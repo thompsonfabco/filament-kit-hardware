@@ -14,3 +14,8 @@ desktop.ini
 /kit/
 # Python caches
 __pycache__/
+# KiCad local and generated files
+*.kicad_prl
+*-backups/
+fp-info-cache
+_autosave-*

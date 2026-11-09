@@ -30,7 +30,7 @@ for this device is in [catalogue.xml](catalogue.xml), and the full circuit is in
 | RSD | 10 kΩ | 0 or 1 | Amplifier SD pull-up to 3V3, only if the module has none (see "Amplifier") |
 | C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks |
 | XU1 | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1, so its USB-C plug clears the M3 screw head (see "Board and layout") |
-| J1-J5 | JST-XH 2.54 mm headers and plugs: 4-pin x4 (J1-J4) and 3-pin x1 (J5) | 5 | Off-board connectors |
+| J1-J5 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x4 (J1-J4) and 3-pin x1 (J5) | 5 | Off-board connectors |
 | F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the screw terminal |
 
 The datasheet limits for each active part, with their sources, are in [catalogue.xml](catalogue.xml).
@@ -58,7 +58,7 @@ The buttons use the C3's internal pull-ups, so each switch goes between its pin 
 
 ## Connectors
 
-Every part off the main board plugs in through a JST-XH 2.54 mm connector, so the board can come out of its
+Every part off the main board plugs in through a JST-XH connector (2.50 mm pitch), so the board can come out of its
 case without desoldering. The speaker is the one exception: it goes into the amplifier's screw terminal.
 
 | Ref | Type | Pin order | To |
@@ -70,12 +70,14 @@ case without desoldering. The speaker is the one exception: it goes into the amp
 | J5 | JST-XH 3-pin | GND 3V3 S | Buzzer BZ1: S to GPIO 0 |
 | J6 | Amplifier screw terminal | + - | Speaker LS1 |
 
-A plug fits any header with the same pin count. An OLED or sensor plug in a button header would put 5 V on a 3.3 V
-part, and a button plug in an I2C header would short 3V3 to G when the button is pressed. You
-are responsible for plugging each harness into the right header:
+A plug fits any header with the same pin count, and a smaller XH plug can be forced in offset: the buzzer plug in a
+button header puts 5 V on the buzzer's 3V3 pin. An OLED or sensor plug in a button header would put 5 V on a 3.3 V
+part, and a button plug in an I2C header would short 3V3 to G when the button is pressed. You are responsible for
+plugging each harness into the right header:
 
 1. Label each header on the board (I2C, YELLOW, RED, BUZZER) with a marker or label, next to the header.
 2. Find pin 1 on the header: it is the pin at the header's pin-1 mark, and it carries the first signal in the pin order above (GND).
+   If the header has no mark, mate a plug before soldering and solder GND to the header pin under the plug's cavity 1.
    Find pin 1 on the plug: the triangle or the cavity number 1 moulded on the housing, which takes the GND wire.
 3. Plug each harness into its labelled header with pin 1 to pin 1.
 

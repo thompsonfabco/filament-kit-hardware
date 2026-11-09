@@ -28,7 +28,7 @@ bench reader's speech through its buzzer is exempt.
 
 ### Connectors
 
-Parts off the main board plug in through JST-XH 2.54 mm connectors. I2C always uses the pin order GND, 3V3, SDA, SCL.
+Parts off the main board plug in through JST-XH connectors (2.50 mm pitch; they fit a 0.1" board). I2C always uses the pin order GND, 3V3, SDA, SCL.
 Each connector is listed in the device's catalogue file.
 
 - Every header carries a label on the board naming its function (for example I2C, YELLOW, RED, BUZZER), and the guide
@@ -53,7 +53,7 @@ applies when a device is next built or rebuilt. Nothing is rewired for it alone.
   The mini board in the same packs is listed as 50.8 x 38.1 mm; measure it before designing around it.
 - Enclosures are designed around that board. They hold it on its two M3 holes with standoffs; the M2 holes are spare.
   The hole positions are also recorded in the device's catalogue file.
-- The main board and the parts off it (buttons, lamps, display, speaker) connect through the connectors below, so the
+- The main board and the parts off it (buttons, lamps, display, speaker) connect through the connectors above, so the
   board can come out of its case without desoldering.
 
 ### Firmware identity and updates
