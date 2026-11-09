@@ -61,12 +61,13 @@
           i_typ_basis="an SSD1306 module draws roughly 10 to 20 mA from 3V3: an estimate, UNCONFIRMED. The chip's
           own figures are ICC 430 typ / 780 max uA and IDD 50 typ / 150 max uA"
           datasheet="https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf"/>
-    <!-- Room air: either one BME280 board (U4) or one BMP280 + AHT20 combination board (U5 and U6). -->
-    <part ref="U4" name="BME280" kind="active" qty="1" use="room air, option A" alt="U5+U6"
-          vmax="4.25" imax="UNCONFIRMED" i_typ="0.0000036"
-          imax_basis="BME280: vmax is the VDD and VDDIO absolute maximum. The datasheet gives no current limit"
-          i_typ_basis="humidity, pressure and temperature at 1 Hz (p2 feature list)"
-          datasheet="https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf"/>
+    <!-- Room air: either one GY-BME/P280 board with a BMP280 chip (U4) or one BMP280 + AHT20 combination board (U5 and U6). -->
+    <part ref="U4" name="GY-BME/P280 board, BMP280 chip, 6-pin (VCC GND SCL SDA CSB SDO)" kind="active" qty="1"
+          use="room air, option A: temperature and pressure, no humidity" alt="U5+U6"
+          vmax="4.25" imax="UNCONFIRMED" i_typ="0.00072"
+          imax_basis="BMP280: vmax is the VDD and VDDIO absolute maximum. The datasheet gives no current limit"
+          i_typ_basis="typical peak during a pressure measurement (1120 uA max)"
+          datasheet="https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf"/>
     <part ref="U5" name="BMP280" kind="active" qty="1" use="room air, option B: temperature and pressure" alt="U4"
           vmax="4.25" imax="UNCONFIRMED" i_typ="0.00072"
           imax_basis="BMP280: vmax is the VDD and VDDIO absolute maximum. The datasheet gives no current limit"
@@ -78,7 +79,7 @@
           UNCONFIRMED as an absolute maximum. The datasheet gives no current limit"
           i_typ_basis="typical current while measuring (Table 2, 3.3 V)"
           datasheet="https://cdn-learn.adafruit.com/assets/assets/000/091/676/original/AHT20-datasheet-2020-4-16.pdf"/>
-    <part ref="BZ1" name="3-wire passive buzzer module" kind="passive" qty="1" use="beeps, + to 3V3"/>
+    <part ref="BZ1" name="3-pin buzzer module, low-level trigger (active-low), VCC I/O GND" kind="passive" qty="1" use="beeps, VCC to 3V3, I/O low = on"/>
     <part ref="SW1" name="illuminated push button, normally open, 5 V lamp with built-in resistor, yellow"
           kind="passive" qty="1" use="Hold; its lamp at most 50 mA through Q1"/>
     <part ref="SW2" name="illuminated push button, normally open, 5 V lamp with built-in resistor, red"

@@ -23,8 +23,8 @@ for this device is in [catalogue.xml](catalogue.xml), and the full circuit is in
 | U2 | AITRIP MAX98357 I2S amplifier module, "No Welding" version (Amazon ASIN B0912CWB7Z, pack of 3) | 1 | Speaker amplifier |
 | LS1 | Shutao double-cavity speaker, 8 Ω, 3 W, sealed body about 100 x 45 x 21 mm (Amazon ASIN B0DL9SFH49) | 1 | Speech |
 | U3 | SSD1306 OLED module, 128x64, I2C address 0x3C | 1 | Display |
-| U4, or U5 + U6 | BME280 board, or a BMP280 + AHT20 combination board | 1 | Room air |
-| BZ1 | 3-wire passive buzzer module | 1 | Beeps |
+| U4, or U5 + U6 | GY-BME/P280 board with a BMP280 chip (6 pins), or a BMP280 + AHT20 combination board | 1 | Room air |
+| BZ1 | 3-pin buzzer module, low-level trigger (active-low) | 1 | Beeps |
 | SW1, SW2 | Illuminated normally-open push buttons with 5 V lamps (resistor built in), yellow and red | 2 | Hold and Discard |
 | RI1, RI2 | 4.7 kΩ | 0 or 2 | I2C pull-ups, only if neither I2C board has them |
 | RSD | 10 kΩ | 0 or 1 | Amplifier SD pull-up to 3V3, only if the module has none (see "Amplifier") |
@@ -243,10 +243,26 @@ default volume of 50 keeps peak speaker current near 310 mA.
 
 - **OLED (SSD1306 128x64, 0x3C) and air sensor:** both on the I2C bus through J1 and J2, VCC to 3V3 and GND to G,
   SDA to GPIO 5 and SCL to GPIO 6. The bus needs pull-ups: keep the sensor board's, or add 4.7 kΩ from SDA and SCL
-  to 3V3 (RI1, RI2) if neither board has them. The air sensor is a BME280, or a BMP280 + AHT20 combination board, in
-  which the AHT20 answers at 0x38.
-- **Buzzer:** + to 3V3, - to G, S to GPIO 0. Use 3V3, not 5 V: some modules switch the buzzer with a PNP that a
-  3.3 V signal can't turn off.
+  to 3V3 (RI1, RI2) if neither board has them. The air sensor is a GY-BME/P280 board with a BMP280
+  chip, or a BMP280 + AHT20 combination board, in which the AHT20 answers at 0x38. The BMP280 board gives temperature
+  and pressure only, so humidity reads "-"; use the combination board for humidity. Leave the BMP280 board's CSB
+  and SDO pins unconnected: its own pull-ups put CSB high (I2C) and set the address to 0x76 or 0x77, and the firmware
+  tries both.
+- **Buzzer:** VCC to 3V3, GND to G, I/O to GPIO 0. The module is marked low-level trigger: a transistor switches
+  it, so I/O low means on. The panel firmware holds GPIO 0 high when silent. Use 3V3, not 5 V: a 3.3 V signal can't
+  turn off a module whose input is pulled up to 5 V.
+
+### Module pin orders
+
+Wire each harness from the module's silkscreen, not from the header order above. Pins are listed left to right.
+
+| Module | Pin order, left to right | Notes |
+|---|---|---|
+| U1 ESP32-C3 Super Mini | Right row, USB at the top: 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0. Left row: GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 | Front view |
+| U2 MAX98357A module | LRC BCLK DIN GAIN SD GND VIN | Screw terminal on the opposite edge: - on the left, + on the right. The board's own SD pull-up gives (L+R)/2 output |
+| U3 OLED | GND VCC SCL SDA | |
+| U4 GY-BME/P280 (BMP280) | VCC GND SCL SDA CSB SDO | CSB and SDO use the module's pull-ups |
+| BZ1 buzzer | VCC I/O GND | Low-level trigger |
 
 ## First flash
 
