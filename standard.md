@@ -31,11 +31,12 @@ bench reader's speech through its buzzer is exempt.
 Parts off the main board plug in through keyed JST-XH 2.54 mm connectors, so a part can't go in backwards. I2C always
 uses the pin order GND, 3V3, SDA, SCL. Each connector is listed in the device's catalogue file.
 
-- Headers for different functions on one device must not accept each other's plugs: use a different pin count where
-  two would otherwise match.
+- Headers for different functions on one device must not accept each other's plugs. Use the same pin count and key by
+  function: remove a different header pin for each function, and block the plug cavity at that position with a cut-off
+  contact, so each blocked cavity meets a pin in the other function's header.
 
-The one exception is the speaker, which goes into the amplifier board's screw terminal. This rule applies when a device
-is next built or rebuilt. Nothing is rewired for it alone.
+The one exception to the JST-XH rule is the speaker, which goes into the amplifier board's screw terminal. This rule
+applies when a device is next built or rebuilt. Nothing is rewired for it alone.
 
 ### Assembly and enclosures
 

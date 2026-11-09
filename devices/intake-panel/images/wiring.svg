@@ -81,7 +81,7 @@
   <text x="356" y="470" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_Y</text>
   <text x="220" y="306" text-anchor="middle" font-weight="600" fill="#9a2f2c">DISCARD (red) switch, SW2</text>
   <text x="220" y="450" text-anchor="middle" font-weight="600" fill="#8a5a10">HOLD (yellow) switch, SW1</text>
-  <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via 5-pin J4 / J3; internal pull-ups, no resistor</text>
+  <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via 5-pin J4 / J3 (pin 1 removed, GND SW 5V LAMP- on 2-5); internal pull-ups, no resistor</text>
   <text x="250" y="281" text-anchor="middle" font-size="11" fill="#555">ground bus to G</text>
 
   <!-- ===== buzzer (GPIO 0), via J5 ===== -->
@@ -220,8 +220,8 @@
     <text x="170" y="776" text-anchor="middle">SCL</text><text x="215" y="776" text-anchor="middle">SDA</text></g>
   <text x="150" y="798" text-anchor="middle" font-weight="600" fill="#4a3a6a">Room air (J2)</text>
   <text x="150" y="812" text-anchor="middle" font-size="10" fill="#555">BME280, or BMP280 + AHT20 (0x38)</text>
-  <text x="270" y="790" font-size="11" fill="#555">J1, J2 pin order:</text>
-  <text x="270" y="804" font-size="11" fill="#555">GND 3V3 SDA SCL</text>
+  <text x="270" y="790" font-size="11" fill="#555">J1, J2 (5-pin, pin 5 removed) order:</text>
+  <text x="270" y="804" font-size="11" fill="#555">GND 3V3 SDA SCL on 1-4</text>
 
   <!-- ===== OLED (same I2C bus, joined by label), via J1 ===== -->
   <g stroke-width="2" fill="none">

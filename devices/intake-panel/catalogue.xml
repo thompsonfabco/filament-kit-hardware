@@ -29,9 +29,10 @@
     <part ref="BRD1" name="ElectroCookie solderable breadboard prototype board, full size" kind="passive" qty="1"
           use="main board" asin="B07ZYNWJ1S"/>
     <part ref="U1" name="ESP32-C3 Super Mini" kind="active" qty="1" use="controller"
-          vmax="3.6" imax="1.0" i_typ="0.04"
+          vmax="3.6" imax="1.0" imax_pin="UNCONFIRMED" i_typ="0.04"
           imax_basis="ESP32-C3 chip: vmax is the absolute maximum on the input power pins; imax is the absolute
-          maximum cumulative IO output current. The board's 3V3 regulator rating and 5 V pin path are UNCONFIRMED"
+          maximum cumulative IO output current, all pins (a whole-chip total, unlike the per-part imax elsewhere); the
+          per-pin limit is UNCONFIRMED and the 40 mA typical is in i_typ. The board's 3V3 regulator rating and 5 V pin path are UNCONFIRMED"
           i_typ_basis="typical source current per GPIO (IOH at PAD_DRIVER 3; IOL sink 28 mA typ), not a limit"
           datasheet="https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"/>
     <part ref="Q1" name="BS170" kind="active" qty="1" use="yellow lamp switch" vmax="60" imax="0.5"
@@ -90,17 +91,19 @@
           use="across U2's VIN (+) and GND (-) at the module, only if 5 V sags on speech peaks"/>
     <part ref="XU1" name="female pin header, 2.54 mm, 8-pin" kind="passive" qty="2"
           use="socket for U1, so its USB-C plug clears the M3 screw head"/>
-    <part ref="J1-J5" name="JST-XH 2.54 mm header and plug, 4-pin x2, 5-pin x2 and 3-pin x1" kind="passive" qty="5"
+    <part ref="J1-J5" name="JST-XH 2.54 mm header and plug, 5-pin x4 and 3-pin x1" kind="passive" qty="5"
           use="off-board connectors"/>
     <part ref="F1-F2" name="wire ferrule to suit the speaker wire" kind="passive" qty="2"
           use="speaker leads into U2's screw terminal"/>
   </parts>
   <connectors>
-    <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="OLED (U3)"/>
-    <connector ref="J2" type="JST-XH-4" order="GND 3V3 SDA SCL" to="air sensor (U4, or U5 and U6)"/>
-    <!-- The button headers are 5-pin so an I2C plug (4-pin) can never go into one. -->
-    <connector ref="J3" type="JST-XH-5" order="GND SW 5V LAMP- NC" to="yellow button SW1: SW to GPIO 3, LAMP- to Q1 drain"/>
-    <connector ref="J4" type="JST-XH-5" order="GND SW 5V LAMP- NC" to="red button SW2: SW to GPIO 4, LAMP- to Q2 drain"/>
+    <connector ref="J1" type="JST-XH-5" order="GND 3V3 SDA SCL" to="OLED (U3)"/>
+    <connector ref="J2" type="JST-XH-5" order="GND 3V3 SDA SCL" to="air sensor (U4, or U5 and U6)"/>
+    <!-- J1-J4 are all JST-XH-5, keyed by function. I2C headers J1/J2: header pin 5 removed, positions 1-4 used, and the I2C
+         plug's cavity 5 is blocked. Button headers J3/J4: header pin 1 removed, positions 2-5 used, and the button plug's
+         cavity 1 is blocked. Each blocked cavity meets a pin in the other function's header, so neither plug fits the wrong one. -->
+    <connector ref="J3" type="JST-XH-5" order="GND SW 5V LAMP-" to="yellow button SW1: SW to GPIO 3, LAMP- to Q1 drain"/>
+    <connector ref="J4" type="JST-XH-5" order="GND SW 5V LAMP-" to="red button SW2: SW to GPIO 4, LAMP- to Q2 drain"/>
     <connector ref="J5" type="JST-XH-3" order="GND 3V3 S" to="buzzer BZ1: S to GPIO 0"/>
     <connector ref="J6" type="screw-terminal-2" order="+ -" to="speaker LS1: red to +, black to -"/>
   </connectors>

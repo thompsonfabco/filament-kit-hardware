@@ -30,7 +30,7 @@ for this device is in [catalogue.xml](catalogue.xml), and the full circuit is in
 | RSD | 10 kΩ | 0 or 1 | Amplifier SD pull-up to 3V3, only if the module has none (see "Amplifier") |
 | C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks |
 | XU1 | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1, so its USB-C plug clears the M3 screw head (see "Board and layout") |
-| J1-J5 | JST-XH 2.54 mm headers and plugs: two 4-pin, two 5-pin, one 3-pin | 5 | Off-board connectors |
+| J1-J5 | JST-XH 2.54 mm headers and plugs: four 5-pin, one 3-pin | 5 | Off-board connectors |
 | F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the screw terminal |
 
 The datasheet limits for each active part, with their sources, are in [catalogue.xml](catalogue.xml).
@@ -63,16 +63,26 @@ case without desoldering. The speaker is the one exception: it goes into the amp
 
 | Ref | Type | Pin order | To |
 |---|---|---|---|
-| J1 | JST-XH 4-pin | GND 3V3 SDA SCL | OLED (U3) |
-| J2 | JST-XH 4-pin | GND 3V3 SDA SCL | Air sensor (U4, or U5 and U6) |
-| J3 | JST-XH 5-pin | GND SW 5V LAMP- NC | Yellow button SW1: SW to GPIO 3, LAMP- to Q1's drain, pin 5 unused |
-| J4 | JST-XH 5-pin | GND SW 5V LAMP- NC | Red button SW2: SW to GPIO 4, LAMP- to Q2's drain, pin 5 unused |
+| J1 | JST-XH 5-pin, pin 5 removed | GND 3V3 SDA SCL (positions 1-4) | OLED (U3) |
+| J2 | JST-XH 5-pin, pin 5 removed | GND 3V3 SDA SCL (positions 1-4) | Air sensor (U4, or U5 and U6) |
+| J3 | JST-XH 5-pin, pin 1 removed | GND SW 5V LAMP- (positions 2-5) | Yellow button SW1: SW to GPIO 3, LAMP- to Q1's drain |
+| J4 | JST-XH 5-pin, pin 1 removed | GND SW 5V LAMP- (positions 2-5) | Red button SW2: SW to GPIO 4, LAMP- to Q2's drain |
 | J5 | JST-XH 3-pin | GND 3V3 S | Buzzer BZ1: S to GPIO 0 |
 | J6 | Amplifier screw terminal | + - | Speaker LS1 |
 
-The button headers are 5-pin so that an I2C plug can never go into one. Don't change them to 4-pin: an OLED or
-sensor plug in a button header would put 5 V on a 3.3 V part, and a button plug in an I2C header would short 3V3 to
-G when the button is pressed.
+J1 to J4 are all 5-pin and keyed by which header pin is missing, so an I2C plug and a button plug can never go into
+each other's header. An OLED or sensor plug in a button header would put 5 V on a 3.3 V part, and a button plug in an
+I2C header would short 3V3 to G when the button is pressed. Make the keying like this:
+
+1. I2C headers J1 and J2: with pliers, pull header pin 5 (the one furthest from the pin 1 end) out of the housing.
+   Solder pins 1 to 4 only.
+2. Button headers J3 and J4: pull header pin 1 out of the housing. Solder pins 2 to 5 only.
+3. I2C plugs (OLED, air sensor): fit contacts in cavities 1 to 4. Leave cavity 5 empty and push a cut-off crimp
+   contact (the wire barrel snipped off) into it as a blocker.
+4. Button plugs: fit contacts in cavities 2 to 5. Push a cut-off contact into cavity 1 as the blocker.
+
+Warning: pull the pin out of the housing, don't just snip it flush, or the plug's blocker will still meet a stub and
+the wrong plug may seat. Do not skip the blockers: without them the plug fits the header it shouldn't.
 
 J3 and J4 are the same type, which is safe because both carry the same signals. If the buttons end up swapped, set
 `panel_swap` as `PANEL.md` describes instead of rewiring.
@@ -265,6 +275,7 @@ Build checks, before the panel goes into service:
   both lamps are fully bright. If higher, swap that BS170 for a logic-level MOSFET.
 - [ ] With the board screwed into the case, the USB-C cable plugs into U1 fully without touching the M3 screw or
   standoff.
+- [ ] Try each I2C plug in J3/J4 and each button plug in J1/J2; neither goes in.
 
 Panel checklist:
 
