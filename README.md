@@ -9,14 +9,14 @@ Firmware and the station code that talks to these devices live in filament-kit, 
 
 | Device | What it is | Status |
 |---|---|---|
-| `intake-panel` | Buttons, lamps, OLED, speaker and room-air sensor for the intake station | Moving from ESP8266 to ESP32-C3 |
-| `bench-reader` | NFC reader with a knob that loads a spool into a printer slot | ESP32-C3; case in `enclosures/bench-reader/`, fit unchecked |
-| `station-nfc` | PN532 NFC reader on the intake station's USB | Bought board, to be documented |
-| `scale` | DYMO USB postal scale | Bought, to be documented |
-| `webcam` | USB camera that photographs new spools | Bought, to be documented |
+| [`intake-panel`](devices/intake-panel/guide.md) | Buttons, lamps, OLED, speaker and room-air sensor for the intake station | Moving from ESP8266 to ESP32-C3 |
+| [`bench-reader`](devices/bench-reader/guide.md) | NFC reader with a knob that loads a spool into a printer slot | ESP32-C3; case in `enclosures/bench-reader/`, fit unchecked |
+| [`station-nfc`](devices/station-nfc/guide.md) | PN532 NFC reader on the intake station's USB | Bought board, to be documented |
+| [`scale`](devices/scale/guide.md) | DYMO USB postal scale | Bought, to be documented |
+| [`webcam`](devices/webcam/guide.md) | USB camera that photographs new spools | Bought, to be documented |
 
-The current design is [specs/2026-11-09-peripheral-standard-design.md](specs/2026-11-09-peripheral-standard-design.md).
-Its standard moves to `standard.md` once it is approved.
+The peripheral standard is in [standard.md](standard.md). The current design is
+[specs/2026-11-09-peripheral-standard-design.md](specs/2026-11-09-peripheral-standard-design.md).
 
 ## Before pushing
 
