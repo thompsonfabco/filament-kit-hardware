@@ -26,8 +26,10 @@ REPO = Path(__file__).resolve().parent.parent
 # ESP32-C3 strapping pins (2, 8, 9) and the USB pair (18, 19).
 C3_RESERVED = {2, 8, 9, 18, 19}
 ACTIVE_ATTRS = ("vmax", "imax", "datasheet")
-# Reference prefixes of active parts in a schematic: ICs and modules, transistors, diodes.
-ACTIVE_PREFIXES = ("U", "Q", "D", "IC")
+# Reference prefixes of active parts in a schematic: ICs and modules, transistors, diodes,
+# amplifiers and assemblies, power supplies, displays, relays. Any symbol with a Vmax property
+# is active too.
+ACTIVE_PREFIXES = ("U", "Q", "D", "IC", "A", "PS", "DS", "K")
 
 _PIN_CONST = re.compile(r"static\s+const\s+(?:uint8_t|int|gpio_num_t)\s+(PIN_\w+)\s*=\s*(\d+)\s*;")
 _PIN_DEFINE = re.compile(r"^\s*#\s*define\s+(PIN_\w+)\s+(\d+)\b", re.M)
@@ -162,17 +164,30 @@ def hello_prints(text: str) -> list:
 
 
 def kicad_projects(dir: Path) -> list:
-    return sorted((dir / "kicad").glob("*.kicad_sch")) if (dir / "kicad").is_dir() else []
+    """The root schematic of each KiCad project in dir/kicad: <name>.kicad_sch beside <name>.kicad_pro.
+
+    Sub-sheets and _autosave-* files are never the root, so they are not listed."""
+    k = dir / "kicad"
+    if not k.is_dir():
+        return []
+    return sorted(s for pro in k.glob("*.kicad_pro") if (s := pro.with_suffix(".kicad_sch")).is_file())
 
 
 def kicad_cli():
-    return os.environ.get("KICAD_CLI") or shutil.which("kicad-cli")
+    """The kicad-cli to run: the KICAD_CLI file if that is set, else the one on PATH, else None."""
+    env = os.environ.get("KICAD_CLI")
+    if env:
+        return env if Path(env).is_file() else None
+    return shutil.which("kicad-cli")
 
 
 def export_netlist(sch: Path, out: Path) -> None:
     """Export the schematic's netlist (kicadxml) to out with kicad-cli."""
-    r = subprocess.run([kicad_cli(), "sch", "export", "netlist", "--format", "kicadxml",
-                        "-o", str(out), str(sch)], capture_output=True, text=True)
+    try:
+        r = subprocess.run([kicad_cli(), "sch", "export", "netlist", "--format", "kicadxml",
+                            "-o", str(out), str(sch)], capture_output=True, text=True)
+    except (OSError, TypeError) as e:
+        raise CatalogueError(sch, f"cannot run kicad-cli: {e}")
     if r.returncode != 0 or not out.is_file():
         raise CatalogueError(sch, f"kicad-cli netlist export failed: {(r.stderr or r.stdout).strip()}")
 
@@ -227,9 +242,10 @@ def check_netlist(cat: Catalogue, bad, netlist: Path) -> dict:
             bad(f"duplicate GPIO {gpio} ({' and '.join(sorted(consts))})")
     for ref, props in sorted(parts.items()):
         prefix = re.match(r"[A-Za-z]*", ref).group(0)
-        if prefix in ACTIVE_PREFIXES:
+        if prefix in ACTIVE_PREFIXES or "vmax" in props:
             for a in ACTIVE_ATTRS:
-                if not props.get(a):
+                # "~" is KiCad's empty-datasheet placeholder; "UNCONFIRMED" stays allowed.
+                if props.get(a, "") in ("", "~"):
                     bad(f"active part {ref} lacks {a}")
     return pins
 
@@ -336,7 +352,7 @@ def main(argv=None) -> int:
         print("a device needs firmware: pass --kit PATH", file=sys.stderr)
         return 2
     if any(kicad_projects(d) for d in devices) and not kicad_cli():
-        print("a device has a KiCad project: put kicad-cli on PATH or set KICAD_CLI", file=sys.stderr)
+        print("a device has a KiCad project: put kicad-cli on PATH or set KICAD_CLI to its file", file=sys.stderr)
         return 2
     problems = []
     for d in devices:

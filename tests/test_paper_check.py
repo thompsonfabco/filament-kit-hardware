@@ -272,3 +272,47 @@ def test_main_without_kicad_cli_exits_2(ktree, monkeypatch, capsys):
     code = pc.main(["--kit", str(ktree[1]), "--devices", str(ktree[0].parent)])
     assert code == 2
     assert "kicad-cli" in capsys.readouterr().err
+
+
+def test_netlist_tilde_datasheet_counts_as_missing(ktree):
+    edit(ktree[2].netlist, "<datasheet>https://example.com/bs170.pdf</datasheet>", "<datasheet>~</datasheet>")
+    assert any("Q1" in p and "datasheet" in p for p in kcheck(ktree))
+
+
+def test_netlist_unconfirmed_values_are_allowed(ktree):
+    edit(ktree[2].netlist, '<field name="Imax">0.5</field>', '<field name="Imax">UNCONFIRMED</field>')
+    assert kcheck(ktree) == []
+
+
+@pytest.mark.parametrize("ref", ["A1", "PS1", "DS1", "K1", "IC1"])
+def test_netlist_more_active_prefixes_need_ratings(ktree, ref):
+    edit(ktree[2].netlist, "</components>", f'<comp ref="{ref}"><value>x</value></comp></components>')
+    problems = kcheck(ktree)
+    assert {a for a in ("vmax", "imax", "datasheet") if f"{ref} lacks {a}" in " ".join(problems)} ==         {"vmax", "imax", "datasheet"}
+
+
+def test_netlist_part_with_vmax_is_active(ktree):
+    edit(ktree[2].netlist, "</components>",
+         '<comp ref="X1"><value>x</value><fields><field name="Vmax">5</field></fields></comp></components>')
+    problems = kcheck(ktree)
+    assert any("X1 lacks imax" in p for p in problems)
+    assert any("X1 lacks datasheet" in p for p in problems)
+
+
+def test_only_the_root_sheet_is_exported(ktree):
+    seen = []
+
+    def export(sch, out):
+        seen.append(sch.name)
+        shutil.copy(ktree[2].netlist, out)
+
+    assert pc.check_device(ktree[0], ktree[1], export=export) == []
+    assert seen == ["demo-panel.kicad_sch"]
+    assert [s.name for s in pc.kicad_projects(ktree[0])] == ["demo-panel.kicad_sch"]
+
+
+def test_bad_kicad_cli_path_exits_2(ktree, monkeypatch, capsys):
+    monkeypatch.setenv("KICAD_CLI", str(ktree[1] / "nope" / "kicad-cli"))
+    code = pc.main(["--kit", str(ktree[1]), "--devices", str(ktree[0].parent)])
+    assert code == 2
+    assert "KICAD_CLI" in capsys.readouterr().err

@@ -38,7 +38,16 @@ jobs:
 
   kicad:
     runs-on: ubuntu-latest
-    container: kicad/kicad:10.0
+    # The image runs as the kicad user and keeps its KiCad config under
+    # /home/kicad, so run as root (checkout needs to write the workspace) and
+    # point KiCad at that config. KICAD_CONFIG_HOME is the folder that holds
+    # the versioned 10.0 config folder; without it ERC cannot find the global
+    # symbol and footprint library tables and reports every library missing.
+    container:
+      image: kicad/kicad:10.0
+      options: --user root
+    env:
+      KICAD_CONFIG_HOME: /home/kicad/.config/kicad
     steps:
       - uses: actions/checkout@v4
 
@@ -48,11 +57,12 @@ jobs:
           ref: main
           path: kit
 
-      # ERC on every device schematic, then the paper check, which exports
-      # each netlist with this container's kicad-cli.
+      # ERC on each project's root sheet (the .kicad_sch named like its
+      # .kicad_pro), then the paper check, which exports each netlist with
+      # this container's kicad-cli.
       - run: |
-          for sch in devices/*/kicad/*.kicad_sch; do
-            kicad-cli sch erc --exit-code-violations "$sch"
+          for pro in devices/*/kicad/*.kicad_pro; do
+            kicad-cli sch erc --exit-code-violations "${pro%.kicad_pro}.kicad_sch"
           done
 
       - run: python3 tools/paper_check.py --kit kit
