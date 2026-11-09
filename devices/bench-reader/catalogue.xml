@@ -4,9 +4,7 @@
      figure is. imax is only ever a datasheet limit: where the datasheet gives none, imax is UNCONFIRMED and i_typ
      holds a typical or operating current, with i_typ_basis saying what it is. -->
 <device id="bench-reader" schema="1">
-  <!-- No family attribute: the paper check looks for the family's chip token in a HELLO print, and the reader,
-       a Wi-Fi device, has no HELLO. Its GPIOs (0, 1, 3, 4, 5, 6) avoid the C3's strapping and USB pins. -->
-  <board model="ESP32-C3 Super Mini"/>
+  <board model="ESP32-C3 Super Mini" family="esp32-c3"/>
   <link type="wifi-https"/>
   <firmware source="reader/src/main.cpp" update="ota-signed"/>
   <!-- Mounting is not recorded yet: the case's fit against the current build is unchecked. -->

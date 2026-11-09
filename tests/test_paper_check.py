@@ -79,6 +79,13 @@ def test_chip_token_must_appear_in_source(tree):
     assert any("esp32c3" in p for p in problems)
 
 
+def test_chip_token_not_required_without_hello(tree):
+    edit(dev(tree) / "catalogue.xml", ' hello="demo-panel"', "")
+    edit(tree[1] / "station/panel/src/main.cpp", "esp32c3", "esp32s3")
+    problems = pc.check_device(dev(tree), tree[1])
+    assert not any("chip token" in p for p in problems)
+
+
 @pytest.mark.parametrize("attr", ["vmax", "imax", "datasheet"])
 def test_active_part_needs_vmax_imax_datasheet(tree, attr):
     text = (dev(tree) / "catalogue.xml").read_text(encoding="utf-8")

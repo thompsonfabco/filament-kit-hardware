@@ -321,7 +321,7 @@ def check_device(dir: Path, kit, export=export_netlist) -> list:
         hellos = hello_prints(src.read_text(encoding="utf-8", errors="replace"))
         if cat.hello and not any(re.search(r"HELLO\s+" + re.escape(cat.hello), h) for h in hellos):
             bad(f"HELLO {cat.hello} not found in the firmware's HELLO print")
-        if cat.chip and not any(cat.chip in h for h in hellos):
+        if cat.hello and cat.chip and not any(cat.chip in h for h in hellos):
             bad(f"chip token {cat.chip} not found in the firmware's HELLO print")
     return out
 
