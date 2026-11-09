@@ -1,0 +1,28 @@
+# filament-kit-hardware
+
+Hardware designs for the peripheral devices of [filament-kit](https://github.com/thompsonfabco/filament-kit): the
+standard they share, build guides, wiring, parts, enclosures and bench results.
+
+Firmware and the station code that talks to these devices live in filament-kit, not here.
+
+## Devices
+
+| Device | What it is | Status |
+|---|---|---|
+| `intake-panel` | Buttons, lamps, OLED, speaker and room-air sensor for the intake station | Moving from ESP8266 to ESP32-C3 |
+| `bench-reader` | NFC reader with a knob that loads a spool into a printer slot | ESP32-C3; case in `enclosures/bench-reader/`, fit unchecked |
+| `station-nfc` | PN532 NFC reader on the intake station's USB | Bought board, to be documented |
+| `scale` | DYMO USB postal scale | Bought, to be documented |
+| `webcam` | USB camera that photographs new spools | Bought, to be documented |
+
+The current design is [specs/2026-11-09-peripheral-standard-design.md](specs/2026-11-09-peripheral-standard-design.md).
+Its standard moves to `standard.md` once it is approved.
+
+## Before pushing
+
+Committed files hold no owner data: no addresses, hostnames, serial numbers, account ids or names. Put owner-specific
+words in `tools/owner-terms.local`, one per line, which git ignores, then run:
+
+```bash
+python -I tools/check_owner_data.py
+```

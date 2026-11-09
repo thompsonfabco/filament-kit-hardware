@@ -1,0 +1,12 @@
+# Editor files
+.vscode/
+.idea/
+# Local notes and scratch
+scratch/
+*.tmp
+# Owner-specific words for the owner-data scan
+tools/owner-terms.local
+# OS files
+Thumbs.db
+desktop.ini
+.DS_Store
