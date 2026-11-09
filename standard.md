@@ -39,11 +39,17 @@ is next built or rebuilt. Nothing is rewired for it alone.
 - A kit-built device is assembled on an ElectroCookie solderable breadboard prototype board (Amazon ASIN B07ZYNWJ1S,
   sold in packs with a mini board). Its strips follow a standard breadboard, so a layout proven on a breadboard moves
   across hole for hole.
-- The listings give the full board as about 88.9 x 52.1 mm and the mini board as 50.8 x 38.1 mm, with 1.2 mm through
-  holes and mounting holes for M3 (3.2 mm) and M2 (2.2 mm) screws. Measure the board in hand before designing a case:
-  the listings disagree on size and give no hole spacing.
-- Enclosures are designed around that board. They hold it on its M3 mounting holes with standoffs, and the measured
-  hole positions are recorded in the device's catalogue file.
+- The full board measures 89 x 52 mm, with 1.2 mm through holes. Its mounting holes, measured from one corner
+  and centred on the board:
+
+  | Holes | Count | Spacing, centre to centre | Positions (mm) |
+  |---|---|---|---|
+  | M3 (3.2 mm) | 2 | 73.5 mm, on the long centreline | (7.75, 26), (81.25, 26) |
+  | M2 (2.2 mm) | 4 | 78.25 x 35.5 mm rectangle | (5.375, 8.25), (83.625, 8.25), (5.375, 43.75), (83.625, 43.75) |
+
+  The mini board in the same packs is listed as 50.8 x 38.1 mm; measure it before designing around it.
+- Enclosures are designed around that board. They hold it on its two M3 holes with standoffs; the M2 holes are spare.
+  The hole positions are also recorded in the device's catalogue file.
 - The main board and the parts off it (buttons, lamps, display, speaker) connect through the connectors below, so the
   board can come out of its case without desoldering.
 
