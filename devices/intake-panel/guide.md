@@ -5,7 +5,7 @@ a 128x64 OLED, a buzzer, a speaker on a MAX98357 amplifier, and a room-air senso
 Mini and plugs into the station PC's USB. This guide covers firmware 10 and later.
 
 The panel's behaviour, its serial protocol, the speech format and the firmware update notes are in the kit's
-`station/PANEL.md`. This guide covers the parts, wiring, assembly, first flash and bench checks. The checked data
+[station/PANEL.md](https://github.com/thompsonfabco/filament-kit/blob/main/station/PANEL.md). This guide covers the parts, wiring, assembly, first flash and bench checks. The checked data
 for this device is in [catalogue.xml](catalogue.xml), and the full circuit is in
 [images/wiring.svg](images/wiring.svg).
 
@@ -27,7 +27,10 @@ for this device is in [catalogue.xml](catalogue.xml), and the full circuit is in
 | BZ1 | 3-wire passive buzzer module | 1 | Beeps |
 | SW1, SW2 | Illuminated normally-open push buttons with 5 V lamps (resistor built in), yellow and red | 2 | Hold and Discard |
 | RI1, RI2 | 4.7 kΩ | 0 or 2 | I2C pull-ups, only if neither I2C board has them |
-| J1-J5 | JST-XH 2.54 mm headers and plugs: four 4-pin, one 3-pin | 5 | Off-board connectors |
+| RSD | 10 kΩ | 0 or 1 | Amplifier SD pull-up to 3V3, only if the module has none (see "Amplifier") |
+| C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks |
+| XU1 | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1, so its USB-C plug clears the M3 screw head (see "Board and layout") |
+| J1-J5 | JST-XH 2.54 mm headers and plugs: two 4-pin, two 5-pin, one 3-pin | 5 | Off-board connectors |
 | F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the screw terminal |
 
 The datasheet limits for each active part, with their sources, are in [catalogue.xml](catalogue.xml).
@@ -62,13 +65,17 @@ case without desoldering. The speaker is the one exception: it goes into the amp
 |---|---|---|---|
 | J1 | JST-XH 4-pin | GND 3V3 SDA SCL | OLED (U3) |
 | J2 | JST-XH 4-pin | GND 3V3 SDA SCL | Air sensor (U4, or U5 and U6) |
-| J3 | JST-XH 4-pin | GND SW 5V LAMP- | Yellow button SW1: SW to GPIO 3, LAMP- to Q1's drain |
-| J4 | JST-XH 4-pin | GND SW 5V LAMP- | Red button SW2: SW to GPIO 4, LAMP- to Q2's drain |
+| J3 | JST-XH 5-pin | GND SW 5V LAMP- NC | Yellow button SW1: SW to GPIO 3, LAMP- to Q1's drain, pin 5 unused |
+| J4 | JST-XH 5-pin | GND SW 5V LAMP- NC | Red button SW2: SW to GPIO 4, LAMP- to Q2's drain, pin 5 unused |
 | J5 | JST-XH 3-pin | GND 3V3 S | Buzzer BZ1: S to GPIO 0 |
 | J6 | Amplifier screw terminal | + - | Speaker LS1 |
 
-J3 and J4 are the same type, so their plugs fit either header. If the buttons end up swapped, set `panel_swap` as
-`PANEL.md` describes instead of rewiring.
+The button headers are 5-pin so that an I2C plug can never go into one. Don't change them to 4-pin: an OLED or
+sensor plug in a button header would put 5 V on a 3.3 V part, and a button plug in an I2C header would short 3V3 to
+G when the button is pressed.
+
+J3 and J4 are the same type, which is safe because both carry the same signals. If the buttons end up swapped, set
+`panel_swap` as `PANEL.md` describes instead of rewiring.
 
 ## Board and layout
 
@@ -101,11 +108,21 @@ around each hole you use, where the standoff and screw head go.
 
 Rails: use one long-edge rail pair for 5 V and G and the other for 3V3 and G, and join the two G rails at one end.
 
+**U1 on female headers.** U1 straddles the centre channel, which runs along the board's long centerline, the same
+line as the M3 holes. Its USB-C socket faces a short edge, so the plug and cable leave the board over the M3 hole at
+that end. U1 can't turn to face a long edge while it straddles the channel, and at the other end it would sit over
+the other M3 hole. So mount U1 in two 8-pin female headers soldered to the board, not directly. That lifts the plug
+above the M3 screw head and standoff. The bench checklist checks that the cable plugs in fully with the board
+screwed into the case.
+
+The amplifier module, U2, sits on the main board with its pins soldered into the strips. It isn't an off-board part,
+so it has no JST-XH connector. Only the speaker leaves it, through the screw terminal.
+
 Suggested layout, from the USB end of the board to the far end:
 
 | Region along the length | Half | What sits there |
 |---|---|---|
-| USB end, past the first mounting hole | Straddling the channel | U1, the C3 Super Mini, its USB-C socket toward the board's short edge so the cable can reach it |
+| USB end, past the first mounting hole | Straddling the channel | U1, the C3 Super Mini, in female headers, its USB-C socket toward the board's short edge so the cable can reach it over the hole |
 | Next to U1 | One half | U2, the MAX98357 module, its pin row in the strips and its screw terminal toward the board's long edge, so the speaker leads stay short |
 | Next to U1 | Other half | J5 (buzzer), then J1 and J2 (I2C) |
 | Middle | One half | The yellow lamp stage: Q1, RG1 and RP1 |
@@ -118,14 +135,15 @@ soldering, then note the row numbers you used in the bench results.
 
 ## Enclosure
 
-The case for the intake station is in `enclosures/intake-station/`. Its speaker grille is designed for the
-100 x 45 mm sealed speaker.
+The case for the intake station is in `enclosures/intake-station/`. The controller case's speaker grille is
+100 x 45 mm, the speaker's size. The simple controller variant has no grille.
 
 ## Power
 
 Power comes from the station PC's USB 5 V. The panel's measured total must stay at or under 500 mA, the USB 2.0
 limit, which the bench checklist measures. The C3's 5V pin feeds the 5 V rail: the amplifier and the lamps. The C3's
-3V3 pin feeds the 3V3 rail: the OLED, the air sensor and the buzzer. The Super Mini's 3V3 regulator rating and the
+3V3 pin feeds the 3V3 rail: the OLED, the air sensor and the buzzer. An SSD1306 OLED module draws roughly 10 to 20 mA
+from 3V3, an estimate (UNCONFIRMED) because the chip's datasheet gives no module figure. The Super Mini's 3V3 regulator rating and the
 path from USB to its 5V pin are not in the sources found (UNCONFIRMED), so the current and rail check on the bench
 covers both.
 
@@ -147,8 +165,17 @@ it directly.
   3.3 V. Both are estimates read from the curves (UNCONFIRMED as figures), not ratings.
 - The 500 mA rating is for full gate drive and doesn't apply here.
 
-Measure each lamp's current on the bench (see the checklist). If a lamp draws more than 50 mA, or is dim when it is
-switched on, replace that BS170 with a logic-level N-MOSFET, for example an AO3400A on a SOT-23 adapter. Pick a part
+The BS170 limits the current itself, so a lamp measured through it can read under 50 mA even when it would draw
+more. Check each lamp in two steps:
+
+1. **Before wiring it to Q1 or Q2,** measure the lamp alone: lamp + to 5 V, lamp - to G, with the meter in series. It
+   must draw 50 mA or less. If it draws more, use a logic-level MOSFET for that lamp, as below.
+2. **In circuit,** with the lamp lit by the station, measure the voltage from the MOSFET's drain to its source. At the
+   flow's ready step both lamps are on. It should be under 0.3 V. A higher reading means the BS170 isn't fully on, so
+   swap it. Use the station to light the lamps, not a manual `L 1 1` over serial: with no further `L` line, the panel's
+   5 s watchdog turns the lamps off.
+
+If a lamp fails either step, replace that BS170 with a logic-level N-MOSFET, for example an AO3400A on a SOT-23 adapter. Pick a part
 whose datasheet gives RDS(on) at a gate voltage of 2.5 V or lower. Keep the same 220 Ω and 100 kΩ. Wire it by the
 adapter's G, D and S labels, not the BS170's leg order, and add it to the catalogue with its datasheet limits.
 
@@ -158,6 +185,8 @@ adapter's G, D and S labels, not the BS170's leg order, and add it to the catalo
 - BCLK to GPIO 10, LRC to GPIO 20, DIN to GPIO 21.
 - Leave GAIN unconnected. That gives 9 dB of gain.
 - Leave SD unconnected at first, then check it as described below.
+
+The module sits on the main board itself, next to U1 (see "Board and layout"), so it needs no JST-XH connector.
 
 The module's listing has no schematic. It doesn't state its SD pull-up or its pin labels, and it is unreliable on
 electrical figures. It gives 5.5 V as both the minimum and maximum supply. The chip's datasheet gives 2.5 to 5.5 V
@@ -175,8 +204,8 @@ SD trip points, min / typ / max:
 | Above that | Left channel |
 
 The firmware writes every sample to both channels, so any mode except shutdown plays correctly. If SD measures near
-0 V, the module has no pull-up, so tie SD to 3V3 through a resistor and measure again. With the chip's 100 kΩ
-pull-down, 10 kΩ to 3V3 puts SD near 3.0 V, in the left-channel range. Record the voltage you measured in the bench
+0 V, the module has no pull-up, so tie SD to 3V3 through a 10 kΩ resistor (RSD) and measure again. With the chip's
+100 kΩ pull-down, 10 kΩ puts SD near 3.0 V, in the left-channel range. Record the voltage you measured in the bench
 results.
 
 **LRC and BCLK labels (UNCONFIRMED on this module).** One user report found the LRC and BCLK labels swapped on
@@ -229,9 +258,13 @@ that, the station keeps the panel's firmware current by itself.
 
 Build checks, before the panel goes into service:
 
-- [ ] SD on the amplifier measured with nothing connected, and tied to 3V3 through a resistor if it sat near 0 V.
-- [ ] Each lamp's current measured with its lamp on: at or under 50 mA, and the lamp fully bright. If not, swap that
-  BS170 for a logic-level MOSFET (see "Lamp MOSFET stages").
+- [ ] SD on the amplifier measured with nothing connected, and tied to 3V3 through 10 kΩ (RSD) if it sat near 0 V.
+- [ ] Each lamp measured alone, before wiring it to its MOSFET, from 5 V to G with the meter in series: 50 mA or
+  less. If more, use a logic-level MOSFET for it (see "Lamp MOSFET stages").
+- [ ] With both lamps lit by the station (the flow's ready step), drain to source on Q1 and on Q2 is under 0.3 V, and
+  both lamps are fully bright. If higher, swap that BS170 for a logic-level MOSFET.
+- [ ] With the board screwed into the case, the USB-C cable plugs into U1 fully without touching the M3 screw or
+  standoff.
 
 Panel checklist:
 
@@ -248,13 +281,14 @@ Panel checklist:
 - [ ] Idle hiss between phrases is not noticeable at working distance.
 - [ ] A full intake runs from scan to save with a real spool.
 - [ ] USB current with both lamps lit and speech at the chosen volume is at or under 500 mA, and the 5 V and 3V3 rails
-  hold. If 5 V sags on speech peaks, fit a 470 µF capacitor across the amplifier's VIN and GND and measure again.
+  hold. If 5 V sags on speech peaks, fit C1, a 470 µF electrolytic rated 10 V or more, at the module: + to VIN and
+  - to GND. Then measure again.
 
 Record the result below, and the firmware version, date and measured current in `catalogue.xml` (`validated` and
 `power`).
 
 ## Bench results
 
-| Date | Firmware | Result | Measured mA |
-|---|---|---|---|
-| | | | |
+| Date | Firmware | Result | Measured mA | Notes |
+|---|---|---|---|---|
+| | | | | |

@@ -29,7 +29,7 @@
 
   <text x="30" y="34" font-size="18" font-weight="600" fill="#111">Intake panel (ESP32-C3): full circuit</text>
   <text x="30" y="54" fill="#555">ESP32-C3 Super Mini on the station PC's USB; BS170s switch the lamps; MAX98357 module drives the speaker; OLED and room-air sensor on I2C.</text>
-  <text x="30" y="72" fill="#555">Every ground symbol joins the C3's G pin; every 5V flag joins its 5V pin; same-named labels (SDA, SCL, 3V3, LAMP_Y, LAMP_R) are joined.</text>
+  <text x="30" y="72" fill="#555">Every ground symbol joins the C3's G pin and every 5V flag its 5V pin; same-named labels (SDA, SCL, BCLK, LRC, DIN, 3V3, LAMP_Y, LAMP_R) are joined.</text>
   <text x="30" y="90" fill="#555">Assembled on an ElectroCookie full-size prototype board; parts off the board plug into keyed JST-XH headers J1-J5, the speaker into J6.</text>
 
   <!-- ===== C3 Super Mini ===== -->
@@ -81,7 +81,7 @@
   <text x="356" y="470" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_Y</text>
   <text x="220" y="306" text-anchor="middle" font-weight="600" fill="#9a2f2c">DISCARD (red) switch, SW2</text>
   <text x="220" y="450" text-anchor="middle" font-weight="600" fill="#8a5a10">HOLD (yellow) switch, SW1</text>
-  <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via J4 / J3; internal pull-ups, no resistor</text>
+  <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via 5-pin J4 / J3; internal pull-ups, no resistor</text>
   <text x="250" y="281" text-anchor="middle" font-size="11" fill="#555">ground bus to G</text>
 
   <!-- ===== buzzer (GPIO 0), via J5 ===== -->
@@ -110,9 +110,12 @@
 
   <!-- ===== MAX98357 module (I2S on 10 / 20 / 21) and speaker ===== -->
   <g stroke-width="2" fill="none">
-    <polyline points="580,430 640,430 640,445 720,445" stroke="#2c8a7a"/>
-    <polyline points="580,466 620,466 620,420 720,420" stroke="#1f6a9a"/>
-    <polyline points="580,502 680,502 680,470 720,470" stroke="#6a4a9a"/>
+    <line x1="580" y1="430" x2="600" y2="430" stroke="#2c8a7a"/>
+    <line x1="580" y1="466" x2="600" y2="466" stroke="#1f6a9a"/>
+    <line x1="580" y1="502" x2="600" y2="502" stroke="#6a4a9a"/>
+    <line x1="700" y1="420" x2="720" y2="420" stroke="#1f6a9a"/>
+    <line x1="700" y1="445" x2="720" y2="445" stroke="#2c8a7a"/>
+    <line x1="700" y1="470" x2="720" y2="470" stroke="#6a4a9a"/>
     <line x1="720" y1="495" x2="705" y2="495" stroke="#999"/>
     <line x1="720" y1="520" x2="705" y2="520" stroke="#999"/>
     <line x1="720" y1="545" x2="700" y2="545" stroke="#222"/>
@@ -139,8 +142,13 @@
   <text x="694" y="502" text-anchor="end" font-size="10" fill="#888">nc</text>
   <text x="694" y="527" text-anchor="end" font-size="10" fill="#888">nc*</text>
   <text x="674" y="574" text-anchor="end" fill="#d22" font-weight="600">5V</text>
-  <text x="798" y="600" text-anchor="middle" font-size="10" fill="#555">GAIN open = 9 dB. *SD: measure; tie to 3V3 via resistor if ~0 V.</text>
+  <g font-weight="700" font-size="11">
+    <text x="604" y="434" fill="#2c8a7a">BCLK</text><text x="604" y="470" fill="#1f6a9a">LRC</text><text x="604" y="506" fill="#6a4a9a">DIN</text>
+    <text x="696" y="424" text-anchor="end" fill="#1f6a9a">LRC</text><text x="696" y="449" text-anchor="end" fill="#2c8a7a">BCLK</text><text x="696" y="474" text-anchor="end" fill="#6a4a9a">DIN</text>
+  </g>
+  <text x="798" y="600" text-anchor="middle" font-size="10" fill="#555">GAIN open = 9 dB. *SD: measure; if ~0 V, 10 kΩ (RSD) from SD to 3V3.</text>
   <text x="798" y="613" text-anchor="middle" font-size="10" fill="#555">No sound? LRC / BCLK labels may be swapped.</text>
+  <text x="798" y="626" text-anchor="middle" font-size="10" fill="#555">If 5V sags: C1 470 µF ≥10 V, + to VIN, − to GND, at the module.</text>
   <text x="891" y="448" text-anchor="middle" font-size="10" fill="#555">J6</text>
   <text x="990" y="540" text-anchor="end" font-weight="600" fill="#1f6a5c">LS1 8 Ω 3 W</text>
   <text x="990" y="554" text-anchor="end" font-size="10" fill="#555">red +, black −</text>
