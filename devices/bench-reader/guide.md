@@ -67,8 +67,8 @@ reader is next rebuilt; nothing is rewired for it alone.
 
 ### PN532 I2C mode
 
-The PN532 picks its host interface from two pins, I0 and I1. For I2C the chip needs I0 low and I1 high (NXP
-PN532/C1 data sheet, Table 72). Modules bring these out as two small switches or jumpers, with a table on the
+The PN532 picks its host interface from two pins, I0 and I1. For I2C the chip needs I0 high and I1 low (NXP
+PN532 User Manual, Table 7). Modules bring these out as two small switches or jumpers, with a table on the
 silkscreen. Set them to the silkscreen's I2C setting, with the power off.
 
 Which switch carries I0 and which I1 differs between module makers, so the switch positions for this build are
@@ -112,7 +112,8 @@ rows run top to bottom with the USB connector at the top.
 ## Power
 
 Power comes from the USB 5 V into the C3. The C3's 3V3 regulator feeds every module. The PN532 is the largest
-load: its data sheet gives at most 150 mA in continuous wave, and below 100 mA with a tuned antenna. The Super
+load: its short form data sheet (Rev. 1.2, Table 1) gives a continuous total current of 91 mA typical and
+140 mA at most. The Super
 Mini's 3V3 regulator rating is not in the sources found (UNCONFIRMED), so the bench checklist measures the USB
 current and the 3V3 rail during a tag read.
 

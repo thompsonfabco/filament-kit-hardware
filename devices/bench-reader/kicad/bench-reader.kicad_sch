@@ -497,7 +497,7 @@
 					)
 				)
 			)
-			(property "Imax" "0.15"
+			(property "Imax" "0.14"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -508,7 +508,7 @@
 					)
 				)
 			)
-			(property "Imax_basis" "PN532/C1 data sheet Rev. 3.6, Table 290 limiting values: VBAT -0.5 to 6.0 V, PVDD (host interface) -0.5 to 4 V, ITVDD 150 mA (antenna driver), ISVDD 30 mA, Ptot 500 mW. Operating VBAT 2.7 to 5.5 V; IVBAT 150 mA max in continuous wave, below 100 mA with a tuned antenna. The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under both limits"
+			(property "Imax_basis" "PN532/C1 short form data sheet Rev. 1.2, Table 13 limiting values: VBAT -0.5 to 6.0 V, PVDD (host interface) -0.5 to 4 V, ITX1 and ITX2 100 mA each, Ptot tbd. Table 1: operating VBAT 2.7 to 5.4 V, PVDD 1.6 to 3.6 V, ITVDD 100 mA max, ISVDD 30 mA max, IVBAT continuous total 91 mA typ and 140 mA max. The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under both limits"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -530,7 +530,7 @@
 					)
 				)
 			)
-			(property "Mode" "I2C: the chip needs I0 low and I1 high (data sheet Table 72, selif 10). Set the module's mode switches to its silkscreen's I2C setting"
+			(property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). Set the module's mode switches to its silkscreen's I2C setting"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -1752,16 +1752,16 @@
     (property "Vmax" "6.0" (at 167.64 76.2 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
-    (property "Imax" "0.15" (at 167.64 76.2 0)
+    (property "Imax" "0.14" (at 167.64 76.2 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
-    (property "Imax_basis" "PN532/C1 data sheet Rev. 3.6, Table 290 limiting values: VBAT -0.5 to 6.0 V, PVDD (host interface) -0.5 to 4 V, ITVDD 150 mA (antenna driver), ISVDD 30 mA, Ptot 500 mW. Operating VBAT 2.7 to 5.5 V; IVBAT 150 mA max in continuous wave, below 100 mA with a tuned antenna. The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under both limits" (at 167.64 76.2 0)
+    (property "Imax_basis" "PN532/C1 short form data sheet Rev. 1.2, Table 13 limiting values: VBAT -0.5 to 6.0 V, PVDD (host interface) -0.5 to 4 V, ITX1 and ITX2 100 mA each, Ptot tbd. Table 1: operating VBAT 2.7 to 5.4 V, PVDD 1.6 to 3.6 V, ITVDD 100 mA max, ISVDD 30 mA max, IVBAT continuous total 91 mA typ and 140 mA max. The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under both limits" (at 167.64 76.2 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
     (property "Pin_order" "UNCONFIRMED (not photographed): common module I2C header left to right GND VCC SDA SCL; IRQ and RSTO on the side header, both unconnected" (at 167.64 76.2 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
-    (property "Mode" "I2C: the chip needs I0 low and I1 high (data sheet Table 72, selif 10). Set the module's mode switches to its silkscreen's I2C setting; switch positions UNCONFIRMED" (at 167.64 76.2 0)
+    (property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). Set the module's mode switches to its silkscreen's I2C setting; switch positions UNCONFIRMED" (at 167.64 76.2 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
 		(pin "1"

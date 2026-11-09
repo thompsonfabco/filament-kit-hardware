@@ -28,12 +28,13 @@
           datasheet="https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"/>
     <part ref="U2" name="PN532 NFC module, I2C mode (0x24)" kind="active" qty="1"
           use="tag reader, VCC to 3V3, IRQ and RSTO unconnected"
-          vmax="6.0" imax="0.15" i_typ="0.1"
-          imax_basis="PN532/C1 data sheet Rev. 3.6, Table 290 limiting values: VBAT -0.5 to 6.0 V, PVDD (host
-          interface) -0.5 to 4 V, ITVDD 150 mA (antenna driver), ISVDD 30 mA, Ptot 500 mW. Operating VBAT 2.7 to 5.5 V.
+          vmax="6.0" imax="0.14" i_typ="0.091"
+          imax_basis="PN532/C1 short form data sheet Rev. 1.2, Table 13 limiting values: VBAT -0.5 to 6.0 V, PVDD
+          (host interface) -0.5 to 4 V, ITX1 and ITX2 100 mA each, Ptot tbd. Table 1: operating VBAT 2.7 to 5.4 V,
+          PVDD 1.6 to 3.6 V, ITVDD 100 mA max, ISVDD 30 mA max, IVBAT continuous total 140 mA max.
           The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under both limits"
-          i_typ_basis="IVBAT is 150 mA max in continuous wave and below 100 mA with the recommended antenna tuning
-          (Table 293 note 4); 0.1 is that bound, not a measurement"
+          i_typ_basis="IVBAT continuous total current, 91 mA typical (short form data sheet Rev. 1.2, Table 1,
+          40 ohm typical TX load); a data sheet figure, not a measurement"
           datasheet="https://www.nxp.com/docs/en/nxp/data-sheets/PN532_C1.pdf"/>
     <part ref="U3" name="SSD1306 OLED module, 128x64, I2C 0x3C" kind="active" qty="1" use="display"
           vmax="4" imax="UNCONFIRMED" i_typ="0.015"
