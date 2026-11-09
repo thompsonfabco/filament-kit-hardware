@@ -195,11 +195,12 @@ adapter's G, D and S labels, not the BS170's leg order, and add it to the catalo
 
 The module sits on the main board itself, next to U1 (see "Board and layout"), so it needs no JST-XH connector.
 
-The module's listing has no schematic. It doesn't state its SD pull-up or its pin labels, and it is unreliable on
-electrical figures. It gives 5.5 V as both the minimum and maximum supply. The chip's datasheet gives 2.5 to 5.5 V
+The module's listing has no schematic and is unreliable on electrical figures. The owner's photo of the board shows the
+pin labels LRC BCLK DIN GAIN SD GND VIN, and the back silkscreen says "Default 9db Gain & (L+R)/2 out", so the board
+has its own SD pull-up. It gives 5.5 V as both the minimum and maximum supply. The chip's datasheet gives 2.5 to 5.5 V
 operating and 6 V absolute maximum, and this panel uses 5 V.
 
-**SD pull-up check (UNCONFIRMED on this module).** With the panel powered and SD unconnected, measure SD to G. The
+**SD pull-up check.** The board's own pull-up is confirmed by its silkscreen; this check confirms it on the bench. With the panel powered and SD unconnected, measure SD to G. The
 chip pulls SD down internally through 100 kΩ, and with SD low the amplifier stays shut down and silent. The chip's
 SD trip points, min / typ / max:
 
@@ -211,7 +212,7 @@ SD trip points, min / typ / max:
 | Above that | Left channel |
 
 The firmware writes every sample to both channels, so any mode except shutdown plays correctly. If SD measures near
-0 V, the module has no pull-up, so tie SD to 3V3 through a 10 kΩ resistor (RSD) and measure again. With the chip's
+0 V, the pull-up is not doing its job on this unit, so tie SD to 3V3 through a 10 kΩ resistor (RSD) and measure again. With the chip's
 100 kΩ pull-down, 10 kΩ puts SD near 3.0 V, in the left-channel range. Record the voltage you measured in the bench
 results.
 
@@ -254,11 +255,11 @@ default volume of 50 keeps peak speaker current near 310 mA.
 
 ### Module pin orders
 
-Wire each harness from the module's silkscreen, not from the header order above. Pins are listed left to right.
+Wire each harness from the module's silkscreen, not from the header order above. Pins are listed left to right, except U1, whose two rows run top to bottom with the USB connector at the top.
 
-| Module | Pin order, left to right | Notes |
+| Module | Pin order | Notes |
 |---|---|---|
-| U1 ESP32-C3 Super Mini | Right row, USB at the top: 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0. Left row: GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 | Front view |
+| U1 ESP32-C3 Super Mini | Both rows run top to bottom, USB at the top. Right row: 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0. Left row: GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 | Top view |
 | U2 MAX98357A module | LRC BCLK DIN GAIN SD GND VIN | Screw terminal on the opposite edge: - on the left, + on the right. The board's own SD pull-up gives (L+R)/2 output |
 | U3 OLED | GND VCC SCL SDA | |
 | U4 GY-BME/P280 (BMP280) | VCC GND SCL SDA CSB SDO | CSB and SDO use the module's pull-ups |

@@ -51,7 +51,7 @@
     <part ref="U2" name="AITRIP MAX98357 I2S amplifier module" kind="active" qty="1" use="speaker amplifier"
           asin="B0912CWB7Z" vmax="6" imax="1.6"
           imax_basis="MAX98357A chip absolute maximums: -0.3 to +6 V on VDD and the I2S pins, +/-1.6 A continuous
-          on VDD, GND and OUT; operating VDD 2.5 to 5.5 V. The module's SD pull-up and pin labels are UNCONFIRMED"
+          on VDD, GND and OUT; operating VDD 2.5 to 5.5 V. The module has its own SD pull-up (default 9 dB gain, (L+R)/2 out); its pin labels are LRC BCLK DIN GAIN SD GND VIN"
           datasheet="https://cdn-shop.adafruit.com/product-files/3006/MAX98357A-MAX98357B.pdf"/>
     <part ref="LS1" name="Shutao double-cavity speaker, 8 ohm, 3 W" kind="passive" qty="1"
           use="speech, on U2's screw terminal" asin="B0DL9SFH49"/>
