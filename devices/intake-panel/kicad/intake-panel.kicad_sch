@@ -5979,7 +5979,7 @@
 				)
 			)
 		)
-		(property "Value" "Passive buzzer module"
+		(property "Value" "Active-low buzzer module"
 			(at 347.98 181.61 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6011,7 +6011,7 @@
 				)
 			)
 		)
-		(property "Description" "3-wire passive buzzer module"
+		(property "Description" "3-wire active-low buzzer module (low-level trigger), VCC, I/O, GND"
 			(at 355.6 175.26 0)
 			(hide yes)
 			(show_name no)
@@ -7828,7 +7828,7 @@
 				(justify left)
 			)
 		)
-		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/BS170-D.PDF"
+		(property "Datasheet" "https://www.onsemi.com/download/data-sheet/pdf/bs170-d.pdf"
 			(at 71.12 166.37 0)
 			(hide yes)
 			(show_name no)
@@ -7841,6 +7841,39 @@
 			)
 		)
 		(property "Description" "0.5A Id, 60V Vds, N-Channel MOSFET, TO-92"
+			(at 66.04 162.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Vmax" "60"
+			(at 66.04 162.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Imax" "0.5"
+			(at 66.04 162.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Imax_basis" "BS170 continuous drain current; at a 3.3 V gate it conducts only weakly (lamps at most 50 mA)"
 			(at 66.04 162.56 0)
 			(hide yes)
 			(show_name no)
@@ -9189,7 +9222,7 @@
 				(justify left)
 			)
 		)
-		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/BS170-D.PDF"
+		(property "Datasheet" "https://www.onsemi.com/download/data-sheet/pdf/bs170-d.pdf"
 			(at 71.12 229.87 0)
 			(hide yes)
 			(show_name no)
@@ -9202,6 +9235,39 @@
 			)
 		)
 		(property "Description" "0.5A Id, 60V Vds, N-Channel MOSFET, TO-92"
+			(at 66.04 226.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Vmax" "60"
+			(at 66.04 226.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Imax" "0.5"
+			(at 66.04 226.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Imax_basis" "BS170 continuous drain current; at a 3.3 V gate it conducts only weakly (lamps at most 50 mA)"
 			(at 66.04 226.06 0)
 			(hide yes)
 			(show_name no)
