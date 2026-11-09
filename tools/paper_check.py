@@ -21,6 +21,8 @@ ACTIVE_ATTRS = ("vmax", "imax", "datasheet")
 
 _PIN_CONST = re.compile(r"static\s+const\s+(?:uint8_t|int|gpio_num_t)\s+(PIN_\w+)\s*=\s*(\d+)\s*;")
 _PIN_DEFINE = re.compile(r"^\s*#\s*define\s+(PIN_\w+)\s+(\d+)\b", re.M)
+# A string literal (kept whole, so "//" inside it is not a comment) or a comment.
+_TOKEN = re.compile(r'"(?:[^"\\\n]|\\.)*"|//[^\n]*|/\*.*?\*/', re.S)
 _STRING = re.compile(r'"((?:[^"\\]|\\.)*)"')
 
 
@@ -90,9 +92,17 @@ def load_catalogue(path: Path) -> Catalogue:
     return cat
 
 
+def strip_comments(text: str) -> str:
+    """Remove // and /* */ comments (newlines kept so line structure survives); strings are untouched."""
+    def blank(m):
+        s = m.group(0)
+        return s if s.startswith('"') else re.sub(r"[^\n]", " ", s)
+    return _TOKEN.sub(blank, text)
+
+
 def firmware_pins(source: Path) -> dict:
-    """PIN_* constants: `static const uint8_t|int|gpio_num_t PIN_X = N;` and `#define PIN_X N`."""
-    text = source.read_text(encoding="utf-8", errors="replace")
+    """PIN_* constants in code, not comments: `static const uint8_t|int|gpio_num_t PIN_X = N;` and `#define PIN_X N`."""
+    text = strip_comments(source.read_text(encoding="utf-8", errors="replace"))
     pins = {m.group(1): int(m.group(2)) for m in _PIN_DEFINE.finditer(text)}
     pins.update({m.group(1): int(m.group(2)) for m in _PIN_CONST.finditer(text)})
     return pins
@@ -120,14 +130,23 @@ def guide_pins(guide: Path) -> dict:
     return pins
 
 
-def _hello_text(text: str) -> str:
-    """String literals of the HELLO print: the line holding a "HELLO literal plus the next 3 lines,
-    joined, so a print split across several calls still reads as one string."""
-    lines = text.splitlines()
+def hello_prints(text: str) -> list:
+    """Joined string literals of each HELLO print in code (comments stripped first).
+
+    A HELLO print starts on a line with a print/printf/println call whose literals include "HELLO ",
+    and runs through the next line holding println or printf (at most 6 lines), so a print split over
+    several Serial.print calls reads as one string. The version between the pieces is not a literal."""
+    lines = strip_comments(text).splitlines()
+    out = []
     for i, line in enumerate(lines):
-        if re.search(r'"HELLO\b', line):
-            return "".join(_STRING.findall("\n".join(lines[i:i + 4])))
-    return ""
+        if re.search(r"print\w*\s*\(", line) and re.search(r'"HELLO ', line):
+            seq = []
+            for l in lines[i:i + 6]:
+                seq.append(l)
+                if re.search(r"println|printf", l):
+                    break
+            out.append("".join(_STRING.findall("\n".join(seq))))
+    return out
 
 
 def check_device(dir: Path, kit) -> list:
@@ -156,7 +175,9 @@ def check_device(dir: Path, kit) -> list:
 
     cat_pins = {p.constant: p.gpio for p in cat.pins}
     guide = dir / "guide.md"
-    if guide.is_file() and cat.pins:
+    if not guide.is_file():
+        bad("no guide.md")
+    else:
         gp = guide_pins(guide)
         for name, gpio in cat_pins.items():
             if name not in gp:
@@ -184,10 +205,10 @@ def check_device(dir: Path, kit) -> list:
         for name in fw:
             if name not in cat_pins:
                 bad(f"{name} is in the firmware but not the catalogue")
-        hello = _hello_text(src.read_text(encoding="utf-8", errors="replace"))
-        if cat.hello and not re.search(r"HELLO\s+" + re.escape(cat.hello), hello):
+        hellos = hello_prints(src.read_text(encoding="utf-8", errors="replace"))
+        if cat.hello and not any(re.search(r"HELLO\s+" + re.escape(cat.hello), h) for h in hellos):
             bad(f"HELLO {cat.hello} not found in the firmware's HELLO print")
-        if cat.chip and cat.chip not in hello:
+        if cat.chip and not any(cat.chip in h for h in hellos):
             bad(f"chip token {cat.chip} not found in the firmware's HELLO print")
     return out
 
@@ -204,6 +225,9 @@ def main(argv=None) -> int:
     ap.add_argument("--kit", help="checkout of filament-kit, for firmware checks")
     ap.add_argument("--devices", default=str(REPO / "devices"), help="devices directory")
     args = ap.parse_args(argv)
+    if not Path(args.devices).is_dir():
+        print(f"devices folder {args.devices} not found", file=sys.stderr)
+        return 2
     devices = sorted(d for d in Path(args.devices).iterdir() if (d / "catalogue.xml").is_file())
     kit = None
     if args.kit is not None:

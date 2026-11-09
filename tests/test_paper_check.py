@@ -135,3 +135,50 @@ def test_missing_kit_path_exits_2(tree, tmp_path):
 
 def test_kit_device_without_kit_exits_2(tree):
     assert pc.main(["--devices", str(tree[0])]) == 2
+
+
+def test_hello_in_a_comment_does_not_count(tree):
+    src = tree[1] / "station/panel/src/main.cpp"
+    src.write_text('// "HELLO demo-panel <version> esp32c3"\n'
+                   + src.read_text(encoding="utf-8").replace("HELLO demo-panel", "HELLO other-panel"),
+                   encoding="utf-8")
+    problems = pc.check_device(dev(tree), tree[1])
+    assert any("HELLO demo-panel" in p for p in problems)
+
+
+def test_chip_in_a_comment_does_not_count(tree):
+    src = tree[1] / "station/panel/src/main.cpp"
+    src.write_text('/* "HELLO demo-panel <version> esp32c3" */\n'
+                   + src.read_text(encoding="utf-8").replace("esp32c3", "esp32s3"),
+                   encoding="utf-8")
+    problems = pc.check_device(dev(tree), tree[1])
+    assert any("esp32c3" in p for p in problems)
+
+
+def test_commented_out_pin_does_not_count(tree):
+    src = tree[1] / "station/panel/src/main.cpp"
+    src.write_text("// static const uint8_t PIN_OLD = 9;\n/* #define PIN_OLD2 8 */\n"
+                   + src.read_text(encoding="utf-8"), encoding="utf-8")
+    assert pc.check_device(dev(tree), tree[1]) == []
+
+
+def test_missing_guide_reported(tree):
+    (dev(tree) / "guide.md").unlink()
+    assert "demo-panel: no guide.md" in pc.check_device(dev(tree), tree[1])
+
+
+def test_bought_device_missing_guide_reported(tree):
+    (tree[0] / "bought-sensor" / "guide.md").unlink()
+    assert "bought-sensor: no guide.md" in pc.check_device(tree[0] / "bought-sensor", None)
+
+
+def test_guide_pins_without_catalogue_pins_reported(tree):
+    (tree[0] / "bought-sensor" / "guide.md").write_text(
+        "| Constant | C3 GPIO |\n|---|---|\n| PIN_X | 3 |\n", encoding="utf-8")
+    problems = pc.check_device(tree[0] / "bought-sensor", None)
+    assert any("PIN_X" in p and "guide" in p for p in problems)
+
+
+def test_missing_devices_folder_exits_2(tmp_path, capsys):
+    assert pc.main(["--devices", str(tmp_path / "none")]) == 2
+    assert "not found" in capsys.readouterr().err
