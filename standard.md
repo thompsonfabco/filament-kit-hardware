@@ -34,6 +34,7 @@ uses the pin order GND, 3V3, SDA, SCL. Each connector is listed in the device's 
 - Headers for different functions on one device must not accept each other's plugs. Use the same pin count and key by
   function: remove a different header pin for each function, and block the plug cavity at that position with a cut-off
   contact, so each blocked cavity meets a pin in the other function's header.
+  The keys are: I2C removes pin 5, buttons remove pin 1, and the buzzer removes pin 3.
 
 The one exception to the JST-XH rule is the speaker, which goes into the amplifier board's screw terminal. This rule
 applies when a device is next built or rebuilt. Nothing is rewired for it alone.

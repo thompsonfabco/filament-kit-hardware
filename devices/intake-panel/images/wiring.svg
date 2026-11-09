@@ -97,6 +97,8 @@
   <text x="320" y="619" text-anchor="end" font-size="11" fill="#555">S</text><text x="320" y="644" text-anchor="end" font-size="11" fill="#555">+</text>
   <text x="246" y="661" font-size="11" fill="#555">−</text>
   <text x="354" y="644" font-weight="700" fill="#e08a00">3V3</text>
+  <text x="266" y="692" font-size="11" fill="#555">J5 (5-pin, pin 3 removed) order:</text>
+  <text x="266" y="706" font-size="11" fill="#555">GND 3V3 on 1-2, S on 4, 5 NC</text>
 
   <!-- ===== right: I2C and red lamp labels ===== -->
   <g stroke-width="2" fill="none">
