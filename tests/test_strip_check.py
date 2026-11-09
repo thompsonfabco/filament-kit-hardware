@@ -11,11 +11,13 @@ FIXTURES = Path(__file__).parent / "fixtures" / "strips"
 BOARD = FIXTURES / "board.xml"
 
 
-def footprint(ref, x, y, pads, rot=None, lib="Test:Part"):
+def footprint(ref, x, y, pads, rot=None, lib="Test:Part", board_pads=None):
     """A footprint block; pads are (number, dx, dy, net or None)."""
     at = f"{x} {y}" + (f" {rot}" if rot is not None else "")
     out = [f'\t(footprint "{lib}"\n\t\t(layer "F.Cu")\n\t\t(at {at})\n'
            f'\t\t(property "Reference" "{ref}"\n\t\t\t(at 0 0 0)\n\t\t)']
+    if board_pads is not None:
+        out.append(f'\t\t(property "Board_pads" "{board_pads}"\n\t\t\t(at 0 0 0)\n\t\t)')
     for number, dx, dy, net in pads:
         netpart = f'\n\t\t\t(net "{net}")' if net else ""
         out.append(f'\t\t(pad "{number}" thru_hole circle\n\t\t\t(at {dx} {dy})'
@@ -130,3 +132,32 @@ def test_real_board_model():
     assert by_id["F1"].strip == "1-FJ" and by_id["E1"].strip == "1-AE"
     assert (by_id["F1"].x, by_id["F1"].y) == (7.67, 22.19)
     assert by_id["A30"].x == pytest.approx(81.33)
+
+
+def _module_pads():
+    # pads 8 and 9 sit 15 mm from any hole
+    return [(str(n), 0, 0, "A") for n in range(1, 8)] + [("8", 0, 20, "B"), ("9", 2.54, 20, "C")]
+
+
+def test_board_pads_ignores_unlisted_pads(tmp_path):
+    holes = sc.load_board(BOARD)
+    fp = footprint("U2", 10, 10, _module_pads(), board_pads="1-7,1")
+    # pad 8 and 9 would be errors without the field
+    _, _, errors = run(tmp_path, footprint("U2", 10, 10, _module_pads()))
+    assert len(errors) == 2
+    assert run(tmp_path, fp) == ([], [], [])
+
+
+def test_board_pads_malformed_is_error(tmp_path, capsys):
+    for bad in ("1-", "a", "7-3", ""):
+        path = pcb(tmp_path, footprint("U2", 10, 10, _module_pads(), board_pads=bad))
+        with pytest.raises(sc.StripError, match="U2"):
+            sc.read_pads(path)
+        assert sc.main(["--board", str(BOARD), str(path)]) == 2
+    assert "malformed Board_pads" in capsys.readouterr().err
+
+
+def test_board_pads_missing_pad_is_error(tmp_path, capsys):
+    path = pcb(tmp_path, footprint("U2", 10, 10, _module_pads(), board_pads="1-7,10"))
+    assert sc.main(["--board", str(BOARD), str(path)]) == 2
+    assert "U2" in capsys.readouterr().err

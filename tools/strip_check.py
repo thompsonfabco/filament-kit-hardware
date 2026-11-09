@@ -5,7 +5,8 @@ Usage: python tools/strip_check.py [--board XML] [--tolerance MM] [--max-distanc
 
 Reads kicad/electrocookie_full.xml (the strips and holes of the board) and each .kicad_pcb
 (default: devices/*/kicad/*.kicad_pcb). Every through-hole pad of a part other than the board is
-assigned to its nearest hole, whatever the distance (a real lead always goes into some hole), and
+assigned to its nearest hole (a footprint field Board_pads such as "1-7" or "1-3,5" limits a part
+to the pads that enter the board), whatever the distance (a real lead always goes into some hole), and
 each strip is checked for pads of different nets. A pad with no net counts as a net of its own.
 Prints strip conflicts; "off-grid" warnings for pads more than the tolerance from their hole (bent
 leads of 2.5 mm and 1.27 mm pitch parts, TO-92); and "no hole near enough" errors for pads more
@@ -112,6 +113,24 @@ def _reference(fp: list) -> str:
     return "?"
 
 
+def _board_pads(fp: list, ref: str):
+    """Pad numbers named by the footprint's Board_pads field, or None without the field."""
+    for p in _children(fp, "property"):
+        if len(p) > 2 and p[1] == "Board_pads":
+            value = p[2]
+            break
+    else:
+        return None
+    numbers = set()
+    for part in value.split(","):
+        m = re.fullmatch(r"\s*(\d+)\s*(?:-\s*(\d+)\s*)?", part)
+        if not m or (m.group(2) and int(m.group(2)) < int(m.group(1))):
+            raise StripError(f"{ref}: malformed Board_pads value {value!r}")
+        lo, hi = int(m.group(1)), int(m.group(2) or m.group(1))
+        numbers.update(str(n) for n in range(lo, hi + 1))
+    return numbers
+
+
 def _net_name(pad: list):
     n = _children(pad, "net")
     if not n or len(n[0]) < 2:
@@ -121,7 +140,10 @@ def _net_name(pad: list):
 
 
 def read_pads(path: Path) -> list:
-    """Through-hole pads of every footprint except the board, at absolute board positions."""
+    """Through-hole pads of every footprint except the board, at absolute board positions.
+
+    A footprint with a Board_pads field (e.g. "1-3,5") contributes only the pads it lists.
+    """
     try:
         tree = parse_sexpr(Path(path).read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, StripError) as e:
@@ -134,6 +156,12 @@ def read_pads(path: Path) -> list:
         lib = fp[1] if len(fp) > 1 else ""
         if ref == BOARD_REF or lib.split(":")[-1] == BOARD_FOOTPRINT:
             continue
+        listed = _board_pads(fp, ref)
+        if listed is not None:
+            missing = listed - {p[1] for p in _children(fp, "pad") if len(p) > 1}
+            if missing:
+                raise StripError(f"{path}: {ref}: Board_pads lists pads that do not exist: "
+                                 f"{', '.join(sorted(missing, key=int))}")
         fx, fy, rot = _at(fp)
         back = any(l[1] == "B.Cu" for l in _children(fp, "layer") if len(l) > 1)
         c, s = math.cos(math.radians(rot)), math.sin(math.radians(rot))
@@ -144,6 +172,8 @@ def read_pads(path: Path) -> list:
             if back:
                 px = -px
             number = pad[1]
+            if listed is not None and number not in listed:
+                continue
             # KiCad's y axis points down, so a positive angle turns counter-clockwise on screen.
             x = fx + px * c + py * s
             y = fy - px * s + py * c
