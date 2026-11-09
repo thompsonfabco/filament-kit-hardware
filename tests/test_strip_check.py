@@ -29,13 +29,13 @@ def pcb(tmp_path, *footprints):
     return path
 
 
-def run(tmp_path, *footprints, tolerance=0.5):
+def run(tmp_path, *footprints, tolerance=0.5, max_distance=1.6):
     holes = sc.load_board(BOARD)
-    return sc.check_pads(sc.read_pads(pcb(tmp_path, *footprints)), holes, tolerance)
+    return sc.check_pads(sc.read_pads(pcb(tmp_path, *footprints)), holes, tolerance, max_distance)
 
 
 def test_two_nets_in_one_strip_fail(tmp_path):
-    conflicts, warnings = run(tmp_path,
+    conflicts, warnings, errors = run(tmp_path,
                               footprint("J1", 10, 10, [("1", 0, 0, "SDA")]),
                               footprint("J2", 10, 12.54, [("1", 0, 0, "BUZZER")]))
     assert warnings == []
@@ -44,37 +44,56 @@ def test_two_nets_in_one_strip_fail(tmp_path):
 
 
 def test_same_net_in_one_strip_passes(tmp_path):
-    conflicts, warnings = run(tmp_path,
+    conflicts, warnings, errors = run(tmp_path,
                               footprint("J1", 10, 10, [("1", 0, 0, "GND")]),
                               footprint("J2", 10, 12.54, [("1", 0, 0, "GND")]))
-    assert (conflicts, warnings) == ([], [])
+    assert (conflicts, warnings, errors) == ([], [], [])
 
 
 def test_rotated_footprint(tmp_path):
     # Pad 2 sits 2.54 mm to the right of pad 1 unrotated. Turned 90 degrees counter-clockwise on
     # screen (angle 90 in KiCad, y down) it lands 2.54 mm above, so it moves from strip 2-FJ to
-    # the hole above F1, which is off-grid here; at 270 it lands on G1 (strip 1-FJ) with pad 1.
+    # the hole above F1, which does not exist here; at 270 it lands on G1 (strip 1-FJ) with pad 1.
     pads = [("1", 0, 0, "A"), ("2", 2.54, 0, "B")]
-    ok, w = run(tmp_path, footprint("U1", 10, 10, pads))
+    ok, w, _ = run(tmp_path, footprint("U1", 10, 10, pads))
     assert ok == [] and w == []
-    conflicts, warnings = run(tmp_path, footprint("U1", 10, 10, pads, rot=270))
+    conflicts, warnings, errors = run(tmp_path, footprint("U1", 10, 10, pads, rot=270))
     assert len(conflicts) == 1 and "strip 1-FJ" in conflicts[0]
-    conflicts, warnings = run(tmp_path, footprint("U1", 10, 10, pads, rot=90))
-    assert conflicts == [] and len(warnings) == 1 and "U1.2" in warnings[0]
+    conflicts, warnings, errors = run(tmp_path, footprint("U1", 10, 10, pads, rot=90))
+    # 2.54 mm from the nearest hole (F1): assigned there anyway, and an error
+    assert len(errors) == 1 and "U1.2" in errors[0]
+    assert len(conflicts) == 1
 
 
 def test_off_grid_pad_warns_only(tmp_path):
-    conflicts, warnings = run(tmp_path, footprint("J1", 10, 11.27, [("1", 0, 0, "SDA")]))
+    conflicts, warnings, errors = run(tmp_path, footprint("J1", 10, 11.27, [("1", 0, 0, "SDA")]))
     assert conflicts == []
     assert len(warnings) == 1
     assert "off-grid" in warnings[0] and "J1.1" in warnings[0] and "1.27 mm" in warnings[0]
-    # a wider tolerance snaps it to the nearest hole
-    conflicts, warnings = run(tmp_path, footprint("J1", 10, 11.27, [("1", 0, 0, "SDA")]), tolerance=1.5)
+    # a wider tolerance silences the warning
+    conflicts, warnings, errors = run(tmp_path, footprint("J1", 10, 11.27, [("1", 0, 0, "SDA")]), tolerance=1.5)
     assert warnings == []
 
 
+def test_bent_pad_still_assigned_and_conflicts(tmp_path):
+    # 1.0 mm off hole F1 (toward G1 by 1.0, so 1.0 from F1 and 1.54 from G1): assigned to F1.
+    conflicts, warnings, errors = run(tmp_path,
+                                      footprint("J1", 10, 10, [("1", 0, 0, "SDA")]),
+                                      footprint("J2", 11, 10, [("1", 0, 0, "BUZZER")]))
+    assert errors == []
+    assert len(conflicts) == 1 and "strip 1-FJ" in conflicts[0] and "J2.1" in conflicts[0]
+    assert len(warnings) == 1 and "J2.1" in warnings[0] and "1.00 mm" in warnings[0]
+
+
+def test_pad_with_no_hole_near_is_error(tmp_path, capsys):
+    conflicts, warnings, errors = run(tmp_path, footprint("J1", 10, 15.5, [("1", 0, 0, "SDA")]))
+    assert len(errors) == 1 and "no hole near enough" in errors[0] and "J1.1" in errors[0]
+    path = pcb(tmp_path, footprint("J1", 10, 15.5, [("1", 0, 0, "SDA")]))
+    assert sc.main(["--board", str(BOARD), str(path)]) == 1
+
+
 def test_rail_conflict_fails(tmp_path):
-    conflicts, warnings = run(tmp_path,
+    conflicts, warnings, errors = run(tmp_path,
                               footprint("U1", 10, 2, [("1", 0, 0, "+5V")]),
                               footprint("U2", 12.54, 2, [("1", 0, 0, "GND")]))
     assert warnings == []
@@ -82,15 +101,15 @@ def test_rail_conflict_fails(tmp_path):
 
 
 def test_unconnected_pads_are_distinct_nets(tmp_path):
-    conflicts, _ = run(tmp_path, footprint("U1", 10, 10, [("1", 0, 0, None), ("2", 0, 2.54, None)]))
+    conflicts, _, _ = run(tmp_path, footprint("U1", 10, 10, [("1", 0, 0, None), ("2", 0, 2.54, None)]))
     assert len(conflicts) == 1
 
 
 def test_board_footprint_is_skipped(tmp_path):
-    conflicts, warnings = run(tmp_path,
+    conflicts, warnings, errors = run(tmp_path,
                               footprint("PCB1", 0, 0, [("1", 10, 10, "A")], lib="filament-kit:ElectroCookie_Full"),
                               footprint("J1", 10, 12.54, [("1", 0, 0, "B")]))
-    assert (conflicts, warnings) == ([], [])
+    assert (conflicts, warnings, errors) == ([], [], [])
 
 
 def test_main_exit_codes(tmp_path, capsys):

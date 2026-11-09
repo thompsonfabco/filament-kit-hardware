@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Strip check: no two nets may share a copper strip of the ElectroCookie board.
 
-Usage: python tools/strip_check.py [--board XML] [--tolerance MM] [PCB ...]
+Usage: python tools/strip_check.py [--board XML] [--tolerance MM] [--max-distance MM] [PCB ...]
 
 Reads kicad/electrocookie_full.xml (the strips and holes of the board) and each .kicad_pcb
 (default: devices/*/kicad/*.kicad_pcb). Every through-hole pad of a part other than the board is
-placed on the nearest hole within the tolerance, and each strip is checked for pads of different
-nets. A pad with no net counts as a net of its own.
-Prints strip conflicts, and "off-grid" warnings for pads that sit on no hole (2.5 mm and 1.27 mm
-pitch parts, bent TO-92 leads). Warnings do not fail the check.
-Exit 0 when there are no conflicts, 1 with conflicts, 2 for unreadable input.
+assigned to its nearest hole, whatever the distance (a real lead always goes into some hole), and
+each strip is checked for pads of different nets. A pad with no net counts as a net of its own.
+Prints strip conflicts; "off-grid" warnings for pads more than the tolerance from their hole (bent
+leads of 2.5 mm and 1.27 mm pitch parts, TO-92); and "no hole near enough" errors for pads more
+than the maximum distance from every hole. Warnings do not fail the check.
+Exit 0 when clean, 1 with conflicts or errors, 2 for unreadable input.
 """
 import argparse
 import math
@@ -24,6 +25,7 @@ BOARD_XML = REPO / "kicad" / "electrocookie_full.xml"
 BOARD_FOOTPRINT = "ElectroCookie_Full"
 BOARD_REF = "PCB1"
 TOLERANCE_MM = 0.5
+MAX_DISTANCE_MM = 1.6
 
 _TOKEN = re.compile(r'"((?:[^"\\]|\\.)*)"|([()])|([^\s()"]+)')
 
@@ -150,17 +152,25 @@ def read_pads(path: Path) -> list:
     return pads
 
 
-def check_pads(pads: list, holes: list, tolerance: float = TOLERANCE_MM):
-    """Return (conflicts, warnings): lists of message strings."""
+def check_pads(pads: list, holes: list, tolerance: float = TOLERANCE_MM,
+               max_distance: float = MAX_DISTANCE_MM):
+    """Return (conflicts, warnings, errors): lists of message strings.
+
+    Every pad goes to its nearest hole. Beyond the tolerance it also warns; beyond the maximum
+    distance it is an error as well.
+    """
     strips = {}
     warnings = []
+    errors = []
     for pad in pads:
         best = min(holes, key=lambda h: math.hypot(h.x - pad.x, h.y - pad.y))
         d = math.hypot(best.x - pad.x, best.y - pad.y)
-        if d > tolerance:
-            warnings.append(f"off-grid: {pad.label} ({pad.net}) at ({pad.x:.2f}, {pad.y:.2f}) is "
-                            f"{d:.2f} mm from the nearest hole {best.id} (strip {best.strip})")
-            continue
+        where = (f"{pad.label} ({pad.net}) at ({pad.x:.2f}, {pad.y:.2f}) is {d:.2f} mm from "
+                 f"the nearest hole {best.id} (strip {best.strip})")
+        if d > max_distance:
+            errors.append(f"no hole near enough: {where}")
+        elif d > tolerance:
+            warnings.append(f"off-grid: {where}")
         strips.setdefault(best.strip, {}).setdefault(pad.net, []).append(pad.label)
     conflicts = []
     for strip in sorted(strips):
@@ -168,7 +178,7 @@ def check_pads(pads: list, holes: list, tolerance: float = TOLERANCE_MM):
         if len(nets) > 1:
             parts = "; ".join(f"{n} ({', '.join(p)})" for n, p in sorted(nets.items()))
             conflicts.append(f"strip {strip}: {len(nets)} nets share it: {parts}")
-    return conflicts, warnings
+    return conflicts, warnings, errors
 
 
 def default_pcbs() -> list:
@@ -181,18 +191,23 @@ def main(argv=None) -> int:
     ap.add_argument("--board", default=str(BOARD_XML), help="board strip model XML")
     ap.add_argument("--tolerance", type=float, default=TOLERANCE_MM,
                     help="max pad-to-hole distance in mm (default %(default)s)")
+    ap.add_argument("--max-distance", type=float, default=MAX_DISTANCE_MM,
+                    help="pads farther than this from every hole are errors (default %(default)s)")
     args = ap.parse_args(argv)
     try:
         holes = load_board(Path(args.board))
         pcbs = [Path(p) for p in args.pcb] or default_pcbs()
         failed = False
         for pcb in pcbs:
-            conflicts, warnings = check_pads(read_pads(pcb), holes, args.tolerance)
+            conflicts, warnings, errors = check_pads(read_pads(pcb), holes, args.tolerance,
+                                                     args.max_distance)
             for w in warnings:
                 print(f"{pcb}: warning: {w}")
+            for e in errors:
+                print(f"{pcb}: error: {e}")
             for c in conflicts:
                 print(f"{pcb}: {c}")
-            failed = failed or bool(conflicts)
+            failed = failed or bool(conflicts or errors)
     except StripError as e:
         print(e, file=sys.stderr)
         return 2
