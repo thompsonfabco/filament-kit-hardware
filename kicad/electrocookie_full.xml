@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ElectroCookie full-size solderable breadboard (89 x 52 mm): which holes are joined by copper.
+  Used by tools/strip_check.py. Coordinates are mm from the board top-left corner, top view
+  (silkscreen side up), x along the 89 mm side, y along the 52 mm side.
+
+  Strips: each column k has two strips, "<k>-FJ" (rows F to J, upper half) and "<k>-AE" (rows A to E,
+  lower half); nothing crosses the channel. Four rails run the full length. Two 2-hole pads sit
+  beside the M3 holes. Every strip is listed explicitly under <strips>, and every hole names its
+  strip, so the tool reads <hole> elements only.
+
+  Source: owner photos, 2026-11-09. Silkscreen strip membership is exact. Positions marked
+  approximate in <unconfirmed> are derived from the photos.
+-->
+<board id="ElectroCookie_Full" width_mm="89" height_mm="52">
+  <grid pitch_mm="2.54" col1_x="7.67" cols="30"/>
+  <rows>
+    <row name="F" y="22.19"/>
+    <row name="G" y="19.65"/>
+    <row name="H" y="17.11"/>
+    <row name="I" y="14.57"/>
+    <row name="J" y="12.03"/>
+    <row name="E" y="29.81"/>
+    <row name="D" y="32.35"/>
+    <row name="C" y="34.89"/>
+    <row name="B" y="37.43"/>
+    <row name="A" y="39.97"/>
+  </rows>
+  <rails>
+    <rail id="top-minus" y="3.4" x_first="7.67" x_last="81.33" holes="30"/>
+    <rail id="top-plus" y="5.9" x_first="7.67" x_last="81.33" holes="30"/>
+    <rail id="bottom-minus" y="46.7" x_first="7.67" x_last="81.33" holes="30"/>
+    <rail id="bottom-plus" y="49.0" x_first="7.67" x_last="81.33" holes="30"/>
+  </rails>
+  <pad_pairs>
+    <pad_pair id="pad-left" x="5.1" y_a="24.7" y_b="27.3"/>
+    <pad_pair id="pad-right" x="86.6" y_a="24.7" y_b="27.3"/>
+  </pad_pairs>
+  <mounting>
+    <m3 x="7.75" y="26" dia_mm="3.2"/>
+    <m3 x="81.25" y="26" dia_mm="3.2"/>
+    <m2 x="5.375" y="8.25" dia_mm="2.2"/>
+    <m2 x="5.375" y="43.75" dia_mm="2.2"/>
+    <m2 x="83.625" y="8.25" dia_mm="2.2"/>
+    <m2 x="83.625" y="43.75" dia_mm="2.2"/>
+  </mounting>
+  <unconfirmed>
+    Approximate (derived from photos at about 12.2 px/mm): the x offset of column 1 (7.67), the row y
+    values, the rail y values and hole counts (30 each, at the column x positions), the pad-pair
+    positions. Not known: whether the rails break in the middle (the photos show no break).
+  </unconfirmed>
+  <strips>
+    <strip id="1-FJ"/>
+    <strip id="1-AE"/>
+    <strip id="2-FJ"/>
+    <strip id="2-AE"/>
+    <strip id="3-FJ"/>
+    <strip id="3-AE"/>
+    <strip id="4-FJ"/>
+    <strip id="4-AE"/>
+    <strip id="5-FJ"/>
+    <strip id="5-AE"/>
+    <strip id="6-FJ"/>
+    <strip id="6-AE"/>
+    <strip id="7-FJ"/>
+    <strip id="7-AE"/>
+    <strip id="8-FJ"/>
+    <strip id="8-AE"/>
+    <strip id="9-FJ"/>
+    <strip id="9-AE"/>
+    <strip id="10-FJ"/>
+    <strip id="10-AE"/>
+    <strip id="11-FJ"/>
+    <strip id="11-AE"/>
+    <strip id="12-FJ"/>
+    <strip id="12-AE"/>
+    <strip id="13-FJ"/>
+    <strip id="13-AE"/>
+    <strip id="14-FJ"/>
+    <strip id="14-AE"/>
+    <strip id="15-FJ"/>
+    <strip id="15-AE"/>
+    <strip id="16-FJ"/>
+    <strip id="16-AE"/>
+    <strip id="17-FJ"/>
+    <strip id="17-AE"/>
+    <strip id="18-FJ"/>
+    <strip id="18-AE"/>
+    <strip id="19-FJ"/>
+    <strip id="19-AE"/>
+    <strip id="20-FJ"/>
+    <strip id="20-AE"/>
+    <strip id="21-FJ"/>
+    <strip id="21-AE"/>
+    <strip id="22-FJ"/>
+    <strip id="22-AE"/>
+    <strip id="23-FJ"/>
+    <strip id="23-AE"/>
+    <strip id="24-FJ"/>
+    <strip id="24-AE"/>
+    <strip id="25-FJ"/>
+    <strip id="25-AE"/>
+    <strip id="26-FJ"/>
+    <strip id="26-AE"/>
+    <strip id="27-FJ"/>
+    <strip id="27-AE"/>
+    <strip id="28-FJ"/>
+    <strip id="28-AE"/>
+    <strip id="29-FJ"/>
+    <strip id="29-AE"/>
+    <strip id="30-FJ"/>
+    <strip id="30-AE"/>
+    <strip id="top-minus"/>
+    <strip id="top-plus"/>
+    <strip id="bottom-minus"/>
+    <strip id="bottom-plus"/>
+    <strip id="pad-left"/>
+    <strip id="pad-right"/>
+  </strips>
+  <holes>
+    <hole id="F1" x="7.67" y="22.19" strip="1-FJ"/>
+    <hole id="G1" x="7.67" y="19.65" strip="1-FJ"/>
+    <hole id="H1" x="7.67" y="17.11" strip="1-FJ"/>
+    <hole id="I1" x="7.67" y="14.57" strip="1-FJ"/>
+    <hole id="J1" x="7.67" y="12.03" strip="1-FJ"/>
+    <hole id="E1" x="7.67" y="29.81" strip="1-AE"/>
+    <hole id="D1" x="7.67" y="32.35" strip="1-AE"/>
+    <hole id="C1" x="7.67" y="34.89" strip="1-AE"/>
+    <hole id="B1" x="7.67" y="37.43" strip="1-AE"/>
+    <hole id="A1" x="7.67" y="39.97" strip="1-AE"/>
+    <hole id="F2" x="10.21" y="22.19" strip="2-FJ"/>
+    <hole id="G2" x="10.21" y="19.65" strip="2-FJ"/>
+    <hole id="H2" x="10.21" y="17.11" strip="2-FJ"/>
+    <hole id="I2" x="10.21" y="14.57" strip="2-FJ"/>
+    <hole id="J2" x="10.21" y="12.03" strip="2-FJ"/>
+    <hole id="E2" x="10.21" y="29.81" strip="2-AE"/>
+    <hole id="D2" x="10.21" y="32.35" strip="2-AE"/>
+    <hole id="C2" x="10.21" y="34.89" strip="2-AE"/>
+    <hole id="B2" x="10.21" y="37.43" strip="2-AE"/>
+    <hole id="A2" x="10.21" y="39.97" strip="2-AE"/>
+    <hole id="F3" x="12.75" y="22.19" strip="3-FJ"/>
+    <hole id="G3" x="12.75" y="19.65" strip="3-FJ"/>
+    <hole id="H3" x="12.75" y="17.11" strip="3-FJ"/>
+    <hole id="I3" x="12.75" y="14.57" strip="3-FJ"/>
+    <hole id="J3" x="12.75" y="12.03" strip="3-FJ"/>
+    <hole id="E3" x="12.75" y="29.81" strip="3-AE"/>
+    <hole id="D3" x="12.75" y="32.35" strip="3-AE"/>
+    <hole id="C3" x="12.75" y="34.89" strip="3-AE"/>
+    <hole id="B3" x="12.75" y="37.43" strip="3-AE"/>
+    <hole id="A3" x="12.75" y="39.97" strip="3-AE"/>
+    <hole id="F4" x="15.29" y="22.19" strip="4-FJ"/>
+    <hole id="G4" x="15.29" y="19.65" strip="4-FJ"/>
+    <hole id="H4" x="15.29" y="17.11" strip="4-FJ"/>
+    <hole id="I4" x="15.29" y="14.57" strip="4-FJ"/>
+    <hole id="J4" x="15.29" y="12.03" strip="4-FJ"/>
+    <hole id="E4" x="15.29" y="29.81" strip="4-AE"/>
+    <hole id="D4" x="15.29" y="32.35" strip="4-AE"/>
+    <hole id="C4" x="15.29" y="34.89" strip="4-AE"/>
+    <hole id="B4" x="15.29" y="37.43" strip="4-AE"/>
+    <hole id="A4" x="15.29" y="39.97" strip="4-AE"/>
+    <hole id="F5" x="17.83" y="22.19" strip="5-FJ"/>
+    <hole id="G5" x="17.83" y="19.65" strip="5-FJ"/>
+    <hole id="H5" x="17.83" y="17.11" strip="5-FJ"/>
+    <hole id="I5" x="17.83" y="14.57" strip="5-FJ"/>
+    <hole id="J5" x="17.83" y="12.03" strip="5-FJ"/>
+    <hole id="E5" x="17.83" y="29.81" strip="5-AE"/>
+    <hole id="D5" x="17.83" y="32.35" strip="5-AE"/>
+    <hole id="C5" x="17.83" y="34.89" strip="5-AE"/>
+    <hole id="B5" x="17.83" y="37.43" strip="5-AE"/>
+    <hole id="A5" x="17.83" y="39.97" strip="5-AE"/>
+    <hole id="F6" x="20.37" y="22.19" strip="6-FJ"/>
+    <hole id="G6" x="20.37" y="19.65" strip="6-FJ"/>
+    <hole id="H6" x="20.37" y="17.11" strip="6-FJ"/>
+    <hole id="I6" x="20.37" y="14.57" strip="6-FJ"/>
+    <hole id="J6" x="20.37" y="12.03" strip="6-FJ"/>
+    <hole id="E6" x="20.37" y="29.81" strip="6-AE"/>
+    <hole id="D6" x="20.37" y="32.35" strip="6-AE"/>
+    <hole id="C6" x="20.37" y="34.89" strip="6-AE"/>
+    <hole id="B6" x="20.37" y="37.43" strip="6-AE"/>
+    <hole id="A6" x="20.37" y="39.97" strip="6-AE"/>
+    <hole id="F7" x="22.91" y="22.19" strip="7-FJ"/>
+    <hole id="G7" x="22.91" y="19.65" strip="7-FJ"/>
+    <hole id="H7" x="22.91" y="17.11" strip="7-FJ"/>
+    <hole id="I7" x="22.91" y="14.57" strip="7-FJ"/>
+    <hole id="J7" x="22.91" y="12.03" strip="7-FJ"/>
+    <hole id="E7" x="22.91" y="29.81" strip="7-AE"/>
+    <hole id="D7" x="22.91" y="32.35" strip="7-AE"/>
+    <hole id="C7" x="22.91" y="34.89" strip="7-AE"/>
+    <hole id="B7" x="22.91" y="37.43" strip="7-AE"/>
+    <hole id="A7" x="22.91" y="39.97" strip="7-AE"/>
+    <hole id="F8" x="25.45" y="22.19" strip="8-FJ"/>
+    <hole id="G8" x="25.45" y="19.65" strip="8-FJ"/>
+    <hole id="H8" x="25.45" y="17.11" strip="8-FJ"/>
+    <hole id="I8" x="25.45" y="14.57" strip="8-FJ"/>
+    <hole id="J8" x="25.45" y="12.03" strip="8-FJ"/>
+    <hole id="E8" x="25.45" y="29.81" strip="8-AE"/>
+    <hole id="D8" x="25.45" y="32.35" strip="8-AE"/>
+    <hole id="C8" x="25.45" y="34.89" strip="8-AE"/>
+    <hole id="B8" x="25.45" y="37.43" strip="8-AE"/>
+    <hole id="A8" x="25.45" y="39.97" strip="8-AE"/>
+    <hole id="F9" x="27.99" y="22.19" strip="9-FJ"/>
+    <hole id="G9" x="27.99" y="19.65" strip="9-FJ"/>
+    <hole id="H9" x="27.99" y="17.11" strip="9-FJ"/>
+    <hole id="I9" x="27.99" y="14.57" strip="9-FJ"/>
+    <hole id="J9" x="27.99" y="12.03" strip="9-FJ"/>
+    <hole id="E9" x="27.99" y="29.81" strip="9-AE"/>
+    <hole id="D9" x="27.99" y="32.35" strip="9-AE"/>
+    <hole id="C9" x="27.99" y="34.89" strip="9-AE"/>
+    <hole id="B9" x="27.99" y="37.43" strip="9-AE"/>
+    <hole id="A9" x="27.99" y="39.97" strip="9-AE"/>
+    <hole id="F10" x="30.53" y="22.19" strip="10-FJ"/>
+    <hole id="G10" x="30.53" y="19.65" strip="10-FJ"/>
+    <hole id="H10" x="30.53" y="17.11" strip="10-FJ"/>
+    <hole id="I10" x="30.53" y="14.57" strip="10-FJ"/>
+    <hole id="J10" x="30.53" y="12.03" strip="10-FJ"/>
+    <hole id="E10" x="30.53" y="29.81" strip="10-AE"/>
+    <hole id="D10" x="30.53" y="32.35" strip="10-AE"/>
+    <hole id="C10" x="30.53" y="34.89" strip="10-AE"/>
+    <hole id="B10" x="30.53" y="37.43" strip="10-AE"/>
+    <hole id="A10" x="30.53" y="39.97" strip="10-AE"/>
+    <hole id="F11" x="33.07" y="22.19" strip="11-FJ"/>
+    <hole id="G11" x="33.07" y="19.65" strip="11-FJ"/>
+    <hole id="H11" x="33.07" y="17.11" strip="11-FJ"/>
+    <hole id="I11" x="33.07" y="14.57" strip="11-FJ"/>
+    <hole id="J11" x="33.07" y="12.03" strip="11-FJ"/>
+    <hole id="E11" x="33.07" y="29.81" strip="11-AE"/>
+    <hole id="D11" x="33.07" y="32.35" strip="11-AE"/>
+    <hole id="C11" x="33.07" y="34.89" strip="11-AE"/>
+    <hole id="B11" x="33.07" y="37.43" strip="11-AE"/>
+    <hole id="A11" x="33.07" y="39.97" strip="11-AE"/>
+    <hole id="F12" x="35.61" y="22.19" strip="12-FJ"/>
+    <hole id="G12" x="35.61" y="19.65" strip="12-FJ"/>
+    <hole id="H12" x="35.61" y="17.11" strip="12-FJ"/>
+    <hole id="I12" x="35.61" y="14.57" strip="12-FJ"/>
+    <hole id="J12" x="35.61" y="12.03" strip="12-FJ"/>
+    <hole id="E12" x="35.61" y="29.81" strip="12-AE"/>
+    <hole id="D12" x="35.61" y="32.35" strip="12-AE"/>
+    <hole id="C12" x="35.61" y="34.89" strip="12-AE"/>
+    <hole id="B12" x="35.61" y="37.43" strip="12-AE"/>
+    <hole id="A12" x="35.61" y="39.97" strip="12-AE"/>
+    <hole id="F13" x="38.15" y="22.19" strip="13-FJ"/>
+    <hole id="G13" x="38.15" y="19.65" strip="13-FJ"/>
+    <hole id="H13" x="38.15" y="17.11" strip="13-FJ"/>
+    <hole id="I13" x="38.15" y="14.57" strip="13-FJ"/>
+    <hole id="J13" x="38.15" y="12.03" strip="13-FJ"/>
+    <hole id="E13" x="38.15" y="29.81" strip="13-AE"/>
+    <hole id="D13" x="38.15" y="32.35" strip="13-AE"/>
+    <hole id="C13" x="38.15" y="34.89" strip="13-AE"/>
+    <hole id="B13" x="38.15" y="37.43" strip="13-AE"/>
+    <hole id="A13" x="38.15" y="39.97" strip="13-AE"/>
+    <hole id="F14" x="40.69" y="22.19" strip="14-FJ"/>
+    <hole id="G14" x="40.69" y="19.65" strip="14-FJ"/>
+    <hole id="H14" x="40.69" y="17.11" strip="14-FJ"/>
+    <hole id="I14" x="40.69" y="14.57" strip="14-FJ"/>
+    <hole id="J14" x="40.69" y="12.03" strip="14-FJ"/>
+    <hole id="E14" x="40.69" y="29.81" strip="14-AE"/>
+    <hole id="D14" x="40.69" y="32.35" strip="14-AE"/>
+    <hole id="C14" x="40.69" y="34.89" strip="14-AE"/>
+    <hole id="B14" x="40.69" y="37.43" strip="14-AE"/>
+    <hole id="A14" x="40.69" y="39.97" strip="14-AE"/>
+    <hole id="F15" x="43.23" y="22.19" strip="15-FJ"/>
+    <hole id="G15" x="43.23" y="19.65" strip="15-FJ"/>
+    <hole id="H15" x="43.23" y="17.11" strip="15-FJ"/>
+    <hole id="I15" x="43.23" y="14.57" strip="15-FJ"/>
+    <hole id="J15" x="43.23" y="12.03" strip="15-FJ"/>
+    <hole id="E15" x="43.23" y="29.81" strip="15-AE"/>
+    <hole id="D15" x="43.23" y="32.35" strip="15-AE"/>
+    <hole id="C15" x="43.23" y="34.89" strip="15-AE"/>
+    <hole id="B15" x="43.23" y="37.43" strip="15-AE"/>
+    <hole id="A15" x="43.23" y="39.97" strip="15-AE"/>
+    <hole id="F16" x="45.77" y="22.19" strip="16-FJ"/>
+    <hole id="G16" x="45.77" y="19.65" strip="16-FJ"/>
+    <hole id="H16" x="45.77" y="17.11" strip="16-FJ"/>
+    <hole id="I16" x="45.77" y="14.57" strip="16-FJ"/>
+    <hole id="J16" x="45.77" y="12.03" strip="16-FJ"/>
+    <hole id="E16" x="45.77" y="29.81" strip="16-AE"/>
+    <hole id="D16" x="45.77" y="32.35" strip="16-AE"/>
+    <hole id="C16" x="45.77" y="34.89" strip="16-AE"/>
+    <hole id="B16" x="45.77" y="37.43" strip="16-AE"/>
+    <hole id="A16" x="45.77" y="39.97" strip="16-AE"/>
+    <hole id="F17" x="48.31" y="22.19" strip="17-FJ"/>
+    <hole id="G17" x="48.31" y="19.65" strip="17-FJ"/>
+    <hole id="H17" x="48.31" y="17.11" strip="17-FJ"/>
+    <hole id="I17" x="48.31" y="14.57" strip="17-FJ"/>
+    <hole id="J17" x="48.31" y="12.03" strip="17-FJ"/>
+    <hole id="E17" x="48.31" y="29.81" strip="17-AE"/>
+    <hole id="D17" x="48.31" y="32.35" strip="17-AE"/>
+    <hole id="C17" x="48.31" y="34.89" strip="17-AE"/>
+    <hole id="B17" x="48.31" y="37.43" strip="17-AE"/>
+    <hole id="A17" x="48.31" y="39.97" strip="17-AE"/>
+    <hole id="F18" x="50.85" y="22.19" strip="18-FJ"/>
+    <hole id="G18" x="50.85" y="19.65" strip="18-FJ"/>
+    <hole id="H18" x="50.85" y="17.11" strip="18-FJ"/>
+    <hole id="I18" x="50.85" y="14.57" strip="18-FJ"/>
+    <hole id="J18" x="50.85" y="12.03" strip="18-FJ"/>
+    <hole id="E18" x="50.85" y="29.81" strip="18-AE"/>
+    <hole id="D18" x="50.85" y="32.35" strip="18-AE"/>
+    <hole id="C18" x="50.85" y="34.89" strip="18-AE"/>
+    <hole id="B18" x="50.85" y="37.43" strip="18-AE"/>
+    <hole id="A18" x="50.85" y="39.97" strip="18-AE"/>
+    <hole id="F19" x="53.39" y="22.19" strip="19-FJ"/>
+    <hole id="G19" x="53.39" y="19.65" strip="19-FJ"/>
+    <hole id="H19" x="53.39" y="17.11" strip="19-FJ"/>
+    <hole id="I19" x="53.39" y="14.57" strip="19-FJ"/>
+    <hole id="J19" x="53.39" y="12.03" strip="19-FJ"/>
+    <hole id="E19" x="53.39" y="29.81" strip="19-AE"/>
+    <hole id="D19" x="53.39" y="32.35" strip="19-AE"/>
+    <hole id="C19" x="53.39" y="34.89" strip="19-AE"/>
+    <hole id="B19" x="53.39" y="37.43" strip="19-AE"/>
+    <hole id="A19" x="53.39" y="39.97" strip="19-AE"/>
+    <hole id="F20" x="55.93" y="22.19" strip="20-FJ"/>
+    <hole id="G20" x="55.93" y="19.65" strip="20-FJ"/>
+    <hole id="H20" x="55.93" y="17.11" strip="20-FJ"/>
+    <hole id="I20" x="55.93" y="14.57" strip="20-FJ"/>
+    <hole id="J20" x="55.93" y="12.03" strip="20-FJ"/>
+    <hole id="E20" x="55.93" y="29.81" strip="20-AE"/>
+    <hole id="D20" x="55.93" y="32.35" strip="20-AE"/>
+    <hole id="C20" x="55.93" y="34.89" strip="20-AE"/>
+    <hole id="B20" x="55.93" y="37.43" strip="20-AE"/>
+    <hole id="A20" x="55.93" y="39.97" strip="20-AE"/>
+    <hole id="F21" x="58.47" y="22.19" strip="21-FJ"/>
+    <hole id="G21" x="58.47" y="19.65" strip="21-FJ"/>
+    <hole id="H21" x="58.47" y="17.11" strip="21-FJ"/>
+    <hole id="I21" x="58.47" y="14.57" strip="21-FJ"/>
+    <hole id="J21" x="58.47" y="12.03" strip="21-FJ"/>
+    <hole id="E21" x="58.47" y="29.81" strip="21-AE"/>
+    <hole id="D21" x="58.47" y="32.35" strip="21-AE"/>
+    <hole id="C21" x="58.47" y="34.89" strip="21-AE"/>
+    <hole id="B21" x="58.47" y="37.43" strip="21-AE"/>
+    <hole id="A21" x="58.47" y="39.97" strip="21-AE"/>
+    <hole id="F22" x="61.01" y="22.19" strip="22-FJ"/>
+    <hole id="G22" x="61.01" y="19.65" strip="22-FJ"/>
+    <hole id="H22" x="61.01" y="17.11" strip="22-FJ"/>
+    <hole id="I22" x="61.01" y="14.57" strip="22-FJ"/>
+    <hole id="J22" x="61.01" y="12.03" strip="22-FJ"/>
+    <hole id="E22" x="61.01" y="29.81" strip="22-AE"/>
+    <hole id="D22" x="61.01" y="32.35" strip="22-AE"/>
+    <hole id="C22" x="61.01" y="34.89" strip="22-AE"/>
+    <hole id="B22" x="61.01" y="37.43" strip="22-AE"/>
+    <hole id="A22" x="61.01" y="39.97" strip="22-AE"/>
+    <hole id="F23" x="63.55" y="22.19" strip="23-FJ"/>
+    <hole id="G23" x="63.55" y="19.65" strip="23-FJ"/>
+    <hole id="H23" x="63.55" y="17.11" strip="23-FJ"/>
+    <hole id="I23" x="63.55" y="14.57" strip="23-FJ"/>
+    <hole id="J23" x="63.55" y="12.03" strip="23-FJ"/>
+    <hole id="E23" x="63.55" y="29.81" strip="23-AE"/>
+    <hole id="D23" x="63.55" y="32.35" strip="23-AE"/>
+    <hole id="C23" x="63.55" y="34.89" strip="23-AE"/>
+    <hole id="B23" x="63.55" y="37.43" strip="23-AE"/>
+    <hole id="A23" x="63.55" y="39.97" strip="23-AE"/>
+    <hole id="F24" x="66.09" y="22.19" strip="24-FJ"/>
+    <hole id="G24" x="66.09" y="19.65" strip="24-FJ"/>
+    <hole id="H24" x="66.09" y="17.11" strip="24-FJ"/>
+    <hole id="I24" x="66.09" y="14.57" strip="24-FJ"/>
+    <hole id="J24" x="66.09" y="12.03" strip="24-FJ"/>
+    <hole id="E24" x="66.09" y="29.81" strip="24-AE"/>
+    <hole id="D24" x="66.09" y="32.35" strip="24-AE"/>
+    <hole id="C24" x="66.09" y="34.89" strip="24-AE"/>
+    <hole id="B24" x="66.09" y="37.43" strip="24-AE"/>
+    <hole id="A24" x="66.09" y="39.97" strip="24-AE"/>
+    <hole id="F25" x="68.63" y="22.19" strip="25-FJ"/>
+    <hole id="G25" x="68.63" y="19.65" strip="25-FJ"/>
+    <hole id="H25" x="68.63" y="17.11" strip="25-FJ"/>
+    <hole id="I25" x="68.63" y="14.57" strip="25-FJ"/>
+    <hole id="J25" x="68.63" y="12.03" strip="25-FJ"/>
+    <hole id="E25" x="68.63" y="29.81" strip="25-AE"/>
+    <hole id="D25" x="68.63" y="32.35" strip="25-AE"/>
+    <hole id="C25" x="68.63" y="34.89" strip="25-AE"/>
+    <hole id="B25" x="68.63" y="37.43" strip="25-AE"/>
+    <hole id="A25" x="68.63" y="39.97" strip="25-AE"/>
+    <hole id="F26" x="71.17" y="22.19" strip="26-FJ"/>
+    <hole id="G26" x="71.17" y="19.65" strip="26-FJ"/>
+    <hole id="H26" x="71.17" y="17.11" strip="26-FJ"/>
+    <hole id="I26" x="71.17" y="14.57" strip="26-FJ"/>
+    <hole id="J26" x="71.17" y="12.03" strip="26-FJ"/>
+    <hole id="E26" x="71.17" y="29.81" strip="26-AE"/>
+    <hole id="D26" x="71.17" y="32.35" strip="26-AE"/>
+    <hole id="C26" x="71.17" y="34.89" strip="26-AE"/>
+    <hole id="B26" x="71.17" y="37.43" strip="26-AE"/>
+    <hole id="A26" x="71.17" y="39.97" strip="26-AE"/>
+    <hole id="F27" x="73.71" y="22.19" strip="27-FJ"/>
+    <hole id="G27" x="73.71" y="19.65" strip="27-FJ"/>
+    <hole id="H27" x="73.71" y="17.11" strip="27-FJ"/>
+    <hole id="I27" x="73.71" y="14.57" strip="27-FJ"/>
+    <hole id="J27" x="73.71" y="12.03" strip="27-FJ"/>
+    <hole id="E27" x="73.71" y="29.81" strip="27-AE"/>
+    <hole id="D27" x="73.71" y="32.35" strip="27-AE"/>
+    <hole id="C27" x="73.71" y="34.89" strip="27-AE"/>
+    <hole id="B27" x="73.71" y="37.43" strip="27-AE"/>
+    <hole id="A27" x="73.71" y="39.97" strip="27-AE"/>
+    <hole id="F28" x="76.25" y="22.19" strip="28-FJ"/>
+    <hole id="G28" x="76.25" y="19.65" strip="28-FJ"/>
+    <hole id="H28" x="76.25" y="17.11" strip="28-FJ"/>
+    <hole id="I28" x="76.25" y="14.57" strip="28-FJ"/>
+    <hole id="J28" x="76.25" y="12.03" strip="28-FJ"/>
+    <hole id="E28" x="76.25" y="29.81" strip="28-AE"/>
+    <hole id="D28" x="76.25" y="32.35" strip="28-AE"/>
+    <hole id="C28" x="76.25" y="34.89" strip="28-AE"/>
+    <hole id="B28" x="76.25" y="37.43" strip="28-AE"/>
+    <hole id="A28" x="76.25" y="39.97" strip="28-AE"/>
+    <hole id="F29" x="78.79" y="22.19" strip="29-FJ"/>
+    <hole id="G29" x="78.79" y="19.65" strip="29-FJ"/>
+    <hole id="H29" x="78.79" y="17.11" strip="29-FJ"/>
+    <hole id="I29" x="78.79" y="14.57" strip="29-FJ"/>
+    <hole id="J29" x="78.79" y="12.03" strip="29-FJ"/>
+    <hole id="E29" x="78.79" y="29.81" strip="29-AE"/>
+    <hole id="D29" x="78.79" y="32.35" strip="29-AE"/>
+    <hole id="C29" x="78.79" y="34.89" strip="29-AE"/>
+    <hole id="B29" x="78.79" y="37.43" strip="29-AE"/>
+    <hole id="A29" x="78.79" y="39.97" strip="29-AE"/>
+    <hole id="F30" x="81.33" y="22.19" strip="30-FJ"/>
+    <hole id="G30" x="81.33" y="19.65" strip="30-FJ"/>
+    <hole id="H30" x="81.33" y="17.11" strip="30-FJ"/>
+    <hole id="I30" x="81.33" y="14.57" strip="30-FJ"/>
+    <hole id="J30" x="81.33" y="12.03" strip="30-FJ"/>
+    <hole id="E30" x="81.33" y="29.81" strip="30-AE"/>
+    <hole id="D30" x="81.33" y="32.35" strip="30-AE"/>
+    <hole id="C30" x="81.33" y="34.89" strip="30-AE"/>
+    <hole id="B30" x="81.33" y="37.43" strip="30-AE"/>
+    <hole id="A30" x="81.33" y="39.97" strip="30-AE"/>
+    <hole id="top-minus-1" x="7.67" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-2" x="10.21" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-3" x="12.75" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-4" x="15.29" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-5" x="17.83" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-6" x="20.37" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-7" x="22.91" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-8" x="25.45" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-9" x="27.99" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-10" x="30.53" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-11" x="33.07" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-12" x="35.61" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-13" x="38.15" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-14" x="40.69" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-15" x="43.23" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-16" x="45.77" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-17" x="48.31" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-18" x="50.85" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-19" x="53.39" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-20" x="55.93" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-21" x="58.47" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-22" x="61.01" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-23" x="63.55" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-24" x="66.09" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-25" x="68.63" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-26" x="71.17" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-27" x="73.71" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-28" x="76.25" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-29" x="78.79" y="3.4" strip="top-minus"/>
+    <hole id="top-minus-30" x="81.33" y="3.4" strip="top-minus"/>
+    <hole id="top-plus-1" x="7.67" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-2" x="10.21" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-3" x="12.75" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-4" x="15.29" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-5" x="17.83" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-6" x="20.37" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-7" x="22.91" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-8" x="25.45" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-9" x="27.99" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-10" x="30.53" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-11" x="33.07" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-12" x="35.61" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-13" x="38.15" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-14" x="40.69" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-15" x="43.23" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-16" x="45.77" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-17" x="48.31" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-18" x="50.85" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-19" x="53.39" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-20" x="55.93" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-21" x="58.47" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-22" x="61.01" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-23" x="63.55" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-24" x="66.09" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-25" x="68.63" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-26" x="71.17" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-27" x="73.71" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-28" x="76.25" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-29" x="78.79" y="5.9" strip="top-plus"/>
+    <hole id="top-plus-30" x="81.33" y="5.9" strip="top-plus"/>
+    <hole id="bottom-minus-1" x="7.67" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-2" x="10.21" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-3" x="12.75" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-4" x="15.29" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-5" x="17.83" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-6" x="20.37" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-7" x="22.91" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-8" x="25.45" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-9" x="27.99" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-10" x="30.53" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-11" x="33.07" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-12" x="35.61" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-13" x="38.15" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-14" x="40.69" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-15" x="43.23" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-16" x="45.77" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-17" x="48.31" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-18" x="50.85" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-19" x="53.39" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-20" x="55.93" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-21" x="58.47" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-22" x="61.01" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-23" x="63.55" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-24" x="66.09" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-25" x="68.63" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-26" x="71.17" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-27" x="73.71" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-28" x="76.25" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-29" x="78.79" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-minus-30" x="81.33" y="46.7" strip="bottom-minus"/>
+    <hole id="bottom-plus-1" x="7.67" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-2" x="10.21" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-3" x="12.75" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-4" x="15.29" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-5" x="17.83" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-6" x="20.37" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-7" x="22.91" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-8" x="25.45" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-9" x="27.99" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-10" x="30.53" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-11" x="33.07" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-12" x="35.61" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-13" x="38.15" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-14" x="40.69" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-15" x="43.23" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-16" x="45.77" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-17" x="48.31" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-18" x="50.85" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-19" x="53.39" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-20" x="55.93" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-21" x="58.47" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-22" x="61.01" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-23" x="63.55" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-24" x="66.09" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-25" x="68.63" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-26" x="71.17" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-27" x="73.71" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-28" x="76.25" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-29" x="78.79" y="49.0" strip="bottom-plus"/>
+    <hole id="bottom-plus-30" x="81.33" y="49.0" strip="bottom-plus"/>
+    <hole id="pad-left-a" x="5.1" y="24.7" strip="pad-left"/>
+    <hole id="pad-left-b" x="5.1" y="27.3" strip="pad-left"/>
+    <hole id="pad-right-a" x="86.6" y="24.7" strip="pad-right"/>
+    <hole id="pad-right-b" x="86.6" y="27.3" strip="pad-right"/>
+  </holes>
+</board>
