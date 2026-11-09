@@ -91,22 +91,17 @@
           use="across U2's VIN (+) and GND (-) at the module, only if 5 V sags on speech peaks"/>
     <part ref="XU1" name="female pin header, 2.54 mm, 8-pin" kind="passive" qty="2"
           use="socket for U1, so its USB-C plug clears the M3 screw head"/>
-    <part ref="J1-J5" name="JST-XH 2.54 mm header and plug, 5-pin x5" kind="passive" qty="5"
+    <part ref="J1-J5" name="JST-XH 2.54 mm header and plug, 4-pin x4 and 3-pin x1" kind="passive" qty="5"
           use="off-board connectors"/>
     <part ref="F1-F2" name="wire ferrule to suit the speaker wire" kind="passive" qty="2"
           use="speaker leads into U2's screw terminal"/>
   </parts>
   <connectors>
-    <connector ref="J1" type="JST-XH-5" order="GND 3V3 SDA SCL" to="OLED (U3)"/>
-    <connector ref="J2" type="JST-XH-5" order="GND 3V3 SDA SCL" to="air sensor (U4, or U5 and U6)"/>
-    <!-- J1-J5 are all JST-XH-5, keyed by function. I2C headers J1/J2: header pin 5 removed, positions 1-4 used, and the I2C
-         plug's cavity 5 is blocked. Button headers J3/J4: header pin 1 removed, positions 2-5 used, and the button plug's
-         cavity 1 is blocked. Each blocked cavity meets a pin in the other function's header, so neither plug fits the wrong one. -->
-    <connector ref="J3" type="JST-XH-5" order="GND SW 5V LAMP-" to="yellow button SW1: SW to GPIO 3, LAMP- to Q1 drain"/>
-    <connector ref="J4" type="JST-XH-5" order="GND SW 5V LAMP-" to="red button SW2: SW to GPIO 4, LAMP- to Q2 drain"/>
-    <!-- J5 is also JST-XH-5. Buzzer header J5: header pin 3 removed, positions 1, 2 and 4 used (1 GND, 2 3V3, 4 S, 5 NC), and
-         the buzzer plug's cavity 3 is blocked. -->
-    <connector ref="J5" type="JST-XH-5" order="GND 3V3 - S NC" to="buzzer BZ1: S to GPIO 0"/>
+    <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="OLED (U3)"/>
+    <connector ref="J2" type="JST-XH-4" order="GND 3V3 SDA SCL" to="air sensor (U4, or U5 and U6)"/>
+    <connector ref="J3" type="JST-XH-4" order="GND SW 5V LAMP-" to="yellow button SW1: SW to GPIO 3, LAMP- to Q1 drain"/>
+    <connector ref="J4" type="JST-XH-4" order="GND SW 5V LAMP-" to="red button SW2: SW to GPIO 4, LAMP- to Q2 drain"/>
+    <connector ref="J5" type="JST-XH-3" order="GND 3V3 S" to="buzzer BZ1: S to GPIO 0"/>
     <connector ref="J6" type="screw-terminal-2" order="+ -" to="speaker LS1: red to +, black to -"/>
   </connectors>
   <power measured_ma=""/>

@@ -30,7 +30,7 @@
   <text x="30" y="34" font-size="18" font-weight="600" fill="#111">Intake panel (ESP32-C3): full circuit</text>
   <text x="30" y="54" fill="#555">ESP32-C3 Super Mini on the station PC's USB; BS170s switch the lamps; MAX98357 module drives the speaker; OLED and room-air sensor on I2C.</text>
   <text x="30" y="72" fill="#555">Every ground symbol joins the C3's G pin and every 5V flag its 5V pin; same-named labels (SDA, SCL, BCLK, LRC, DIN, 3V3, LAMP_Y, LAMP_R) are joined.</text>
-  <text x="30" y="90" fill="#555">Assembled on an ElectroCookie full-size prototype board; parts off the board plug into keyed JST-XH headers J1-J5, the speaker into J6.</text>
+  <text x="30" y="90" fill="#555">Assembled on an ElectroCookie full-size prototype board; parts off the board plug into labelled JST-XH headers J1-J5, the speaker into J6.</text>
 
   <!-- ===== C3 Super Mini ===== -->
   <rect x="400" y="200" width="180" height="340" rx="8" fill="#e8eef5" stroke="#4a6680" stroke-width="2"/>
@@ -81,7 +81,7 @@
   <text x="356" y="470" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_Y</text>
   <text x="220" y="306" text-anchor="middle" font-weight="600" fill="#9a2f2c">DISCARD (red) switch, SW2</text>
   <text x="220" y="450" text-anchor="middle" font-weight="600" fill="#8a5a10">HOLD (yellow) switch, SW1</text>
-  <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via 5-pin J4 / J3 (pin 1 removed, GND SW 5V LAMP- on 2-5); internal pull-ups, no resistor</text>
+  <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via 4-pin J4 / J3 (GND SW 5V LAMP-); internal pull-ups, no resistor</text>
   <text x="250" y="281" text-anchor="middle" font-size="11" fill="#555">ground bus to G</text>
 
   <!-- ===== buzzer (GPIO 0), via J5 ===== -->
@@ -97,8 +97,8 @@
   <text x="320" y="619" text-anchor="end" font-size="11" fill="#555">S</text><text x="320" y="644" text-anchor="end" font-size="11" fill="#555">+</text>
   <text x="246" y="661" font-size="11" fill="#555">−</text>
   <text x="354" y="644" font-weight="700" fill="#e08a00">3V3</text>
-  <text x="266" y="692" font-size="11" fill="#555">J5 (5-pin, pin 3 removed) order:</text>
-  <text x="266" y="706" font-size="11" fill="#555">GND 3V3 on 1-2, S on 4, 5 NC</text>
+  <text x="266" y="692" font-size="11" fill="#555">J5 (3-pin) order:</text>
+  <text x="266" y="706" font-size="11" fill="#555">GND 3V3 S</text>
 
   <!-- ===== right: I2C and red lamp labels ===== -->
   <g stroke-width="2" fill="none">
@@ -222,8 +222,8 @@
     <text x="170" y="776" text-anchor="middle">SCL</text><text x="215" y="776" text-anchor="middle">SDA</text></g>
   <text x="150" y="798" text-anchor="middle" font-weight="600" fill="#4a3a6a">Room air (J2)</text>
   <text x="150" y="812" text-anchor="middle" font-size="10" fill="#555">BME280, or BMP280 + AHT20 (0x38)</text>
-  <text x="270" y="790" font-size="11" fill="#555">J1, J2 (5-pin, pin 5 removed) order:</text>
-  <text x="270" y="804" font-size="11" fill="#555">GND 3V3 SDA SCL on 1-4</text>
+  <text x="270" y="790" font-size="11" fill="#555">J1, J2 (4-pin) order:</text>
+  <text x="270" y="804" font-size="11" fill="#555">GND 3V3 SDA SCL</text>
 
   <!-- ===== OLED (same I2C bus, joined by label), via J1 ===== -->
   <g stroke-width="2" fill="none">
