@@ -10,3 +10,5 @@ tools/owner-terms.local
 Thumbs.db
 desktop.ini
 .DS_Store
+# Kit checkout made by CI
+kit/

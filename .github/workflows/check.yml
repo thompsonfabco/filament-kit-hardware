@@ -1,0 +1,37 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The kit is public, so no token is needed. It is checked out into kit/,
+      # which .gitignore lists so the owner-data scan does not treat it as part
+      # of this repository.
+      - uses: actions/checkout@v4
+        with:
+          repository: thompsonfabco/filament-kit
+          ref: main
+          path: kit
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install pytest
+
+      - run: python -m pytest tests -q
+
+      # CI has no tools/owner-terms.local, so the scan prints its note and
+      # checks only the generic patterns. That is expected.
+      - run: python -I tools/check_owner_data.py
+
+      - run: python -I tools/paper_check.py --kit kit
