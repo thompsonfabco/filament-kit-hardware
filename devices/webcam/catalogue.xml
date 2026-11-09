@@ -1,0 +1,12 @@
+<!-- Station webcam: a bought USB camera that takes the spool picture, read through v4l2. Build guide: guide.md.
+     No kit firmware and no pins. vmax is in volts and imax in amperes. UNCONFIRMED means no source was read for
+     that figure. -->
+<device id="webcam" schema="1">
+  <link type="v4l2" find="/dev/v4l/by-id/*-video-index0, first USB camera, or STATION_CAMERA"/>
+  <parts>
+    <part ref="CAM1" name="USB webcam, 1080p MJPEG" kind="active" qty="1" use="spool picture"
+          vmax="UNCONFIRMED" imax="UNCONFIRMED" datasheet="UNCONFIRMED"/>
+  </parts>
+  <power measured_ma=""/>
+  <validated firmware="" date=""/>
+</device>

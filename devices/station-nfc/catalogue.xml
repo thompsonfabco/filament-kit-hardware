@@ -1,0 +1,16 @@
+<!-- Station NFC reader: a bought PN532 board in HSU (UART) mode on a CH340 USB serial adapter. Build guide: guide.md.
+     No kit firmware and no pins: the station talks to it through nfcpy. vmax is in volts and imax in amperes.
+     UNCONFIRMED means no source was read for that figure. -->
+<device id="station-nfc" schema="1">
+  <link type="usb-serial" vendor="1a86" find="the ttyUSB port that is not the panel, or NFC_DEVICE"/>
+  <parts>
+    <part ref="U1" name="PN532 NFC reader board, HSU (UART) mode" kind="active" qty="1" use="tag reader"
+          vmax="UNCONFIRMED" imax="UNCONFIRMED" datasheet="UNCONFIRMED"/>
+    <part ref="U2" name="CH340 USB to serial adapter, 3.3 V logic" kind="active" qty="1" use="USB link to the station PC"
+          vmax="UNCONFIRMED" imax="UNCONFIRMED" datasheet="UNCONFIRMED"/>
+    <part ref="W1" name="jumper wire, female to female" kind="passive" qty="4"
+          use="adapter power, GND, TX to the board's RX, RX to the board's TX"/>
+  </parts>
+  <power measured_ma=""/>
+  <validated firmware="" date=""/>
+</device>

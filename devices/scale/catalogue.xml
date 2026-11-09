@@ -1,0 +1,14 @@
+<!-- Station scale: a bought DYMO USB postal scale, read by the station as a USB HID device. Build guide: guide.md.
+     No kit firmware and no pins. vmax is in volts and imax in amperes. UNCONFIRMED means no source was read for
+     that figure. -->
+<device id="scale" schema="1">
+  <link type="usb-hid" vendor="0922" find="hidraw device whose HID_ID vendor is 0922"/>
+  <tested model="M10"/>
+  <tested model="M25"/>
+  <parts>
+    <part ref="SC1" name="DYMO USB postal scale (M10, M25 or S-series)" kind="active" qty="1" use="spool weight"
+          vmax="UNCONFIRMED" imax="UNCONFIRMED" datasheet="UNCONFIRMED"/>
+  </parts>
+  <power measured_ma=""/>
+  <validated firmware="" date=""/>
+</device>
