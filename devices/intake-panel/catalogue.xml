@@ -1,0 +1,101 @@
+<!-- Intake panel on the ESP32-C3 Super Mini. Build guide: guide.md. Wiring: images/wiring.svg.
+     Firmware paths are inside filament-kit. vmax is in volts and imax in amperes. imax_basis says what the imax
+     figure is: an absolute maximum, a typical drive figure, or the datasheet's maximum operating current where it
+     gives no pin limit. UNCONFIRMED marks a value the datasheet does not give. -->
+<device id="intake-panel" schema="1">
+  <board family="esp32-c3" model="ESP32-C3 Super Mini"/>
+  <link type="usb-serial" vendor="303a" hello="intake-panel"/>
+  <firmware source="station/panel/src/main.cpp" bundled="station/panel/firmware/VERSION" update="station-usb"/>
+  <!-- Measured on a board in hand. positions are x,y in mm from one corner, x along the 89 mm length.
+       The two M3 holes sit on the long centerline, 26 mm in from each long edge; the case mounts on these.
+       The four M2 holes form a rectangle centered on the board, 78.25 x 35.5 mm center to center. -->
+  <mount part="BRD1" board_mm="89x52" holes="M3" count="2" spacing_mm="73.5" line="long centerline"
+         positions="7.75,26 81.25,26" use="case"/>
+  <mount part="BRD1" board_mm="89x52" holes="M2" count="4" spacing_mm="78.25x35.5"
+         positions="5.375,8.25 83.625,8.25 5.375,43.75 83.625,43.75" use="spare"/>
+  <pins>
+    <pin gpio="5" constant="PIN_SDA" role="i2c-sda"/>
+    <pin gpio="6" constant="PIN_SCL" role="i2c-scl"/>
+    <pin gpio="0" constant="PIN_BUZZER" role="buzzer"/>
+    <pin gpio="3" constant="PIN_BTN_HOLD" role="button-yellow"/>
+    <pin gpio="4" constant="PIN_BTN_DISCARD" role="button-red"/>
+    <pin gpio="1" constant="PIN_LAMP_HOLD" role="lamp-yellow-gate"/>
+    <pin gpio="7" constant="PIN_LAMP_DISCARD" role="lamp-red-gate"/>
+    <pin gpio="10" constant="PIN_I2S_BCLK" role="i2s-bclk"/>
+    <pin gpio="20" constant="PIN_I2S_LRC" role="i2s-lrc"/>
+    <pin gpio="21" constant="PIN_I2S_DIN" role="i2s-din"/>
+  </pins>
+  <parts>
+    <part ref="BRD1" name="ElectroCookie solderable breadboard prototype board, full size" kind="passive" qty="1"
+          use="main board" asin="B07ZYNWJ1S"/>
+    <part ref="U1" name="ESP32-C3 Super Mini" kind="active" qty="1" use="controller"
+          vmax="3.6" imax="0.04"
+          imax_basis="ESP32-C3 chip: vmax is the absolute maximum on the input power pins; imax is the typical
+          source current per GPIO (IOH at PAD_DRIVER 3; IOL sink 28 mA typ), not a guaranteed limit; the only
+          absolute maximum current is 1000 mA cumulative IO output. The board's 3V3 regulator rating and 5 V pin
+          path are UNCONFIRMED"
+          datasheet="https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"/>
+    <part ref="Q1" name="BS170" kind="active" qty="1" use="yellow lamp switch" vmax="60" imax="0.5"
+          imax_basis="continuous drain current with full gate drive. At the C3's 3.3 V gate the curves show
+          roughly 0.1 A or less (read from the curves, an estimate) and no RDS(on) is given below VGS 10 V, so each
+          lamp is limited to 50 mA. URL provenance UNCONFIRMED: the server refused downloads; the copy read is
+          onsemi MMBF170/D Rev 7"
+          datasheet="https://www.onsemi.com/download/data-sheet/pdf/bs170-d.pdf"/>
+    <part ref="Q2" name="BS170" kind="active" qty="1" use="red lamp switch" vmax="60" imax="0.5"
+          imax_basis="as Q1"
+          datasheet="https://www.onsemi.com/download/data-sheet/pdf/bs170-d.pdf"/>
+    <part ref="RG1" name="220 ohm" kind="passive" qty="1" use="Q1 gate resistor"/>
+    <part ref="RG2" name="220 ohm" kind="passive" qty="1" use="Q2 gate resistor"/>
+    <part ref="RP1" name="100 kohm" kind="passive" qty="1" use="Q1 gate pull-down, lamp dark during reset"/>
+    <part ref="RP2" name="100 kohm" kind="passive" qty="1" use="Q2 gate pull-down, lamp dark during reset"/>
+    <part ref="U2" name="AITRIP MAX98357 I2S amplifier module" kind="active" qty="1" use="speaker amplifier"
+          asin="B0912CWB7Z" vmax="6" imax="1.6"
+          imax_basis="MAX98357A chip absolute maximums: -0.3 to +6 V on VDD and the I2S pins, +/-1.6 A continuous
+          on VDD, GND and OUT; operating VDD 2.5 to 5.5 V. The module's SD pull-up and pin labels are UNCONFIRMED"
+          datasheet="https://cdn-shop.adafruit.com/product-files/3006/MAX98357A-MAX98357B.pdf"/>
+    <part ref="LS1" name="Shutao double-cavity speaker, 8 ohm, 3 W" kind="passive" qty="1"
+          use="speech, on U2's screw terminal" asin="B0DL9SFH49"/>
+    <part ref="U3" name="SSD1306 OLED module, 128x64, I2C 0x3C" kind="active" qty="1" use="display"
+          vmax="4" imax="0.00078"
+          imax_basis="SSD1306: vmax is the VDD absolute maximum. No pin current limit is given, so imax is the
+          maximum operating panel current ICC (IDD 150 uA max)"
+          datasheet="https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf"/>
+    <!-- Room air: either one BME280 board (U4) or one BMP280 + AHT20 combination board (U5 and U6). -->
+    <part ref="U4" name="BME280" kind="active" qty="1" use="room air, option A" alt="U5+U6"
+          vmax="4.25" imax="0.0000042"
+          imax_basis="BME280: vmax is the VDD and VDDIO absolute maximum. No pin current limit is given, so imax is
+          the 1 Hz forced-mode maximum (IDD,LP)"
+          datasheet="https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf"/>
+    <part ref="U5" name="BMP280" kind="active" qty="1" use="room air, option B: temperature and pressure" alt="U4"
+          vmax="4.25" imax="0.00112"
+          imax_basis="BMP280: vmax is the VDD and VDDIO absolute maximum. No pin current limit is given, so imax is
+          the maximum peak during a pressure measurement"
+          datasheet="https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf"/>
+    <part ref="U6" name="AHT20" kind="active" qty="1" use="room air, option B: humidity (I2C 0x38)" alt="U4"
+          vmax="5.5" imax="UNCONFIRMED"
+          imax_basis="AHT20: the datasheet has no absolute maximum table. vmax is the top of the supply range,
+          UNCONFIRMED as an absolute maximum. No current limit is given (23 uA typ while measuring)"
+          datasheet="https://cdn-learn.adafruit.com/assets/assets/000/091/676/original/AHT20-datasheet-2020-4-16.pdf"/>
+    <part ref="BZ1" name="3-wire passive buzzer module" kind="passive" qty="1" use="beeps, + to 3V3"/>
+    <part ref="SW1" name="illuminated push button, normally open, 5 V lamp with built-in resistor, yellow"
+          kind="passive" qty="1" use="Hold; its lamp at most 50 mA through Q1"/>
+    <part ref="SW2" name="illuminated push button, normally open, 5 V lamp with built-in resistor, red"
+          kind="passive" qty="1" use="Discard; its lamp at most 50 mA through Q2"/>
+    <part ref="RI1" name="4.7 kohm" kind="passive" qty="0" use="SDA pull-up to 3V3, only if no I2C board has one"/>
+    <part ref="RI2" name="4.7 kohm" kind="passive" qty="0" use="SCL pull-up to 3V3, only if no I2C board has one"/>
+    <part ref="J1-J5" name="JST-XH 2.54 mm header and plug, 4-pin x4 and 3-pin x1" kind="passive" qty="5"
+          use="off-board connectors"/>
+    <part ref="F1-F2" name="wire ferrule to suit the speaker wire" kind="passive" qty="2"
+          use="speaker leads into U2's screw terminal"/>
+  </parts>
+  <connectors>
+    <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="OLED (U3)"/>
+    <connector ref="J2" type="JST-XH-4" order="GND 3V3 SDA SCL" to="air sensor (U4, or U5 and U6)"/>
+    <connector ref="J3" type="JST-XH-4" order="GND SW 5V LAMP-" to="yellow button SW1: SW to GPIO 3, LAMP- to Q1 drain"/>
+    <connector ref="J4" type="JST-XH-4" order="GND SW 5V LAMP-" to="red button SW2: SW to GPIO 4, LAMP- to Q2 drain"/>
+    <connector ref="J5" type="JST-XH-3" order="GND 3V3 S" to="buzzer BZ1: S to GPIO 0"/>
+    <connector ref="J6" type="screw-terminal-2" order="+ -" to="speaker LS1: red to +, black to -"/>
+  </connectors>
+  <power measured_ma=""/>
+  <validated firmware="" date=""/>
+</device>

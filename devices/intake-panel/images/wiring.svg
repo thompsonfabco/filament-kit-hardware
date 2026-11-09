@@ -1,0 +1,247 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1200" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">
+  <rect width="1000" height="1200" fill="#ffffff"/>
+  <defs>
+    <g id="gnd" stroke="#222" stroke-width="2"><line x1="-10" y1="0" x2="10" y2="0"/><line x1="-6" y1="5" x2="6" y2="5"/><line x1="-2" y1="10" x2="2" y2="10"/></g>
+    <g id="v5" stroke="#d22" stroke-width="2"><line x1="-9" y1="0" x2="9" y2="0"/></g>
+    <!-- N-channel enhancement MOSFET, gate lead ends at (0,0); drain lead up at (24,-14..), source at (24,14..) -->
+    <g id="nmos" stroke="#222" stroke-width="2" fill="none">
+      <line x1="0" y1="-14" x2="0" y2="14"/>
+      <line x1="8" y1="-18" x2="8" y2="-10"/><line x1="8" y1="-4" x2="8" y2="4"/><line x1="8" y1="10" x2="8" y2="18"/>
+      <polyline points="8,-14 24,-14"/><polyline points="8,14 24,14"/>
+      <line x1="24" y1="0" x2="24" y2="14"/><line x1="24" y1="0" x2="14" y2="0"/>
+      <polygon points="8,0 15,-4 15,4" fill="#222" stroke="none"/>
+    </g>
+    <!-- push switch, terminals at (0,0) and (-100,0) -->
+    <g id="sw" stroke="#222" stroke-width="2" fill="none">
+      <line x1="0" y1="0" x2="-30" y2="0"/><line x1="-70" y1="0" x2="-100" y2="0"/>
+      <circle cx="-34" cy="0" r="4" fill="#fff"/><circle cx="-66" cy="0" r="4" fill="#fff"/>
+      <line x1="-72" y1="-14" x2="-28" y2="-14"/><line x1="-50" y1="-14" x2="-50" y2="-24"/>
+    </g>
+    <!-- lamp, leads at (0,-13) and (0,13) -->
+    <g id="lamp" stroke-width="2"><circle cx="0" cy="0" r="13" fill="#fff"/>
+      <line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
+    <!-- speaker, leads at (0,0) and (0,30) -->
+    <g id="spk" stroke="#222" stroke-width="2" fill="#fff">
+      <line x1="0" y1="0" x2="0" y2="6"/><line x1="0" y1="24" x2="0" y2="30"/>
+      <rect x="-5" y="6" width="10" height="18"/><polygon points="5,6 16,-2 16,32 5,24"/>
+    </g>
+  </defs>
+
+  <text x="30" y="34" font-size="18" font-weight="600" fill="#111">Intake panel (ESP32-C3): full circuit</text>
+  <text x="30" y="54" fill="#555">ESP32-C3 Super Mini on the station PC's USB; BS170s switch the lamps; MAX98357 module drives the speaker; OLED and room-air sensor on I2C.</text>
+  <text x="30" y="72" fill="#555">Every ground symbol joins the C3's G pin; every 5V flag joins its 5V pin; same-named labels (SDA, SCL, 3V3, LAMP_Y, LAMP_R) are joined.</text>
+  <text x="30" y="90" fill="#555">Assembled on an ElectroCookie full-size prototype board; parts off the board plug into keyed JST-XH headers J1-J5, the speaker into J6.</text>
+
+  <!-- ===== C3 Super Mini ===== -->
+  <rect x="400" y="200" width="180" height="340" rx="8" fill="#e8eef5" stroke="#4a6680" stroke-width="2"/>
+  <rect x="465" y="188" width="50" height="18" rx="4" fill="#bbb" stroke="#666" stroke-width="1.5"/>
+  <text x="490" y="180" text-anchor="middle" fill="#334">USB-C to station PC</text>
+  <rect x="445" y="300" width="90" height="62" rx="4" fill="#cfd8e2" stroke="#7a8fa3" stroke-width="1.5"/>
+  <text x="490" y="327" text-anchor="middle" fill="#334" font-weight="600">ESP32-C3</text>
+  <text x="490" y="343" text-anchor="middle" fill="#556" font-size="11">no Wi-Fi, no BT</text>
+  <text x="490" y="430" text-anchor="middle" fill="#334" font-weight="600">C3 Super Mini</text>
+  <text x="490" y="446" text-anchor="middle" fill="#556" font-size="11">U1</text>
+  <g font-size="12">
+    <text x="412" y="254" font-weight="700" fill="#111">5V</text><text x="412" y="290" font-weight="700" fill="#111">G</text>
+    <text x="412" y="326" font-weight="700" fill="#111">3V3</text><text x="412" y="362" font-weight="700" fill="#111">4</text>
+    <text x="412" y="398" font-weight="700" fill="#111">3</text><text x="412" y="434" fill="#aaa">2</text>
+    <text x="412" y="470" font-weight="700" fill="#111">1</text><text x="412" y="506" font-weight="700" fill="#111">0</text>
+    <text x="568" y="254" text-anchor="end" font-weight="700" fill="#111">5</text><text x="568" y="290" text-anchor="end" font-weight="700" fill="#111">6</text>
+    <text x="568" y="326" text-anchor="end" font-weight="700" fill="#111">7</text><text x="568" y="362" text-anchor="end" fill="#aaa">8</text>
+    <text x="568" y="398" text-anchor="end" fill="#aaa">9</text><text x="568" y="434" text-anchor="end" font-weight="700" fill="#111">10</text>
+    <text x="568" y="470" text-anchor="end" font-weight="700" fill="#111">20</text><text x="568" y="506" text-anchor="end" font-weight="700" fill="#111">21</text>
+  </g>
+  <g fill="#4a6680">
+    <circle cx="400" cy="250" r="4"/><circle cx="400" cy="286" r="4"/>
+    <circle cx="400" cy="322" r="4"/><circle cx="400" cy="358" r="4"/>
+    <circle cx="400" cy="394" r="4"/><circle cx="400" cy="430" r="4" fill="#bbb"/>
+    <circle cx="400" cy="466" r="4"/><circle cx="400" cy="502" r="4"/>
+    <circle cx="580" cy="250" r="4"/><circle cx="580" cy="286" r="4"/>
+    <circle cx="580" cy="322" r="4"/><circle cx="580" cy="358" r="4" fill="#bbb"/>
+    <circle cx="580" cy="394" r="4" fill="#bbb"/><circle cx="580" cy="430" r="4"/>
+    <circle cx="580" cy="466" r="4"/><circle cx="580" cy="502" r="4"/>
+  </g>
+  <text x="490" y="530" text-anchor="middle" font-size="10" fill="#777">grey: 2, 8, 9 strapping, never used</text>
+
+  <!-- ===== left: power flags, button switches, ground bus ===== -->
+  <g stroke-width="2" fill="none">
+    <line x1="400" y1="250" x2="365" y2="250" stroke="#d22"/>
+    <line x1="365" y1="241" x2="365" y2="259" stroke="#d22"/>
+    <line x1="400" y1="322" x2="360" y2="322" stroke="#e08a00"/>
+    <polyline points="400,358 320,358 320,340 270,340" stroke="#c0504d"/>
+    <polyline points="400,394 300,394 300,420 270,420" stroke="#c08a2c"/>
+    <polyline points="400,286 130,286 130,420 170,420" stroke="#222"/>
+    <line x1="170" y1="340" x2="130" y2="340" stroke="#222"/>
+    <line x1="400" y1="466" x2="360" y2="466" stroke="#c08a2c"/>
+  </g>
+  <use href="#sw" x="270" y="340"/><use href="#sw" x="270" y="420"/>
+  <circle cx="130" cy="340" r="4" fill="#222"/>
+  <text x="357" y="254" text-anchor="end" fill="#d22" font-weight="600">5V</text>
+  <text x="356" y="326" text-anchor="end" font-weight="700" fill="#e08a00">3V3</text>
+  <text x="356" y="470" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_Y</text>
+  <text x="220" y="306" text-anchor="middle" font-weight="600" fill="#9a2f2c">DISCARD (red) switch, SW2</text>
+  <text x="220" y="450" text-anchor="middle" font-weight="600" fill="#8a5a10">HOLD (yellow) switch, SW1</text>
+  <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via J4 / J3; internal pull-ups, no resistor</text>
+  <text x="250" y="281" text-anchor="middle" font-size="11" fill="#555">ground bus to G</text>
+
+  <!-- ===== buzzer (GPIO 0), via J5 ===== -->
+  <g stroke-width="2" fill="none">
+    <polyline points="400,502 370,502 370,615 330,615" stroke="#5a8a3c"/>
+    <line x1="330" y1="640" x2="350" y2="640" stroke="#e08a00"/>
+    <rect x="150" y="590" width="180" height="75" rx="6" fill="#eef5ea" stroke="#5a8a3c"/>
+    <line x1="240" y1="665" x2="240" y2="680" stroke="#222"/>
+  </g>
+  <circle cx="190" cy="627" r="20" fill="#333"/><circle cx="190" cy="627" r="5" fill="#666"/>
+  <use href="#gnd" x="240" y="680"/>
+  <text x="240" y="581" text-anchor="middle" font-weight="600" fill="#3d6a22">3-wire passive buzzer, BZ1 (J5)</text>
+  <text x="320" y="619" text-anchor="end" font-size="11" fill="#555">S</text><text x="320" y="644" text-anchor="end" font-size="11" fill="#555">+</text>
+  <text x="246" y="661" font-size="11" fill="#555">−</text>
+  <text x="354" y="644" font-weight="700" fill="#e08a00">3V3</text>
+
+  <!-- ===== right: I2C and red lamp labels ===== -->
+  <g stroke-width="2" fill="none">
+    <line x1="580" y1="250" x2="620" y2="250" stroke="#2c7a9a"/>
+    <line x1="580" y1="286" x2="620" y2="286" stroke="#7a4a9a"/>
+    <line x1="580" y1="322" x2="620" y2="322" stroke="#c0504d"/>
+  </g>
+  <text x="624" y="254" font-weight="700" fill="#2c7a9a">SDA</text>
+  <text x="624" y="290" font-weight="700" fill="#7a4a9a">SCL</text>
+  <text x="624" y="326" font-weight="700" fill="#9a2f2c">LAMP_R</text>
+
+  <!-- ===== MAX98357 module (I2S on 10 / 20 / 21) and speaker ===== -->
+  <g stroke-width="2" fill="none">
+    <polyline points="580,430 640,430 640,445 720,445" stroke="#2c8a7a"/>
+    <polyline points="580,466 620,466 620,420 720,420" stroke="#1f6a9a"/>
+    <polyline points="580,502 680,502 680,470 720,470" stroke="#6a4a9a"/>
+    <line x1="720" y1="495" x2="705" y2="495" stroke="#999"/>
+    <line x1="720" y1="520" x2="705" y2="520" stroke="#999"/>
+    <line x1="720" y1="545" x2="700" y2="545" stroke="#222"/>
+    <line x1="700" y1="545" x2="700" y2="551" stroke="#222"/>
+    <line x1="720" y1="570" x2="680" y2="570" stroke="#d22"/>
+    <line x1="680" y1="561" x2="680" y2="579" stroke="#d22"/>
+    <rect x="720" y="400" width="160" height="190" rx="6" fill="#eaf3f3" stroke="#2c6a6a"/>
+    <rect x="880" y="455" width="22" height="70" fill="#3a8a5a" stroke="#235a3a"/>
+    <polyline points="902,470 940,470 940,475" stroke="#222"/>
+    <polyline points="902,510 940,510 940,505" stroke="#222"/>
+  </g>
+  <circle cx="705" cy="495" r="3.5" fill="#fff" stroke="#999" stroke-width="1.5"/>
+  <circle cx="705" cy="520" r="3.5" fill="#fff" stroke="#999" stroke-width="1.5"/>
+  <use href="#gnd" x="700" y="551"/>
+  <use href="#spk" x="940" y="475"/>
+  <g font-size="11" fill="#333">
+    <text x="728" y="424">LRC</text><text x="728" y="449">BCLK</text><text x="728" y="474">DIN</text>
+    <text x="728" y="499" fill="#888">GAIN</text><text x="728" y="524" fill="#888">SD</text>
+    <text x="728" y="549">GND</text><text x="728" y="574">VIN</text>
+  </g>
+  <text x="872" y="474" text-anchor="end" font-size="11" fill="#333">+</text>
+  <text x="872" y="514" text-anchor="end" font-size="11" fill="#333">−</text>
+  <text x="800" y="392" text-anchor="middle" font-weight="600" fill="#1f5a5a">MAX98357 module, U2</text>
+  <text x="694" y="502" text-anchor="end" font-size="10" fill="#888">nc</text>
+  <text x="694" y="527" text-anchor="end" font-size="10" fill="#888">nc*</text>
+  <text x="674" y="574" text-anchor="end" fill="#d22" font-weight="600">5V</text>
+  <text x="798" y="600" text-anchor="middle" font-size="10" fill="#555">GAIN open = 9 dB. *SD: measure; tie to 3V3 via resistor if ~0 V.</text>
+  <text x="798" y="613" text-anchor="middle" font-size="10" fill="#555">No sound? LRC / BCLK labels may be swapped.</text>
+  <text x="891" y="448" text-anchor="middle" font-size="10" fill="#555">J6</text>
+  <text x="990" y="540" text-anchor="end" font-weight="600" fill="#1f6a5c">LS1 8 Ω 3 W</text>
+  <text x="990" y="554" text-anchor="end" font-size="10" fill="#555">red +, black −</text>
+  <text x="990" y="567" text-anchor="end" font-size="10" fill="#555">neither is a ground</text>
+
+  <!-- ===== row A: HOLD lamp (LAMP_Y, GPIO 1), lamp in SW1 via J3 ===== -->
+  <g stroke="#222" stroke-width="2" fill="none">
+    <line x1="595" y1="740" x2="625" y2="740" stroke="#c08a2c"/>
+    <rect x="625" y="734" width="40" height="12" fill="#fff"/>
+    <line x1="665" y1="740" x2="750" y2="740"/>
+    <line x1="700" y1="740" x2="700" y2="755"/>
+    <rect x="694" y="755" width="12" height="40" fill="#fff"/>
+    <line x1="700" y1="795" x2="700" y2="808"/>
+    <line x1="774" y1="726" x2="774" y2="700"/>
+    <line x1="774" y1="674" x2="774" y2="654" stroke="#d22"/>
+    <line x1="774" y1="754" x2="774" y2="778"/>
+  </g>
+  <circle cx="700" cy="740" r="3.5" fill="#222"/>
+  <use href="#nmos" x="750" y="740"/>
+  <use href="#lamp" x="774" y="687" stroke="#c08a2c"/>
+  <use href="#v5" x="774" y="654"/><use href="#gnd" x="774" y="778"/><use href="#gnd" x="700" y="808"/>
+  <text x="774" y="647" text-anchor="middle" fill="#d22" font-weight="600">5V</text>
+  <text x="590" y="744" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_Y</text>
+  <text x="645" y="728" text-anchor="middle" font-size="11" fill="#555">RG1 220 Ω</text>
+  <text x="688" y="780" text-anchor="end" font-size="11" fill="#555">RP1 100 kΩ</text>
+  <text x="792" y="744" font-size="11" fill="#555">Q1 BS170</text>
+  <text x="780" y="720" font-size="10" fill="#777">D</text><text x="780" y="768" font-size="10" fill="#777">S</text><text x="740" y="730" font-size="10" fill="#777">G</text>
+  <text x="794" y="683" font-weight="600" fill="#8a5a10">HOLD lamp (in SW1, J3)</text>
+  <text x="794" y="697" font-size="11" fill="#555">+ to 5V, − to D; at most 50 mA</text>
+
+  <!-- ===== row B: DISCARD lamp (LAMP_R, GPIO 7), lamp in SW2 via J4 ===== -->
+  <g stroke="#222" stroke-width="2" fill="none">
+    <line x1="595" y1="930" x2="625" y2="930" stroke="#c0504d"/>
+    <rect x="625" y="924" width="40" height="12" fill="#fff"/>
+    <line x1="665" y1="930" x2="750" y2="930"/>
+    <line x1="700" y1="930" x2="700" y2="945"/>
+    <rect x="694" y="945" width="12" height="40" fill="#fff"/>
+    <line x1="700" y1="985" x2="700" y2="998"/>
+    <line x1="774" y1="916" x2="774" y2="890"/>
+    <line x1="774" y1="864" x2="774" y2="844" stroke="#d22"/>
+    <line x1="774" y1="944" x2="774" y2="968"/>
+  </g>
+  <circle cx="700" cy="930" r="3.5" fill="#222"/>
+  <use href="#nmos" x="750" y="930"/>
+  <use href="#lamp" x="774" y="877" stroke="#c0504d"/>
+  <use href="#v5" x="774" y="844"/><use href="#gnd" x="774" y="968"/><use href="#gnd" x="700" y="998"/>
+  <text x="774" y="837" text-anchor="middle" fill="#d22" font-weight="600">5V</text>
+  <text x="590" y="934" text-anchor="end" font-weight="700" fill="#9a2f2c">LAMP_R</text>
+  <text x="645" y="918" text-anchor="middle" font-size="11" fill="#555">RG2 220 Ω</text>
+  <text x="688" y="970" text-anchor="end" font-size="11" fill="#555">RP2 100 kΩ</text>
+  <text x="792" y="934" font-size="11" fill="#555">Q2 BS170</text>
+  <text x="780" y="910" font-size="10" fill="#777">D</text><text x="780" y="958" font-size="10" fill="#777">S</text><text x="740" y="920" font-size="10" fill="#777">G</text>
+  <text x="794" y="873" font-weight="600" fill="#9a2f2c">DISCARD lamp (in SW2, J4)</text>
+  <text x="794" y="887" font-size="11" fill="#555">+ to 5V, − to D; at most 50 mA</text>
+
+  <!-- ===== air sensor (I2C on 5 / 6, joined by label), via J2 ===== -->
+  <g stroke-width="2" fill="none">
+    <line x1="80" y1="760" x2="80" y2="740" stroke="#e08a00"/>
+    <line x1="125" y1="760" x2="125" y2="750" stroke="#222"/>
+    <line x1="170" y1="760" x2="170" y2="740" stroke="#7a4a9a"/>
+    <line x1="215" y1="760" x2="215" y2="740" stroke="#2c7a9a"/>
+    <rect x="50" y="760" width="200" height="60" rx="6" fill="#f3eef8" stroke="#6a5a8a"/>
+  </g>
+  <use href="#gnd" x="0" y="0" transform="translate(125 750) rotate(180)"/>
+  <text x="80" y="734" text-anchor="middle" font-weight="700" fill="#e08a00">3V3</text>
+  <text x="170" y="734" text-anchor="middle" font-weight="700" fill="#7a4a9a">SCL</text>
+  <text x="215" y="734" text-anchor="middle" font-weight="700" fill="#2c7a9a">SDA</text>
+  <g font-size="11" fill="#555"><text x="80" y="776" text-anchor="middle">VIN</text><text x="125" y="776" text-anchor="middle">GND</text>
+    <text x="170" y="776" text-anchor="middle">SCL</text><text x="215" y="776" text-anchor="middle">SDA</text></g>
+  <text x="150" y="798" text-anchor="middle" font-weight="600" fill="#4a3a6a">Room air (J2)</text>
+  <text x="150" y="812" text-anchor="middle" font-size="10" fill="#555">BME280, or BMP280 + AHT20 (0x38)</text>
+  <text x="270" y="790" font-size="11" fill="#555">J1, J2 pin order:</text>
+  <text x="270" y="804" font-size="11" fill="#555">GND 3V3 SDA SCL</text>
+
+  <!-- ===== OLED (same I2C bus, joined by label), via J1 ===== -->
+  <g stroke-width="2" fill="none">
+    <line x1="80" y1="900" x2="80" y2="880" stroke="#e08a00"/>
+    <line x1="125" y1="900" x2="125" y2="890" stroke="#222"/>
+    <line x1="170" y1="900" x2="170" y2="880" stroke="#7a4a9a"/>
+    <line x1="215" y1="900" x2="215" y2="880" stroke="#2c7a9a"/>
+    <rect x="50" y="900" width="200" height="90" rx="6" fill="#eef1f5" stroke="#3a4a5a"/>
+    <rect x="70" y="928" width="160" height="40" fill="#10161c" stroke="#3a4a5a"/>
+  </g>
+  <use href="#gnd" x="0" y="0" transform="translate(125 890) rotate(180)"/>
+  <text x="80" y="874" text-anchor="middle" font-weight="700" fill="#e08a00">3V3</text>
+  <text x="170" y="874" text-anchor="middle" font-weight="700" fill="#7a4a9a">SCL</text>
+  <text x="215" y="874" text-anchor="middle" font-weight="700" fill="#2c7a9a">SDA</text>
+  <g font-size="11" fill="#555"><text x="80" y="916" text-anchor="middle">VCC</text><text x="125" y="916" text-anchor="middle">GND</text>
+    <text x="170" y="916" text-anchor="middle">SCL</text><text x="215" y="916" text-anchor="middle">SDA</text></g>
+  <text x="150" y="952" text-anchor="middle" font-size="11" fill="#9fd3ff">Ready</text>
+  <text x="150" y="1008" text-anchor="middle" font-weight="600" fill="#2a3a4a">OLED SSD1306 128x64 (0x3C), J1</text>
+
+  <!-- ===== notes ===== -->
+  <line x1="30" y1="1030" x2="970" y2="1030" stroke="#ddd"/>
+  <g fill="#333" font-size="12">
+    <text x="30" y="1052"><tspan font-weight="600">Parts:</tspan> Q1, Q2 BS170 (TO-92, flat face toward you, legs D G S left to right; a 2N7000 is S G D). RG 220 Ω gate resistors.</text>
+    <text x="30" y="1070">RP 100 kΩ gate pull-downs keep the lamps dark while the C3 resets. Each button's lamp is 5 V with its resistor built in.</text>
+    <text x="30" y="1092"><tspan font-weight="600">Lamps:</tspan> at most 50 mA each; the BS170 conducts only weakly at a 3.3 V gate. Higher or dim: use a logic-level MOSFET (see guide).</text>
+    <text x="30" y="1114"><tspan font-weight="600">Speaker:</tspan> only to the screw terminal, ferrules or twisted untinned wire, no capacitor, short leads.</text>
+    <text x="30" y="1136"><tspan font-weight="600">Buzzer:</tspan> + to 3V3, not 5V. I2C pull-ups: keep the sensor board's, or add 4.7 kΩ from SDA and SCL to 3V3.</text>
+    <text x="30" y="1158"><tspan font-weight="600">Never use</tspan> GPIO 2, 8, 9 (strapping) or 18, 19 (USB). Pin positions vary between Super Mini boards: follow the labels on yours.</text>
+    <text x="30" y="1180">Firmware: station/panel in filament-kit. Pins: 3 / 4 buttons (yellow / red), 1 / 7 lamps, 0 buzzer, 5 SDA, 6 SCL, 10 BCLK, 20 LRC, 21 DIN.</text>
+  </g>
+</svg>
