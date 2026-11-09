@@ -46,16 +46,18 @@ opens, swap TX and RX first.
 
 ## How the station finds it
 
-The station opens the first `ttyUSB` port that the intake panel isn't on, which is the CH340's port (USB vendor
-`1a86`). The panel is an ESP32-C3 on a native USB port, so it doesn't appear as a `ttyUSB` port. To pin a port, set
+The station opens the first `ttyUSB` port that the intake panel isn't on (`nfc_path` in the kit's
+`station/nfc.py`). It does not check the USB vendor. With this adapter that port is the CH340's (vendor `1a86`), but
+any other `ttyUSB` adapter would be taken the same way. The panel is an ESP32-C3 on a native USB port, so it doesn't appear as a `ttyUSB` port. To pin a port, set
 `NFC_DEVICE` to an nfcpy path such as `tty:USB0:pn532`.
 
 ## Baud rate and the 921600 wedge
 
 The PN532 keeps its UART speed until it loses power. nfcpy opens it at 115200, moves it to 921600 baud, and sets it
 back to 115200 when it closes. If the station stops without that close, the reader stays at 921600 and every later
-open at 115200 times out (Errno 110). The station now closes nfcpy first when it is stopped, and if an open fails it
-tries 921600, 460800, 230400 and 115200 to set the chip back. If a reader still won't open, unplug and replug the
+open at 115200 times out (Errno 110). The station now closes nfcpy first when it is stopped, and if an open fails with a timeout (`ETIMEDOUT`) or a missing device (`ENODEV`) it
+tries 921600, 460800, 230400 and 115200 to set the chip back (`pn532_unwedge` in the kit's `station/nfc.py`). Any
+other open error is only logged and retried after 5 seconds. If a reader still won't open, unplug and replug the
 adapter, which cuts the board's power.
 
 ## Bench checklist

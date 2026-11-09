@@ -16,16 +16,17 @@ bus-powered from the station PC's USB.
 
 | Model | Status |
 |---|---|
-| M10 | Listed as tested in the catalogue |
-| M25 | Listed as tested in the catalogue |
+| M10 | Example named in the kit's `docs/user-guide.md`; no bench test recorded |
+| M25 | Example named in the kit's `docs/user-guide.md`; no bench test recorded |
 | Other S-series | Not tested: the owner tries one and records it in the bench results |
 
 ## How the station reads it
 
 The station finds the scale by USB vendor `0922` (DYMO) among the `hidraw` devices and reads its data reports. A
 report carries a status (zero, moving, stable, negative, overload and so on), a unit (grams, ounces or pounds) and
-the weight. The station converts every unit to grams, and treats a reading as final only when the status is
-`stable`. Reading `hidraw` needs a udev rule, which the station installer adds.
+the weight. The station converts grams, ounces and pounds to grams (the unit table in the kit's `station/scale.py`, used by
+`parse_report`); a report with any other unit is read as if it were grams, with no conversion. It treats a reading as
+final only when the status is `stable`. Reading `hidraw` needs a udev rule, which the station installer adds.
 
 ## Auto power-off
 
@@ -49,4 +50,6 @@ A DYMO shows up on USB only while it is switched on, and it switches itself off 
 
 | Date | Model | Result | Notes |
 |---|---|---|---|
+| | M10 | | |
+| | M25 | | |
 | | | | |
