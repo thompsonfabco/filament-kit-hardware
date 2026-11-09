@@ -276,6 +276,55 @@ Moves out of `filament-kit`, done as kit changes:
 
 `standard.md` replaces the standard's section of this design once both are approved.
 
+## KiCad
+
+The owner decided on 2026-11-09 to keep the hardware designs in KiCad 10.
+
+### What lives where
+
+- A shared library at `kicad/` holds the parts the stock KiCad libraries don't have:
+  - **Symbols:** ESP32-C3 Super Mini, the MAX98357 module, the BME280 and AHT20 boards, the SSD1306 module and the
+    3-pin buzzer module.
+  - **Footprints:** the same modules, plus `ElectroCookie_Full`.
+- Each kit-built device has a project at `devices/<device>/kicad/`. The bought devices have none.
+- `ElectroCookie_Full` is the board as an outline: 89 x 52 mm, the two M3 holes at (7.75, 26) and (81.25, 26), the four
+  M2 holes on the 78.25 x 35.5 mm rectangle, and the 2.54 mm hole grid as reference marks. The breadboard strips aren't
+  modelled as copper, so the layout table in the guide stays the reference for strip connections.
+
+### The schematic is the source of truth
+
+- The wiring is defined by the schematic.
+- Each net on a C3 GPIO pin is named after its firmware constant without the `PIN_` prefix, for example `SDA` or
+  `LAMP_HOLD`.
+- Parts carry their datasheet limits as symbol properties: `Vmax`, `Imax`, `Imax_basis` and `Datasheet`.
+- `catalogue.xml` keeps what a schematic can't hold: the link, firmware paths, mounting, measured power and bench
+  results. Its `pins` and `parts` sections are dropped once the paper check reads them from the schematic.
+- `images/schematic.svg` and `schematic.pdf` are exports made with `kicad-cli`. They replace the hand-drawn
+  `wiring.svg`.
+
+### Checks
+
+- **ERC** is a new validation level. `kicad-cli sch erc` must report 0 errors. Warnings are allowed only when the
+  device's guide lists them.
+- **Paper check:** it reads the netlist exported by `kicad-cli sch export netlist`. It checks:
+  - every GPIO net against the firmware constant;
+  - that no strapping or USB pin is used;
+  - that every active part has `Vmax`, `Imax` and `Datasheet`;
+  - that the guide's pin table matches.
+- **CI:** both checks run in a `kicad/kicad:10.0` container next to the existing jobs.
+- **Fit:** the board is exported to STEP with the modules placed. This lets the case fit be checked against the
+  owner's enclosure in a CAD tool.
+- **Owner data:** KiCad files are plain text, so the owner-data scan covers them. Leave the title block's company and
+  author fields empty.
+
+### Order
+
+1. Library and the `ElectroCookie_Full` footprint.
+2. Intake panel schematic, with ERC clean and its exports.
+3. Paper check reading the netlist, and the KiCad CI job.
+4. Intake panel placement on the board, with the STEP export.
+5. Bench reader schematic, folded into its guide task.
+
 ## Follow-up: reader setup
 
 The reader's Wi-Fi password, server URL and token are compiled into its image today, so anyone using the public repo
