@@ -58,3 +58,54 @@ def test_entity_escaped_email_in_plain_svg_is_found(tmp_path):
     p.write_text(f"<svg><desc>x &lt;{EMAIL.replace('@', '&#64;')}&gt;</desc></svg>", encoding="utf-8")
     out = cod.scan_file(p, "a.svg", [])
     assert len(out) == 1 and "email address" in out[0]
+
+
+def test_truncated_archive_is_reported(tmp_path):
+    p = make_zip(tmp_path / "a.FCStd", {"Document.xml": "<a/>" * 200, "b.txt": "x" * 500})
+    full = p.read_bytes()
+    for keep in (len(full) // 2, len(full) * 9 // 10):
+        p.write_bytes(full[:keep])
+        assert cod.scan_file(p, "a.FCStd", []) == ["a.FCStd: cannot read archive"]
+
+
+def test_zero_byte_3mf_is_reported(tmp_path):
+    p = tmp_path / "a.3mf"
+    p.write_bytes(b"")
+    assert cod.scan_file(p, "a.3mf", []) == ["a.3mf: cannot read archive"]
+
+
+def test_freecad_geometry_member_is_skipped_but_document_is_scanned(tmp_path):
+    p = make_zip(tmp_path / "a.FCStd", {"PartShape.Map.txt": ";:H10.6.241.248\n", "Document.xml": f"<a>{EMAIL}</a>"})
+    out = cod.scan_file(p, "a.FCStd", [])
+    assert len(out) == 1 and out[0].startswith("a.FCStd!Document.xml:1: email address")
+
+
+def test_entity_newline_does_not_shift_line_numbers(tmp_path):
+    p = tmp_path / "a.svg"
+    p.write_text(f"<svg>\n<desc>&#10;&#10;{EMAIL}</desc></svg>", encoding="utf-8")
+    assert cod.scan_file(p, "a.svg", [])[0].startswith("a.svg:2: email address")
+
+
+def test_utf16_member_is_scanned(tmp_path):
+    p = make_zip(tmp_path / "a.zip", {"m.txt": ("﻿" + EMAIL).encode("utf-16-le")})
+    assert len(cod.scan_file(p, "a.zip", [])) == 1
+
+
+def test_member_name_is_scanned(tmp_path):
+    p = make_zip(tmp_path / "a.zip", {f"{EMAIL}.txt": "ok"})
+    assert any("email address" in f for f in cod.scan_file(p, "a.zip", []))
+
+
+def test_oversized_member_is_reported(tmp_path, monkeypatch):
+    monkeypatch.setattr(cod, "MAX_MEMBER", 10)
+    p = make_zip(tmp_path / "a.zip", {"big.txt": "x" * 100})
+    assert cod.scan_file(p, "a.zip", []) == ["a.zip!big.txt: skipped, too large"]
+
+
+def test_encrypted_archive_is_reported(tmp_path):
+    p = make_zip(tmp_path / "a.zip", {"x.txt": "secret"})
+    data = bytearray(p.read_bytes())
+    data[6] |= 1  # local header: encrypted flag
+    data[data.index(b"PK\x01\x02") + 8] |= 1  # central directory entry
+    p.write_bytes(bytes(data))
+    assert cod.scan_file(p, "a.zip", []) == ["a.zip: cannot read archive"]
