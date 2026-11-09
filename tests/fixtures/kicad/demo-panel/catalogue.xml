@@ -8,6 +8,7 @@
     <pin gpio="0" constant="PIN_BUZZER" role="buzzer"/>
   </pins>
   <parts>
+    <part ref="U1" name="ESP32-C3 Super Mini" kind="active" qty="1" use="controller" vmax="3.6" imax="1.0" datasheet="https://example.com/c3.pdf"/>
     <part ref="Q1" name="BS170" kind="active" qty="1" use="lamp switch" vmax="60" imax="0.5" datasheet="https://example.com/bs170.pdf"/>
     <part ref="R1" name="10k" kind="passive" qty="1" use="pull-up"/>
   </parts>

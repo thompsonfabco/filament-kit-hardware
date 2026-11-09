@@ -69,6 +69,7 @@ class Catalogue:
     id: str
     chip: str = ""
     hello: str = ""
+    link_type: str = ""
     firmware_source: str = ""
     family: str = ""
     pins: list = field(default_factory=list)
@@ -92,6 +93,7 @@ def load_catalogue(path: Path) -> Catalogue:
         # The chip token is the board family with the dash dropped: esp32-c3 -> esp32c3.
         chip=family.replace("-", ""),
         hello=link.get("hello", "") if link is not None else "",
+        link_type=link.get("type", "") if link is not None else "",
         firmware_source=fw.get("source", "") if fw is not None else "",
     )
     for p in root.findall("./pins/pin"):
@@ -240,13 +242,32 @@ def check_netlist(cat: Catalogue, bad, netlist: Path) -> dict:
     for gpio, consts in sorted(by_gpio.items()):
         if len(consts) > 1:
             bad(f"duplicate GPIO {gpio} ({' and '.join(sorted(consts))})")
+    # Catalogue parts are matched to netlist symbols by ref, exactly. A range ref such as J1-J5 matches
+    # nothing, which is fine: those are passive parts with no figures to compare.
+    cat_parts = {p.ref: p for p in cat.parts}
+    cat_gpio = {p.constant: p.gpio for p in cat.pins}
+    for const in sorted(set(cat_gpio) | set(pins)):
+        if const not in pins:
+            bad(f"{const} is GPIO {cat_gpio[const]} in the catalogue but not in the schematic")
+        elif const not in cat_gpio:
+            bad(f"{const} is GPIO {pins[const]} in the schematic but not in the catalogue")
+        elif cat_gpio[const] != pins[const]:
+            bad(f"{const} is GPIO {cat_gpio[const]} in the catalogue but {pins[const]} in the schematic")
     for ref, props in sorted(parts.items()):
         prefix = re.match(r"[A-Za-z]*", ref).group(0)
+        cp = cat_parts.get(ref)
         if prefix in ACTIVE_PREFIXES or "vmax" in props:
             for a in ACTIVE_ATTRS:
                 # "~" is KiCad's empty-datasheet placeholder; "UNCONFIRMED" stays allowed.
                 if props.get(a, "") in ("", "~"):
                     bad(f"active part {ref} lacks {a}")
+                if cp is None or not getattr(cp, a):
+                    bad(f"active part {ref} is in the schematic but the catalogue lacks {a} for it")
+        if cp is not None:
+            for a in ACTIVE_ATTRS:
+                have = getattr(cp, a)
+                if have and props.get(a, "") not in ("", "~") and have != props[a]:
+                    bad(f"part {ref} {a} is {have} in the catalogue but {props[a]} in the schematic")
     return pins
 
 
@@ -300,6 +321,9 @@ def check_device(dir: Path, kit, export=export_netlist) -> list:
         for name in gp:
             if name not in cat_pins:
                 bad(f"{name} is in the guide's pin table but not {source}")
+
+    if cat.link_type == "usb-serial" and cat.firmware_source and not cat.hello:
+        bad("a usb-serial device with firmware needs a hello on its <link> (HELLO rule)")
 
     if cat.firmware_source:
         if kit is None:

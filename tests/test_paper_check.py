@@ -215,9 +215,26 @@ def test_netlist_matching_is_clean(ktree):
     assert kcheck(ktree) == []
 
 
-def test_netlist_path_ignores_catalogue_pins(ktree):
+def test_netlist_catalogue_pin_gpio_mismatch_reported(ktree):
     edit(ktree[0] / "catalogue.xml", 'gpio="5"', 'gpio="4"')
-    assert kcheck(ktree) == []
+    problems = kcheck(ktree)
+    assert any("PIN_SDA" in p and "catalogue" in p and "4" in p and "5" in p for p in problems)
+
+
+def test_netlist_catalogue_part_imax_mismatch_reported(ktree):
+    edit(ktree[0] / "catalogue.xml", 'imax="1.0"', 'imax="2.0"')
+    assert any("U1" in p and "imax" in p and "2.0" in p for p in kcheck(ktree))
+
+
+def test_netlist_active_part_missing_ratings_in_catalogue_reported(ktree):
+    edit(ktree[0] / "catalogue.xml", ' imax="1.0"', "")
+    assert any("U1" in p and "catalogue lacks imax" in p for p in kcheck(ktree))
+
+
+def test_usb_serial_firmware_needs_hello(tree):
+    edit(dev(tree) / "catalogue.xml", ' hello="demo-panel"', "")
+    problems = pc.check_device(dev(tree), tree[1])
+    assert any("usb-serial" in p and "HELLO rule" in p for p in problems)
 
 
 def test_renamed_gpio_net_reported(ktree):
@@ -288,6 +305,7 @@ def test_netlist_tilde_datasheet_counts_as_missing(ktree):
 
 def test_netlist_unconfirmed_values_are_allowed(ktree):
     edit(ktree[2].netlist, '<field name="Imax">0.5</field>', '<field name="Imax">UNCONFIRMED</field>')
+    edit(ktree[0] / "catalogue.xml", 'vmax="60" imax="0.5"', 'vmax="60" imax="UNCONFIRMED"')
     assert kcheck(ktree) == []
 
 
