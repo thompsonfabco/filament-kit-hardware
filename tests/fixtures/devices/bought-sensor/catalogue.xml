@@ -1,0 +1,6 @@
+<device id="bought-sensor" schema="1">
+  <tested model="Example Sensor 3000"/>
+  <parts>
+    <part ref="U1" name="Example Sensor" kind="passive" qty="1" use="sensor"/>
+  </parts>
+</device>
