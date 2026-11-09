@@ -34,6 +34,19 @@ uses the pin order GND, 3V3, SDA, SCL. Each connector is listed in the device's 
 The one exception is the speaker, which goes into the amplifier board's screw terminal. This rule applies when a device
 is next built or rebuilt. Nothing is rewired for it alone.
 
+### Assembly and enclosures
+
+- A kit-built device is assembled on an ElectroCookie solderable breadboard prototype board (Amazon ASIN B07ZYNWJ1S,
+  sold in packs with a mini board). Its strips follow a standard breadboard, so a layout proven on a breadboard moves
+  across hole for hole.
+- The listings give the full board as about 88.9 x 52.1 mm and the mini board as 50.8 x 38.1 mm, with 1.2 mm through
+  holes and mounting holes for M3 (3.2 mm) and M2 (2.2 mm) screws. Measure the board in hand before designing a case:
+  the listings disagree on size and give no hole spacing.
+- Enclosures are designed around that board. They hold it on its M3 mounting holes with standoffs, and the measured
+  hole positions are recorded in the device's catalogue file.
+- The main board and the parts off it (buttons, lamps, display, speaker) connect through the connectors below, so the
+  board can come out of its case without desoldering.
+
 ### Firmware identity and updates
 
 - A USB device answers `?` with `HELLO <device> <version> <chip>`, for example `HELLO intake-panel 10 esp32c3`. It also

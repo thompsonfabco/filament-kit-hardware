@@ -287,7 +287,8 @@ reader's first-run flow and how its update images are signed.
 
 The reader's case is four STEP files, copied into `enclosures/bench-reader/` from an older project. Their headers hold
 no personal data, and their fit against the current reader build is unchecked. The design for this piece checks that
-fit and adds printable files. The panel has no enclosure files today. Its enclosure is designed once the rebuilt panel's
+fit and adds printable files. Every enclosure is designed around the ElectroCookie prototype board the standard names,
+mounted on its M3 holes, using hole positions measured from a real board. The panel has no enclosure files today. Its enclosure is designed once the rebuilt panel's
 parts are final. The speaker's body is already sealed, so the enclosure needs only a mount using its two holes and an
 opening in front of the speaker, with no baffle.
 
