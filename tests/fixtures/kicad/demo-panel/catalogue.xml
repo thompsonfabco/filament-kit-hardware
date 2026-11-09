@@ -1,0 +1,14 @@
+<device id="demo-panel" schema="1">
+  <board family="esp32-c3" model="ESP32-C3 Super Mini"/>
+  <link type="usb-serial" vendor="303a" hello="demo-panel"/>
+  <firmware source="station/panel/src/main.cpp" bundled="station/panel/firmware/VERSION" update="station-usb"/>
+  <pins>
+    <pin gpio="5" constant="PIN_SDA" role="i2c-sda"/>
+    <pin gpio="6" constant="PIN_SCL" role="i2c-scl"/>
+    <pin gpio="0" constant="PIN_BUZZER" role="buzzer"/>
+  </pins>
+  <parts>
+    <part ref="Q1" name="BS170" kind="active" qty="1" use="lamp switch" vmax="60" imax="0.5" datasheet="https://example.com/bs170.pdf"/>
+    <part ref="R1" name="10k" kind="passive" qty="1" use="pull-up"/>
+  </parts>
+</device>

@@ -3,13 +3,21 @@
 
 Usage: python tools/paper_check.py [--kit PATH_TO_FILAMENT_KIT] [--devices DIR]
 
-Devices are the directories under devices/ that hold a catalogue.xml. Kit-built devices
-(those with a <firmware> element) are also checked against the source in the kit checkout.
-Exit 0 when clean, 1 with problems, 2 for a bad --kit or a kit device with no --kit.
+Devices are the directories under devices/ that hold a catalogue.xml. A device with a
+kicad/*.kicad_sch project is checked from its exported netlist (kicad-cli, found on PATH or
+through the KICAD_CLI environment variable); any other device from its catalogue pins and parts.
+Kit-built devices (those with a <firmware> element) are also checked against the source in the
+kit checkout.
+Exit 0 when clean, 1 with problems, 2 for a bad --kit, a kit device with no --kit, or a KiCad
+project with no kicad-cli.
 """
 import argparse
+import os
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -18,12 +26,16 @@ REPO = Path(__file__).resolve().parent.parent
 # ESP32-C3 strapping pins (2, 8, 9) and the USB pair (18, 19).
 C3_RESERVED = {2, 8, 9, 18, 19}
 ACTIVE_ATTRS = ("vmax", "imax", "datasheet")
+# Reference prefixes of active parts in a schematic: ICs and modules, transistors, diodes.
+ACTIVE_PREFIXES = ("U", "Q", "D", "IC")
 
 _PIN_CONST = re.compile(r"static\s+const\s+(?:uint8_t|int|gpio_num_t)\s+(PIN_\w+)\s*=\s*(\d+)\s*;")
 _PIN_DEFINE = re.compile(r"^\s*#\s*define\s+(PIN_\w+)\s+(\d+)\b", re.M)
 # A string literal (kept whole, so "//" inside it is not a comment) or a comment.
 _TOKEN = re.compile(r'"(?:[^"\\\n]|\\.)*"|//[^\n]*|/\*.*?\*/', re.S)
 _STRING = re.compile(r'"((?:[^"\\]|\\.)*)"')
+# A U1 pin name in the netlist: the GPIO name plus the pad number, as in GPIO5_1.
+_GPIO_PIN = re.compile(r"^GPIO(\d+)_\d+$")
 
 
 class CatalogueError(Exception):
@@ -149,7 +161,80 @@ def hello_prints(text: str) -> list:
     return out
 
 
-def check_device(dir: Path, kit) -> list:
+def kicad_projects(dir: Path) -> list:
+    return sorted((dir / "kicad").glob("*.kicad_sch")) if (dir / "kicad").is_dir() else []
+
+
+def kicad_cli():
+    return os.environ.get("KICAD_CLI") or shutil.which("kicad-cli")
+
+
+def export_netlist(sch: Path, out: Path) -> None:
+    """Export the schematic's netlist (kicadxml) to out with kicad-cli."""
+    r = subprocess.run([kicad_cli(), "sch", "export", "netlist", "--format", "kicadxml",
+                        "-o", str(out), str(sch)], capture_output=True, text=True)
+    if r.returncode != 0 or not out.is_file():
+        raise CatalogueError(sch, f"kicad-cli netlist export failed: {(r.stderr or r.stdout).strip()}")
+
+
+def read_netlist(path: Path):
+    """(gpio_nets, parts) from a kicadxml netlist.
+
+    gpio_nets maps net name (leading "/" dropped) to the set of GPIO numbers wired to it, for nets
+    that touch a GPIOn pin and are not left unconnected. parts maps ref to a dict of lowercase
+    field name to value, with the datasheet taken from the component's <datasheet> element."""
+    try:
+        root = ET.parse(path).getroot()
+    except (ET.ParseError, OSError) as e:
+        raise CatalogueError(path, f"cannot parse netlist: {e}")
+    parts = {}
+    for c in root.findall("./components/comp"):
+        props = {f.get("name", "").lower(): (f.text or "").strip() for f in c.findall("./fields/field")}
+        props["datasheet"] = (c.findtext("datasheet") or "").strip()
+        parts[c.get("ref", "")] = props
+    gpio_nets = {}
+    for n in root.findall("./nets/net"):
+        name = n.get("name", "")
+        if name.startswith("unconnected-"):
+            continue
+        for node in n.findall("node"):
+            m = _GPIO_PIN.match(node.get("pinfunction", ""))
+            if m and "no_connect" not in node.get("pintype", ""):
+                gpio_nets.setdefault(name.lstrip("/"), set()).add(int(m.group(1)))
+    return gpio_nets, parts
+
+
+def check_netlist(cat: Catalogue, bad, netlist: Path) -> dict:
+    """Check a KiCad device from its netlist. Returns the {constant: gpio} the schematic wires."""
+    try:
+        gpio_nets, parts = read_netlist(netlist)
+    except CatalogueError as e:
+        bad(e.message)
+        return {}
+    pins = {}
+    for net, gpios in sorted(gpio_nets.items()):
+        if len(gpios) > 1:
+            bad(f"net {net} joins GPIOs {sorted(gpios)}")
+        gpio = min(gpios)
+        if cat.family == "esp32-c3" and gpio in C3_RESERVED:
+            bad(f"net {net} uses GPIO {gpio}, reserved on the ESP32-C3 (strapping or USB)")
+        pins["PIN_" + net] = gpio
+    by_gpio = {}
+    for const, gpio in pins.items():
+        by_gpio.setdefault(gpio, []).append(const)
+    for gpio, consts in sorted(by_gpio.items()):
+        if len(consts) > 1:
+            bad(f"duplicate GPIO {gpio} ({' and '.join(sorted(consts))})")
+    for ref, props in sorted(parts.items()):
+        prefix = re.match(r"[A-Za-z]*", ref).group(0)
+        if prefix in ACTIVE_PREFIXES:
+            for a in ACTIVE_ATTRS:
+                if not props.get(a):
+                    bad(f"active part {ref} lacks {a}")
+    return pins
+
+
+def check_device(dir: Path, kit, export=export_netlist) -> list:
     try:
         cat = load_catalogue(dir / "catalogue.xml")
     except CatalogueError as e:
@@ -159,21 +244,33 @@ def check_device(dir: Path, kit) -> list:
     def bad(msg):
         out.append(f"{cat.id}: {msg}")
 
-    seen = {}
-    for p in cat.pins:
-        if p.gpio in seen:
-            bad(f"duplicate GPIO {p.gpio} ({seen[p.gpio]} and {p.constant})")
-        seen[p.gpio] = p.constant
-        if cat.family == "esp32-c3" and p.gpio in C3_RESERVED:
-            bad(f"{p.constant} uses GPIO {p.gpio}, reserved on the ESP32-C3 (strapping or USB)")
+    schematics = kicad_projects(dir)
+    if schematics:
+        with tempfile.TemporaryDirectory() as tmp:
+            netlist = Path(tmp) / "netlist.xml"
+            try:
+                export(schematics[0], netlist)
+            except CatalogueError as e:
+                return [f"{cat.id}: {e.message}"]
+            cat_pins = check_netlist(cat, bad, netlist)
+        source = "the schematic"
+    else:
+        seen = {}
+        for p in cat.pins:
+            if p.gpio in seen:
+                bad(f"duplicate GPIO {p.gpio} ({seen[p.gpio]} and {p.constant})")
+            seen[p.gpio] = p.constant
+            if cat.family == "esp32-c3" and p.gpio in C3_RESERVED:
+                bad(f"{p.constant} uses GPIO {p.gpio}, reserved on the ESP32-C3 (strapping or USB)")
 
-    for part in cat.parts:
-        if part.kind == "active":
-            for a in ACTIVE_ATTRS:
-                if not getattr(part, a):
-                    bad(f"active part {part.ref} lacks {a}")
+        for part in cat.parts:
+            if part.kind == "active":
+                for a in ACTIVE_ATTRS:
+                    if not getattr(part, a):
+                        bad(f"active part {part.ref} lacks {a}")
+        cat_pins = {p.constant: p.gpio for p in cat.pins}
+        source = "the catalogue"
 
-    cat_pins = {p.constant: p.gpio for p in cat.pins}
     guide = dir / "guide.md"
     if not guide.is_file():
         bad("no guide.md")
@@ -183,10 +280,10 @@ def check_device(dir: Path, kit) -> list:
             if name not in gp:
                 bad(f"{name} is not in the guide's pin table")
             elif gp[name] != gpio:
-                bad(f"{name} is GPIO {gpio} in the catalogue but {gp[name]} in the guide")
+                bad(f"{name} is GPIO {gpio} in {source} but {gp[name]} in the guide")
         for name in gp:
             if name not in cat_pins:
-                bad(f"{name} is in the guide's pin table but not the catalogue")
+                bad(f"{name} is in the guide's pin table but not {source}")
 
     if cat.firmware_source:
         if kit is None:
@@ -201,10 +298,10 @@ def check_device(dir: Path, kit) -> list:
             if name not in fw:
                 bad(f"{name} is not in the firmware")
             elif fw[name] != gpio:
-                bad(f"{name} is GPIO {gpio} in the catalogue but {fw[name]} in the firmware")
+                bad(f"{name} is GPIO {gpio} in {source} but {fw[name]} in the firmware")
         for name in fw:
             if name not in cat_pins:
-                bad(f"{name} is in the firmware but not the catalogue")
+                bad(f"{name} is in the firmware but not {source}")
         hellos = hello_prints(src.read_text(encoding="utf-8", errors="replace"))
         if cat.hello and not any(re.search(r"HELLO\s+" + re.escape(cat.hello), h) for h in hellos):
             bad(f"HELLO {cat.hello} not found in the firmware's HELLO print")
@@ -237,6 +334,9 @@ def main(argv=None) -> int:
             return 2
     elif any(_needs_firmware(d) for d in devices):
         print("a device needs firmware: pass --kit PATH", file=sys.stderr)
+        return 2
+    if any(kicad_projects(d) for d in devices) and not kicad_cli():
+        print("a device has a KiCad project: put kicad-cli on PATH or set KICAD_CLI", file=sys.stderr)
         return 2
     problems = []
     for d in devices:

@@ -34,4 +34,25 @@ jobs:
       # checks only the generic patterns. That is expected.
       - run: python -I tools/check_owner_data.py
 
-      - run: python -I tools/paper_check.py --kit kit
+      # The paper check runs in the kicad job, which has kicad-cli.
+
+  kicad:
+    runs-on: ubuntu-latest
+    container: kicad/kicad:10.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: thompsonfabco/filament-kit
+          ref: main
+          path: kit
+
+      # ERC on every device schematic, then the paper check, which exports
+      # each netlist with this container's kicad-cli.
+      - run: |
+          for sch in devices/*/kicad/*.kicad_sch; do
+            kicad-cli sch erc --exit-code-violations "$sch"
+          done
+
+      - run: python3 tools/paper_check.py --kit kit

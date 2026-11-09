@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <components>
+    <comp ref="U1">
+      <value>ESP32-C3 Super Mini</value>
+      <datasheet>https://example.com/c3.pdf</datasheet>
+      <fields>
+        <field name="Vmax">3.6</field>
+        <field name="Imax">1.0</field>
+        <field name="Datasheet">https://example.com/c3.pdf</field>
+      </fields>
+    </comp>
+    <comp ref="Q1">
+      <value>BS170</value>
+      <datasheet>https://example.com/bs170.pdf</datasheet>
+      <fields>
+        <field name="Vmax">60</field>
+        <field name="Imax">0.5</field>
+        <field name="Datasheet">https://example.com/bs170.pdf</field>
+      </fields>
+    </comp>
+    <comp ref="R1">
+      <value>10k</value>
+      <datasheet/>
+    </comp>
+  </components>
+  <nets>
+    <net code="1" name="+3V3" class="Default">
+      <node ref="U1" pin="11" pinfunction="3V3_11" pintype="power_out"/>
+      <node ref="R1" pin="1" pintype="passive"/>
+    </net>
+    <net code="2" name="/BUZZER" class="Default">
+      <node ref="U1" pin="16" pinfunction="GPIO0_16" pintype="bidirectional"/>
+    </net>
+    <net code="3" name="/SCL" class="Default">
+      <node ref="U1" pin="2" pinfunction="GPIO6_2" pintype="bidirectional"/>
+    </net>
+    <net code="4" name="/SDA" class="Default">
+      <node ref="U1" pin="1" pinfunction="GPIO5_1" pintype="bidirectional"/>
+    </net>
+    <net code="5" name="unconnected-(U1-GPIO2-Pad14)" class="Default">
+      <node ref="U1" pin="14" pinfunction="GPIO2_14" pintype="bidirectional+no_connect"/>
+    </net>
+  </nets>
+</export>

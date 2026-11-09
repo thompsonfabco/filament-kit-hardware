@@ -182,3 +182,93 @@ def test_guide_pins_without_catalogue_pins_reported(tree):
 def test_missing_devices_folder_exits_2(tmp_path, capsys):
     assert pc.main(["--devices", str(tmp_path / "none")]) == 2
     assert "not found" in capsys.readouterr().err
+
+
+# --- KiCad netlist path -------------------------------------------------------------------------
+
+@pytest.fixture
+def ktree(tmp_path):
+    """A device with a KiCad project and a canned netlist: returns (device_dir, kit, export)."""
+    shutil.copytree(FIXTURES / "kicad" / "demo-panel", tmp_path / "demo-panel")
+    shutil.copytree(FIXTURES / "kit", tmp_path / "kit")
+    netlist = tmp_path / "canned.xml"
+    shutil.copy(FIXTURES / "kicad" / "netlist.xml", netlist)
+
+    def export(sch, out):
+        shutil.copy(netlist, out)
+    export.netlist = netlist
+    return tmp_path / "demo-panel", tmp_path / "kit", export
+
+
+def kcheck(ktree):
+    return pc.check_device(ktree[0], ktree[1], export=ktree[2])
+
+
+def test_netlist_matching_is_clean(ktree):
+    assert kcheck(ktree) == []
+
+
+def test_netlist_path_ignores_catalogue_pins(ktree):
+    edit(ktree[0] / "catalogue.xml", 'gpio="5"', 'gpio="4"')
+    assert kcheck(ktree) == []
+
+
+def test_renamed_gpio_net_reported(ktree):
+    edit(ktree[2].netlist, 'name="/SDA"', 'name="/SDA_RENAMED"')
+    problems = kcheck(ktree)
+    assert any("PIN_SDA_RENAMED" in p and "firmware" in p for p in problems)
+    assert any("PIN_SDA" in p and "guide" in p for p in problems)
+
+
+def test_net_on_wrong_gpio_reported(ktree):
+    edit(ktree[2].netlist, "GPIO5_1", "GPIO4_1")
+    problems = kcheck(ktree)
+    assert any("PIN_SDA" in p and "4" in p and "5" in p for p in problems)
+
+
+@pytest.mark.parametrize("gpio", [2, 8, 9, 18, 19])
+def test_netlist_strapping_pin_rejected(ktree, gpio):
+    edit(ktree[2].netlist, "GPIO5_1", f"GPIO{gpio}_1")
+    edit(ktree[1] / "station/panel/src/main.cpp", "PIN_SDA = 5", f"PIN_SDA = {gpio}")
+    edit(ktree[0] / "guide.md", "| PIN_SDA | 5 |", f"| PIN_SDA | {gpio} |")
+    problems = kcheck(ktree)
+    assert any(f"GPIO {gpio}" in p and "reserved" in p for p in problems)
+
+
+def test_unconnected_strapping_pin_is_fine(ktree):
+    assert "GPIO2_14" in ktree[2].netlist.read_text(encoding="utf-8")
+    assert not any("reserved" in p for p in kcheck(ktree))
+
+
+@pytest.mark.parametrize("attr", ["Vmax", "Imax", "Datasheet"])
+def test_netlist_active_part_needs_vmax_imax_datasheet(ktree, attr):
+    import re
+    text = ktree[2].netlist.read_text(encoding="utf-8")
+    text = re.sub(rf'<field name="{attr}">[^<]*</field>\s*', "", text, count=2)
+    if attr == "Datasheet":
+        text = re.sub(r"<datasheet>[^<]*</datasheet>", "<datasheet/>", text)
+    ktree[2].netlist.write_text(text, encoding="utf-8")
+    problems = kcheck(ktree)
+    assert any("Q1" in p and attr.lower() in p for p in problems)
+
+
+def test_netlist_guide_mismatch_reported(ktree):
+    edit(ktree[0] / "guide.md", "| PIN_SCL | 6 |", "| PIN_SCL | 7 |")
+    assert any("guide" in p and "PIN_SCL" in p for p in kcheck(ktree))
+
+
+def test_netlist_passive_part_needs_no_ratings(ktree):
+    assert not any("R1" in p for p in kcheck(ktree))
+
+
+def test_unreadable_netlist_reported(ktree):
+    ktree[2].netlist.write_text("<export", encoding="utf-8")
+    assert any("netlist" in p for p in kcheck(ktree))
+
+
+def test_main_without_kicad_cli_exits_2(ktree, monkeypatch, capsys):
+    monkeypatch.delenv("KICAD_CLI", raising=False)
+    monkeypatch.setattr(pc.shutil, "which", lambda name: None)
+    code = pc.main(["--kit", str(ktree[1]), "--devices", str(ktree[0].parent)])
+    assert code == 2
+    assert "kicad-cli" in capsys.readouterr().err
