@@ -312,8 +312,7 @@ The owner decided on 2026-11-09 to keep the hardware designs in KiCad 10.
   - that every active part has `Vmax`, `Imax` and `Datasheet`;
   - that the guide's pin table matches.
 - **CI:** both checks run in a `kicad/kicad:10.0` container next to the existing jobs.
-- **Fit:** the board is exported to STEP with the modules placed. This lets the case fit be checked against the
-  owner's enclosure in a CAD tool.
+- **Fit:** dropped on 2026-11-09 by the owner: no proto-board layout, so no STEP export of a placed board.
 - **Owner data:** KiCad files are plain text, so the owner-data scan covers them. Leave the title block's company and
   author fields empty.
 
@@ -322,7 +321,7 @@ The owner decided on 2026-11-09 to keep the hardware designs in KiCad 10.
 1. Library and the `ElectroCookie_Full` footprint.
 2. Intake panel schematic, with ERC clean and its exports.
 3. Paper check reading the netlist, and the KiCad CI job.
-4. Intake panel placement on the board, with the STEP export.
+4. Intake panel placement on the board, with the STEP export. (Dropped on 2026-11-09 by the owner: no proto-board layout.)
 5. Bench reader schematic, folded into its guide task.
 
 ## Follow-up: reader setup

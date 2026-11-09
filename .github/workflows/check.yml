@@ -34,10 +34,6 @@ jobs:
       # checks only the generic patterns. That is expected.
       - run: python -I tools/check_owner_data.py
 
-      # No two nets may share a strip of the ElectroCookie board. Reads the
-      # .kicad_pcb files directly, so it needs no kicad-cli.
-      - run: python tools/strip_check.py
-
       # The paper check runs in the kicad job, which has kicad-cli.
 
   kicad:
