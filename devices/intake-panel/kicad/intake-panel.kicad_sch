@@ -6044,7 +6044,7 @@
 				)
 			)
 		)
-		(property "Imax_basis" "no datasheet for the 3-wire passive buzzer module"
+		(property "Imax_basis" "no datasheet for the 3-wire active-low buzzer module (low-level trigger)"
 			(at 355.6 175.26 0)
 			(hide yes)
 			(show_name no)
@@ -7816,7 +7816,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
+		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline_Wide"
 			(at 71.12 164.465 0)
 			(hide yes)
 			(show_name no)
@@ -8598,6 +8598,17 @@
 				)
 			)
 		)
+		(property "Board_pads" "1-7"
+			(at 137.16 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Pin_order" "header pins 1-7 left to right, header at the bottom and screw terminal at the top: LRC BCLK DIN GAIN SD GND VIN (owner-confirmed from the board); screw terminal 8 = - (left), 9 = + (right), terminal position on the footprint UNCONFIRMED"
 			(at 137.16 60.96 0)
 			(hide yes)
@@ -9210,7 +9221,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
+		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline_Wide"
 			(at 71.12 227.965 0)
 			(hide yes)
 			(show_name no)
