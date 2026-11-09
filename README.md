@@ -26,3 +26,5 @@ words in `tools/owner-terms.local`, one per line, which git ignores, then run:
 ```bash
 python -I tools/check_owner_data.py
 ```
+
+The scan also opens zip-based files (`.FCStd`, `.3mf`, `.zip`) and reads their text members.
