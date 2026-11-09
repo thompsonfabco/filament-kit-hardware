@@ -12,3 +12,5 @@ desktop.ini
 .DS_Store
 # Kit checkout made by CI
 /kit/
+# Python caches
+__pycache__/
