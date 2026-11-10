@@ -69,12 +69,15 @@ jobs:
       - run: python3 tools/paper_check.py --kit kit
 
       # A device's surface-mount board (kicad-smt/) must wire exactly what its
-      # through-hole board (kicad/) wires.
+      # through-hole board (kicad/) wires, apart from any block listed in
+      # kicad-smt/parity-exceptions.txt.
       - run: |
           for pro in devices/*/kicad-smt/*.kicad_pro; do
             [ -e "$pro" ] || continue
             dev="${pro%/kicad-smt/*}"
+            exc=""
+            [ -e "$dev/kicad-smt/parity-exceptions.txt" ] && exc="--exceptions $dev/kicad-smt/parity-exceptions.txt"
             for tht in "$dev"/kicad/*.kicad_pro; do
-              python3 tools/netlist_parity.py "${tht%.kicad_pro}.kicad_sch" "${pro%.kicad_pro}.kicad_sch"
+              python3 tools/netlist_parity.py "${tht%.kicad_pro}.kicad_sch" "${pro%.kicad_pro}.kicad_sch" $exc
             done
           done
