@@ -338,8 +338,8 @@ reader's first-run flow and how its update images are signed.
 ## Follow-up: enclosures
 
 The reader's case is four STEP files, copied into `enclosures/bench-reader/` from an older project. Their headers hold
-no personal data, and their fit against the current reader build is unchecked. The design for this piece checks that
-fit and adds printable files. Every enclosure is designed around the ElectroCookie prototype board the standard names,
+no personal data. They predate the custom board; the reader's case is being redesigned to fit the board in
+`devices/bench-reader/kicad/`, and that design adds printable files. Every enclosure is designed around the ElectroCookie prototype board the standard names,
 mounted on its M3 holes, using hole positions measured from a real board. The intake station's case files (Controller, Simple Controller and Camera Stand) are in `enclosures/intake-station/`. The speaker's body is already sealed, so the enclosure needs only a mount using its two holes and an
 opening in front of the speaker, with no baffle.
 
