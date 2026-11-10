@@ -128,8 +128,8 @@ The board comes in two variants with the same outline, holes, copper and connect
 
 Both wire exactly the same pins together; `python tools/netlist_parity.py` with the two schematics checks that. Every
 board part (the four JST-XH headers and the two female headers for U1) is a through-hole part on both variants: JLCPCB
-stocks no surface-mount JST-XH header from JST in 3, 4 and 5 pins, so the JLCPCB variant has JLCPCB solder the
-through-hole headers by hand.
+stocks no surface-mount JST-XH header from JST in 3 or 5 pins (only the 4-pin S4B-XH-SM4-TB), so the JLCPCB variant
+keeps one connector family and has JLCPCB solder the through-hole headers by hand.
 
 The board is 89 x 52 mm, the outline and hole pattern of the ElectroCookie full board, so it fits cases made for that
 board: M3 holes at (7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.625, 8.25), (5.375, 43.75) and
@@ -190,7 +190,6 @@ not part of the order; buy them from the main parts list. Every part number and 
 ### Assembly order
 
 For the JLCPCB board, the headers come fitted: start at step 3.
-
 
 1. Solder the two 1x8 female headers. Plug U1 into them while soldering so the rows stay square and 15.24 mm apart,
    then take U1 out.
