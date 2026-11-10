@@ -2,7 +2,7 @@
 
 The intake panel is the intake station's front panel. It has a yellow (Hold) and a red (Discard) illuminated button,
 a 128x64 OLED, a buzzer, a speaker on a MAX98357 amplifier, a room-air sensor and an optional PN532 tag reader. It is built on an ESP32-C3 Super
-Mini and plugs into the station PC's USB. This guide covers firmware 10 and later.
+Mini and plugs into the station PC's USB. This guide covers firmware 11 and later.
 
 The panel's behaviour, its serial protocol, the speech format and the firmware update notes are in the kit's
 [station/PANEL.md](https://github.com/thompsonfabco/filament-kit/blob/main/station/PANEL.md). This guide covers the parts, wiring, assembly, first flash and bench checks. The checked data
@@ -205,7 +205,8 @@ more. Check each LED in two steps:
 
 If an LED fails either step, replace that BS170 with a logic-level N-MOSFET, for example an AO3400A on a SOT-23 adapter. Pick a part
 whose datasheet gives RDS(on) at a gate voltage of 2.5 V or lower. Keep the same 220 Ω and 100 kΩ. Wire it by the
-adapter's G, D and S labels, not the BS170's leg order, and add it to the catalogue with its datasheet limits, unless this guide already documents it as a substitute with its datasheet limits, as it does the 2N7000 above.
+adapter's G, D and S labels, not the BS170's leg order, and add it to the catalogue with its datasheet limits. The
+2N7000 is not a fix here: its gate threshold and RDS(on) ratings are about the same as the BS170's.
 
 ## Amplifier (MAX98357 module)
 

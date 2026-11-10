@@ -1,8 +1,8 @@
 # Intake panel bill of materials
 
 Parts to buy for one intake panel, with Amazon listing links. The refs, values and use of each part are in the
-[build guide](guide.md); this list adds where to get them. "Reference build: yes" marks the listing used in the
-reference build; "suggested" marks a listing chosen to match the part. Most listings are multi-packs, so one pack
+[build guide](guide.md); this list adds where to get them. "Reference build: yes" marks a listing used in a
+reference build (more than one row may be marked for the same part); "suggested" marks a listing chosen to match the part. Most listings are multi-packs, so one pack
 covers the quantity shown.
 
 | Ref | Part | Qty | Brand / listing | Link | Reference build | Notes |
