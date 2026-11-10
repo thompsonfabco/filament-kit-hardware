@@ -49,6 +49,10 @@ buzzer; the J1-J5 headers fix that order, whatever order a module's own pins are
   1 mm top-copper pads under the solder mask, with no hole: the speaker wires go into the module's own terminal, and
   the pads only keep the footprint's pins matching the symbol. F.Fab shows a 17.8 x 19.3 mm module outline
   (UNCONFIRMED). Used by the intake panel board.
+- `SOT-23_BS170_Pinout`: the stock KiCad SOT-23 copper, with its pads numbered to match the BS170 symbol (pad 1
+  drain, 2 gate, 3 source) instead of the SOT-23 package's pin 1-3 (gate, source, drain). A 2N7002 or AO3400A sits
+  on it with its package pin 1 on the pad numbered 2. Used by the intake panel's JLCPCB board for Q1 and Q2, so its
+  schematic keeps the BS170 symbol and wires the same pins as the through-hole board.
 - The buzzer and the I2C modules use the stock 2.54 mm pin headers, whose pad 1-N order matches the symbols.
 - `ElectroCookie_Full`: the board as an outline, measured from the board. The origin is one corner, with x along the
   89 mm side.

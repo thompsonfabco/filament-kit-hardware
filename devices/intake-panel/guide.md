@@ -20,7 +20,7 @@ exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.p
 |---|---|---|---|
 | BRD1 | ElectroCookie solderable breadboard prototype board, full size (Amazon ASIN B07ZYNWJ1S) | 1 | Main board |
 | U1 | ESP32-C3 Super Mini | 1 | Controller, on the station PC's USB |
-| Q1, Q2 | BS170 N-MOSFET (TO-92); a 2N7000 also fits, turned round (see "LED MOSFET stages") | 2 | Yellow and red LED switches |
+| Q1, Q2 | BS170 N-MOSFET (TO-92); a 2N7000 also fits, turned round. The JLCPCB board carries a 2N7002 (SOT-23) instead (see "LED MOSFET stages") | 2 | Yellow and red LED switches |
 | RG1, RG2 | 220 Ω | 2 | Gate resistors |
 | RP1, RP2 | 100 kΩ | 2 | Gate pull-downs, so the LEDs stay dark during reset |
 | U2 | AITRIP MAX98357 I2S amplifier module, "No Welding" version (Amazon ASIN B0912CWB7Z, pack of 3) | 1 | Speaker amplifier |
@@ -34,7 +34,7 @@ exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.p
 | RSD | 10 kΩ | 0 or 1 | Amplifier SD pull-up to 3V3, only if the module has none (see "Amplifier") |
 | C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks |
 | XU1 | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1, so its USB-C plug clears the M3 screw head (see "Board and layout") |
-| XU2 | Female pin header, 2.54 mm, 7-pin | 0 or 1 | Socket for U2, through-hole board only (see "Board") |
+| XU2 | Female pin header, 2.54 mm, 7-pin | 0 or 1 | Socket for U2, custom boards only (see "Board") |
 | J1-J5 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x4 (J1-J4) and 3-pin x1 (J5) | 5 | Off-board connectors |
 | J7 | JST-XH (2.50 mm pitch) header and plug, 4-pin | 0 or 1 | Off-board connector for U7, only if U7 is fitted |
 | F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the screw terminal |
@@ -99,27 +99,39 @@ I2C headers. If the buttons end up swapped, set
 
 ## Board
 
-The through-hole board is `kicad/intake-panel.kicad_pcb`, in the same KiCad project as the schematic. Order the bare
-board and solder the parts yourself. Without it, the panel is built on the ElectroCookie board as "Board and layout"
-describes.
+The board comes in two variants with the same outline, holes, connectors and pin-to-pin wiring:
+
+- **Through-hole (DIY)**: `kicad/intake-panel.kicad_pcb`, in the same KiCad project as the schematic. Order the bare
+  board and solder the parts yourself.
+- **JLCPCB assembly**: `kicad-smt/intake-panel-smt.kicad_pcb`, a second KiCad project whose schematic is a copy of the
+  first with surface-mount footprints and an LCSC part number on each board part. JLCPCB makes the board and fits the
+  parts (see "Ordering the JLCPCB board").
+
+Without either, the panel is built on the ElectroCookie board as "Board and layout" describes.
+
+Both wire exactly the same pins together; `python tools/netlist_parity.py` with the two schematics checks that. On
+the JLCPCB board the resistors are 0603, Q1 and Q2 are 2N7002 in SOT-23 (see "LED MOSFET stages") and C1 is a
+6.3 mm surface-mount electrolytic. The JST-XH headers and the female headers for U1 and U2 stay through-hole on both,
+so the two boards take the same plugs and modules; JLCPCB solders those by hand.
 
 The board is 89 x 52 mm, the outline and hole pattern of the ElectroCookie full board, so it fits cases made for that
 board: M3 holes at (7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.625, 8.25), (5.375, 43.75) and
 (83.625, 43.75), in mm from one corner. It has two layers with a GND pour on both sides, 0.25 mm signal tracks,
-0.5 mm 3V3 tracks and 0.8 mm 5V tracks (the amplifier supply and the button LEDs), and every part is through-hole.
+0.5 mm 3V3 tracks and 0.8 mm 5V tracks (the amplifier supply and the button LEDs).
 Both copper layers stay clear of each mounting hole out to 3.5 mm (M3) and 2.5 mm (M2) from its centre, so a screw
 head or a metal standoff can't touch the pour.
 
-| | Through-hole (DIY) |
-|---|---|
-| Top | [board-tht-top.svg](board/board-tht-top.svg) |
-| Bottom (mirrored) | [board-tht-bottom.svg](board/board-tht-bottom.svg) |
-| Both, with the title block | [board-tht.pdf](board/board-tht.pdf) |
-| 3D model | [board-tht.step](board/board-tht.step) |
-| Gerbers and drill files | [gerbers-tht.zip](board/gerbers-tht.zip) |
+| | Through-hole (DIY) | JLCPCB assembly |
+|---|---|---|
+| Top | [board-tht-top.svg](board/board-tht-top.svg) | [board-smt-top.svg](board/board-smt-top.svg) |
+| Bottom (mirrored) | [board-tht-bottom.svg](board/board-tht-bottom.svg) | [board-smt-bottom.svg](board/board-smt-bottom.svg) |
+| Both, with the title block | [board-tht.pdf](board/board-tht.pdf) | [board-smt.pdf](board/board-smt.pdf) |
+| 3D model | [board-tht.step](board/board-tht.step) | [board-smt.step](board/board-smt.step) |
+| Gerbers and drill files | [gerbers-tht.zip](board/gerbers-tht.zip) | [gerbers-smt.zip](board/gerbers-smt.zip) |
+| Assembly files | - | [jlcpcb-bom-smt.csv](board/jlcpcb-bom-smt.csv), [jlcpcb-cpl-smt.csv](board/jlcpcb-cpl-smt.csv) |
 
-The zip holds the Gerbers and the drill files (plated and unplated holes in separate files). Any board maker that
-takes Gerbers can make the board: 2 layers, 1.6 mm.
+Each zip holds the Gerbers and the drill files (plated and unplated holes in separate files); the JLCPCB zip also
+holds the top paste layer for the stencil. Any board maker that takes Gerbers can make either board: 2 layers, 1.6 mm.
 
 What sits on the board, and why:
 
@@ -129,17 +141,19 @@ What sits on the board, and why:
 - **U2, the amplifier**, plugs into a 1x7 female header (XU2) beside U1, with its pin row facing U1 and its screw
   terminal toward the left short edge. It sits on the board because its I2S lines run straight to U1's pins, it
   draws the panel's largest 5 V current, and the speaker is wired to its own screw terminal, so it needs no harness.
-  Its VIN takes 5 V straight from U1's 5V pin over a 22.5 mm, 0.8 mm track along the top edge, on the bottom layer. The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one,
-  before you plug U2 in. The module's outline and the terminal position are UNCONFIRMED; nothing else on the board
+  Its VIN takes 5 V straight from U1's 5V pin over a 22.5 mm, 0.8 mm track along the top edge, on the bottom layer.
+  The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one, before you plug U2 in. The module's outline and the terminal position are UNCONFIRMED; nothing else on the board
   sits under it.
-- **C1**, the optional 470 µF capacitor, has its pads below U1, by the "C1" mark: there is no room for an 8 mm can
-  beside U2's header. Its + pad reaches U2's VIN over 45.5 mm of 0.8 mm track (down the left side of U1 and up to VIN),
-  so on this board it steadies the 5 V rail as a whole rather than sitting at the module.
+- **C1**, the optional 470 µF capacitor, has its pads below U1, by the "C1" mark, on both boards: there is no room
+  for the capacitor beside U2's header. Its + pad reaches U2's VIN over about 45 mm of 0.8 mm track (down the left
+  side of U1 and up to VIN), so it steadies the 5 V rail as a whole rather than sitting at the module.
 - **Off the board**: the OLED, the air sensor, the buzzer, the two buttons and the PN532 reader mount on the case,
   where each one has to be seen, pressed, heard or reach the room air or the tags, so each one plugs into a JST-XH
   header, as the schematic shows.
 - **The LED stages** (Q1, RG1, RP1 and Q2, RG2, RP2) sit above J3 and J4, each drain straight above its header's
   LED- pin.
+- **Silkscreen**: the through-hole board reads "filament-kit intake panel THT rev A", the JLCPCB board "filament-kit
+  intake panel JLCPCB rev A".
 
 ### Connectors
 
@@ -170,7 +184,31 @@ The board has pads for four parts that are left out at first. Each is marked DNP
 | RI1, RI2 | 4.7 kΩ | Neither the OLED nor the air sensor board has I2C pull-ups |
 | C1 | 470 µF, 10 V or more | 5 V sags on speech peaks in the bench check. + to the pad by the + mark |
 
+On the JLCPCB board these are 0603 resistors and a 6.3 mm surface-mount electrolytic. JLCPCB leaves them off, as on
+the through-hole board; the LCSC part for each is in the [bill of materials](bom.md), to order with the board or to
+solder by hand later.
+
+### Ordering the JLCPCB board
+
+1. On jlcpcb.com, upload `board/gerbers-smt.zip` as the board, 2 layers, 1.6 mm; JLCPCB reads the size from the Gerbers.
+2. Turn on assembly, top side, and pick the assembly service that fits through-hole parts as well as surface-mount
+   ones.
+3. Upload `board/jlcpcb-bom-smt.csv` as the BOM and `board/jlcpcb-cpl-smt.csv` as the pick-and-place (CPL) file.
+4. Check each part in the placement preview against the silkscreen:
+   - Q1 and Q2: the single drain pin points down, toward J3 and J4, and the gate and source pins point up. Correct the
+     rotation in the preview if a part shows otherwise.
+   - J5 has its pin 1 on the right (it is turned round).
+   - The rows marked U1A and U1B are the two female headers for U1, which share one footprint on the board; the row
+     marked U2 is U2's 1x7 female header.
+
+The positions are each part's centre, or the centre of its pins for the through-hole headers. The BOM lists only
+the parts JLCPCB solders: RSD1, RI1, RI2 and C1 stay off (see "Parts fitted only when needed"). U1 and U2 are modules
+that plug into their headers and are never soldered. The off-board modules and the harnesses are not part of the
+order; buy them from the main parts list. Every part number and its stock are in the [bill of materials](bom.md).
+
 ### Assembly order
+
+For the JLCPCB board, the resistors, Q1, Q2 and every header come fitted: start at step 5.
 
 1. Solder the resistors that are always fitted: RG1 and RG2 (220 Ω), RP1 and RP2 (100 kΩ).
 2. Solder Q1 and Q2 (BS170), each with its flat face matching its outline on the silkscreen. A 2N7000 has its pins
@@ -274,6 +312,16 @@ series resistor. Each LED draws 10 to 20 mA.
 10 to 20 mA LED. Its pinout is mirrored: flat face toward you, its legs are S G D, left to right. Fit it turned round,
 flat face away from you, so its drain and source land where the BS170's did, or swap the drain and source wires. The
 gate stays in the middle. Keep the same 220 Ω and 100 kΩ, and run the same two checks below.
+
+**2N7002 on the JLCPCB board.** The JLCPCB board carries a 2N7002 (SOT-23, LCSC C8545) in place of each BS170: the
+schematic still names the BS170, and only the JLCPCB board's footprint and part number change. Its SOT-23 footprint
+numbers the pads to the BS170's drain, gate and source, so the wiring is the same. The figures in its LCSC listing:
+VDS 60 V, ID 115 mA continuous, 225 mW, VGS ±20 V, gate threshold 2.5 V, RDS(on) 5 Ω at VGS = 10 V. Like the BS170's
+datasheet, the listing gives no RDS(on) at a 3.3 V gate, and its 2.5 V threshold leaves 3.3 V only just above it, so
+it is driven no better than the BS170 and the same two checks below apply to it. Its 115 mA rating is above the 50 mA
+an LED may draw. If an LED fails a check on the JLCPCB board, an AO3400A (SOT-23, LCSC C20917; listing: VDS 30 V,
+gate threshold 1.45 V, RDS(on) 48 mΩ at VGS = 2.5 V) has the same gate, source and drain pins as the 2N7002 and fits
+the same pads: solder it in by hand, or put C20917 in place of C8545 in the BOM before ordering.
 
 **Each LED may draw at most 50 mA**, well above its 10 to 20 mA. The C3 drives the gate at only 3.3 V, and the BS170
 barely conducts there:
