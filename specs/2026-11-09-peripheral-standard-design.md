@@ -59,8 +59,8 @@ The standard is kept in [standard.md](../standard.md).
 
 ### What stays the same
 
-The station's flow, display text and `panel_swap` setting keep working. The lamps and their MOSFET stages, OLED, air
-sensor, buzzer and buttons are the same parts. The lamp gates still see 3.3 V, so those stages need no new values.
+The station's flow, display text and `panel_swap` setting keep working. The button LEDs and their MOSFET stages, OLED,
+air sensor, buzzer and buttons are the same parts. The LED gates still see 3.3 V, so those stages need no new values.
 
 ### What changes in the parts
 
@@ -90,8 +90,8 @@ check measures against the USB limit.
 | Buzzer signal | 0 | `PIN_BUZZER` | D7 |
 | Yellow switch, other side to G | 3 | `PIN_BTN_HOLD` | D1 |
 | Red switch, other side to G | 4 | `PIN_BTN_DISCARD` | D2 |
-| Yellow lamp MOSFET gate | 1 | `PIN_LAMP_HOLD` | D5 |
-| Red lamp MOSFET gate | 7 | `PIN_LAMP_DISCARD` | D6 |
+| Yellow LED MOSFET gate | 1 | `PIN_LAMP_HOLD` | D5 |
+| Red LED MOSFET gate | 7 | `PIN_LAMP_DISCARD` | D6 |
 | Amplifier BCLK | 10 | `PIN_I2S_BCLK` | D8, the speaker gate |
 | Amplifier LRC | 20 | `PIN_I2S_LRC` | New |
 | Amplifier DIN | 21 | `PIN_I2S_DIN` | New |
@@ -112,7 +112,7 @@ board's, or add 4.7 kΩ to 3V3 on a board that has none.
 - **USB serial:** `Serial.setTxTimeoutMs(0)` keeps a missing host from stalling the main loop. The receive buffer stays
   at 2048 bytes.
 - **I2C:** the bus clock is set to 400 kHz, so a full OLED update stays short.
-- **Logic:** the line parser, lamp modes and button timing move to `lib/panel_core` with host tests.
+- **Logic:** the line parser, LED modes and button timing move to `lib/panel_core` with host tests.
 
 ### Speech
 
@@ -187,7 +187,7 @@ One file per device, `devices/<device>/catalogue.xml` in this repository. For th
     <pin gpio="5" constant="PIN_SDA" role="i2c-sda"/>
   </pins>
   <parts>
-    <part ref="Q1" name="BS170" qty="1" use="yellow lamp switch"/>
+    <part ref="Q1" name="BS170" qty="1" use="yellow LED switch"/>
   </parts>
   <connectors>
     <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="OLED"/>
@@ -211,11 +211,11 @@ and with `<example model="..." source="..."/>` entries for models named in the k
 
 Bench checklist for the panel:
 
-- [ ] A cold boot gives `HELLO intake-panel 10 esp32c3`, with both lamps dark during reset.
+- [ ] A cold boot gives `HELLO intake-panel 10 esp32c3`, with both LEDs dark during reset.
 - [ ] The station finds the panel, and the PN532 opens as the station's reader.
 - [ ] Unplugging and replugging the panel recovers without a service restart.
 - [ ] The station updates the panel from an older C3 firmware by itself.
-- [ ] Each button gives a short and a long press, and each lamp shows all modes.
+- [ ] Each button gives a short and a long press, and each LED shows all modes.
 - [ ] The OLED shows all rows, and "Station offline" 5 s after the service stops.
 - [ ] Air readings appear in `/state` for the fitted sensor.
 - [ ] Beeps play at the flow's frequencies, and a beep during speech leaves the speech intact.
@@ -223,7 +223,7 @@ Bench checklist for the panel:
 - [ ] Power-up, reset, phrase start, phrase end and a phrase cut off by a newer one make no thump.
 - [ ] Idle hiss between phrases is not noticeable at working distance.
 - [ ] A full intake runs from scan to save with a real spool.
-- [ ] USB current with both lamps lit and speech at the chosen volume is at or under 500 mA, and the 5 V and 3V3 rails
+- [ ] USB current with both LEDs lit and speech at the chosen volume is at or under 500 mA, and the 5 V and 3V3 rails
   hold. If 5 V sags on speech peaks, fit the removed 470 µF capacitor across the amplifier's VIN and GND and measure
   again.
 

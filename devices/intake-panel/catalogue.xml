@@ -1,4 +1,5 @@
-<!-- Intake panel on the ESP32-C3 Super Mini. Build guide: guide.md. Wiring: images/wiring.svg.
+<!-- Intake panel on the ESP32-C3 Super Mini. Build guide: guide.md. Circuit: kicad/intake-panel.kicad_sch, exported as
+     images/schematic.svg and images/schematic.pdf; images/wiring.svg is an overview drawing.
      Firmware paths are inside filament-kit. vmax is in volts and imax in amperes. imax_basis says what the imax
      figure is. imax is only ever a datasheet limit: where the datasheet gives none, imax is UNCONFIRMED and i_typ
      holds a typical or operating current, with i_typ_basis saying what it is. -->
@@ -19,8 +20,8 @@
     <pin gpio="0" constant="PIN_BUZZER" role="buzzer"/>
     <pin gpio="3" constant="PIN_BTN_HOLD" role="button-yellow"/>
     <pin gpio="4" constant="PIN_BTN_DISCARD" role="button-red"/>
-    <pin gpio="1" constant="PIN_LAMP_HOLD" role="lamp-yellow-gate"/>
-    <pin gpio="7" constant="PIN_LAMP_DISCARD" role="lamp-red-gate"/>
+    <pin gpio="1" constant="PIN_LAMP_HOLD" role="led-yellow-gate"/>
+    <pin gpio="7" constant="PIN_LAMP_DISCARD" role="led-red-gate"/>
     <pin gpio="10" constant="PIN_I2S_BCLK" role="i2s-bclk"/>
     <pin gpio="20" constant="PIN_I2S_LRC" role="i2s-lrc"/>
     <pin gpio="21" constant="PIN_I2S_DIN" role="i2s-din"/>
@@ -35,19 +36,21 @@
           per-pin limit is UNCONFIRMED and the 40 mA typical is in i_typ. The board's 3V3 regulator rating and 5 V pin path are UNCONFIRMED"
           i_typ_basis="typical source current per GPIO (IOH at PAD_DRIVER 3; IOL sink 28 mA typ), not a limit"
           datasheet="https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"/>
-    <part ref="Q1" name="BS170" kind="active" qty="1" use="yellow lamp switch" vmax="60" imax="0.5"
+    <part ref="Q1" name="BS170" kind="active" qty="1" use="yellow LED switch" vmax="60" imax="0.5"
+          alt_part="2N7000 (TO-92, 60 V, 200 mA): pins mirrored (S G D against the BS170's D G S), so fit it turned round or swap the drain and source wires"
           imax_basis="continuous drain current with full gate drive. At the C3's 3.3 V gate the curves show
           roughly 0.1 A or less (read from the curves, an estimate) and no RDS(on) is given below VGS 10 V, so each
-          lamp is limited to 50 mA. URL provenance UNCONFIRMED: the server refused downloads; the copy read is
+          LED is limited to 50 mA (it draws 10 to 20 mA). URL provenance UNCONFIRMED: the server refused downloads; the copy read is
           onsemi MMBF170/D Rev 7"
           datasheet="https://www.onsemi.com/download/data-sheet/pdf/bs170-d.pdf"/>
-    <part ref="Q2" name="BS170" kind="active" qty="1" use="red lamp switch" vmax="60" imax="0.5"
+    <part ref="Q2" name="BS170" kind="active" qty="1" use="red LED switch" vmax="60" imax="0.5"
+          alt_part="2N7000, as Q1"
           imax_basis="as Q1"
           datasheet="https://www.onsemi.com/download/data-sheet/pdf/bs170-d.pdf"/>
     <part ref="RG1" name="220 ohm" kind="passive" qty="1" use="Q1 gate resistor"/>
     <part ref="RG2" name="220 ohm" kind="passive" qty="1" use="Q2 gate resistor"/>
-    <part ref="RP1" name="100 kohm" kind="passive" qty="1" use="Q1 gate pull-down, lamp dark during reset"/>
-    <part ref="RP2" name="100 kohm" kind="passive" qty="1" use="Q2 gate pull-down, lamp dark during reset"/>
+    <part ref="RP1" name="100 kohm" kind="passive" qty="1" use="Q1 gate pull-down, LED dark during reset"/>
+    <part ref="RP2" name="100 kohm" kind="passive" qty="1" use="Q2 gate pull-down, LED dark during reset"/>
     <part ref="U2" name="AITRIP MAX98357 I2S amplifier module" kind="active" qty="1" use="speaker amplifier"
           asin="B0912CWB7Z" vmax="6" imax="1.6"
           imax_basis="MAX98357A chip absolute maximums: -0.3 to +6 V on VDD and the I2S pins, +/-1.6 A continuous
@@ -90,10 +93,10 @@
           vmax="UNCONFIRMED" imax="UNCONFIRMED"
           imax_basis="no datasheet for the 3-wire active-low buzzer module (low-level trigger)"
           datasheet="UNCONFIRMED"/>
-    <part ref="SW1" name="illuminated push button, normally open, 5 V lamp with built-in resistor, yellow"
-          kind="passive" qty="1" use="Hold; its lamp at most 50 mA through Q1"/>
-    <part ref="SW2" name="illuminated push button, normally open, 5 V lamp with built-in resistor, red"
-          kind="passive" qty="1" use="Discard; its lamp at most 50 mA through Q2"/>
+    <part ref="SW1" name="illuminated push button, normally open, built-in 5 V LED with its own series resistor, yellow"
+          kind="passive" qty="1" use="Hold; its LED draws 10 to 20 mA, at most 50 mA, through Q1"/>
+    <part ref="SW2" name="illuminated push button, normally open, built-in 5 V LED with its own series resistor, red"
+          kind="passive" qty="1" use="Discard; its LED draws 10 to 20 mA, at most 50 mA, through Q2"/>
     <part ref="RI1" name="4.7 kohm" kind="passive" qty="0" use="SDA pull-up to 3V3, only if no I2C board has one"/>
     <part ref="RI2" name="4.7 kohm" kind="passive" qty="0" use="SCL pull-up to 3V3, only if no I2C board has one"/>
     <part ref="RSD" name="10 kohm" kind="passive" qty="0-1"
@@ -112,8 +115,8 @@
   <connectors>
     <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="OLED (U3)"/>
     <connector ref="J2" type="JST-XH-4" order="GND 3V3 SDA SCL" to="air sensor (U4, or U5 and U6)"/>
-    <connector ref="J3" type="JST-XH-4" order="GND SW 5V LAMP-" to="yellow button SW1: SW to GPIO 3, LAMP- to Q1 drain"/>
-    <connector ref="J4" type="JST-XH-4" order="GND SW 5V LAMP-" to="red button SW2: SW to GPIO 4, LAMP- to Q2 drain"/>
+    <connector ref="J3" type="JST-XH-4" order="GND SW 5V LED-" to="yellow button SW1: SW to GPIO 3, LED- to Q1 drain"/>
+    <connector ref="J4" type="JST-XH-4" order="GND SW 5V LED-" to="red button SW2: SW to GPIO 4, LED- to Q2 drain"/>
     <connector ref="J5" type="JST-XH-3" order="GND 3V3 S" to="buzzer BZ1: S to GPIO 0"/>
     <connector ref="J6" type="screw-terminal-2" order="+ -" to="speaker LS1: red to +, black to -"/>
     <connector ref="J7" type="JST-XH-4" order="GND 3V3 SDA SCL" to="PN532 reader (U7), optional"/>

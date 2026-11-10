@@ -3889,7 +3889,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Intake panel, ESP32-C3. Net names on U1 GPIOs are the firmware pin constants without PIN_.\nU2 OUT+ / OUT- are the module's screw terminal (J6): speaker LS1 red to +, black to -, nothing else.\nOff the board, on harnesses: U3 (J1), U4 or U5 + U6 (J2), SW1 (J3), SW2 (J4), BZ1 (J5), LS1 (J6), U7 (J7).\nU7: PN532 reader (Elechouse NFC Module V3, I2C mode: switch 1 ON, switch 2 OFF), fitted but optional; IRQ and RSTO unconnected.\nI2C addresses: 0x3C U3, 0x76/0x77 U4 or U5, 0x38 U6, 0x24 U7.\nRoom air: fit U4 (BMP280 on a GY-BME/P280 board: temperature and pressure) or U5 + U6 (one BMP280 + AHT20 combination board on one 4-pin header: U5 is drawn as the combination board and U6 lists the AHT20's own ratings; adds humidity), not both.\nDNP by default: RI1, RI2 (only if no I2C board has pull-ups), RSD1 (only if SD reads near 0 V),\nC1 (only if 5 V sags on speech peaks). U2 GAIN open = 9 dB. GPIO 2, 8, 9 are strapping pins: unused.\nNot drawn: BRD1 ElectroCookie full board; XU1, two 8-pin female headers socketing U1; F1, F2 speaker ferrules."
+	(text "Intake panel, ESP32-C3. Net names on U1 GPIOs are the firmware pin constants without PIN_.\nU2 OUT+ / OUT- are the module's screw terminal (J6): speaker LS1 red to +, black to -, nothing else.\nOff the board, on harnesses: U3 (J1), U4 or U5 + U6 (J2), SW1 (J3), SW2 (J4), BZ1 (J5), LS1 (J6), U7 (J7).\nU7: PN532 reader (Elechouse NFC Module V3, I2C mode: switch 1 ON, switch 2 OFF), fitted but optional; IRQ and RSTO unconnected.\nI2C addresses: 0x3C U3, 0x76/0x77 U4 or U5, 0x38 U6, 0x24 U7.\nRoom air: fit U4 (BMP280 on a GY-BME/P280 board: temperature and pressure) or U5 + U6 (one BMP280 + AHT20 combination board on one 4-pin header: U5 is drawn as the combination board and U6 lists the AHT20's own ratings; adds humidity), not both.\nDNP by default: RI1, RI2 (only if no I2C board has pull-ups), RSD1 (only if SD reads near 0 V),\nC1 (only if 5 V sags on speech peaks). U2 GAIN open = 9 dB. GPIO 2, 8, 9 are strapping pins: unused.\nNot drawn: BRD1 ElectroCookie full board; XU1, two 8-pin female headers socketing U1; F1, F2 speaker ferrules.\nSW1, SW2: the 5 V LED built into each button has its own series resistor; LAMP in net names means that LED.\nQ1, Q2: a 2N7000 may replace a BS170; its TO-92 pins are mirrored (S G D against D G S), so fit it turned round."
 		(exclude_from_sim no)
 		(at 20.32 248.92 0)
 		(effects
@@ -5415,7 +5415,7 @@
 				)
 			)
 		)
-		(property "Value" "Push button, yellow, 5 V lamp"
+		(property "Value" "Push button, yellow, 5 V LED"
 			(at 205.74 166.37 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8036,7 +8036,7 @@
 				)
 			)
 		)
-		(property "Value" "Push button, red, 5 V lamp"
+		(property "Value" "Push button, red, 5 V LED"
 			(at 205.74 229.87 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8304,7 +8304,7 @@
 				)
 			)
 		)
-		(property "Imax_basis" "BS170 continuous drain current; at a 3.3 V gate it conducts only weakly (lamps at most 50 mA)"
+		(property "Imax_basis" "BS170 continuous drain current; at a 3.3 V gate it conducts only weakly (LEDs 10 to 20 mA, at most 50 mA). Alternative: 2N7000, TO-92 pins mirrored (S G D)"
 			(at 66.04 162.56 0)
 			(hide yes)
 			(show_name no)
@@ -9709,7 +9709,7 @@
 				)
 			)
 		)
-		(property "Imax_basis" "BS170 continuous drain current; at a 3.3 V gate it conducts only weakly (lamps at most 50 mA)"
+		(property "Imax_basis" "BS170 continuous drain current; at a 3.3 V gate it conducts only weakly (LEDs 10 to 20 mA, at most 50 mA). Alternative: 2N7000, TO-92 pins mirrored (S G D)"
 			(at 66.04 226.06 0)
 			(hide yes)
 			(show_name no)

@@ -17,7 +17,7 @@
       <circle cx="-34" cy="0" r="4" fill="#fff"/><circle cx="-66" cy="0" r="4" fill="#fff"/>
       <line x1="-72" y1="-14" x2="-28" y2="-14"/><line x1="-50" y1="-14" x2="-50" y2="-24"/>
     </g>
-    <!-- lamp, leads at (0,-13) and (0,13) -->
+    <!-- button LED, leads at (0,-13) and (0,13) -->
     <g id="lamp" stroke-width="2"><circle cx="0" cy="0" r="13" fill="#fff"/>
       <line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
     <!-- speaker, leads at (0,0) and (0,30) -->
@@ -28,7 +28,7 @@
   </defs>
 
   <text x="30" y="34" font-size="18" font-weight="600" fill="#111">Intake panel (ESP32-C3): full circuit</text>
-  <text x="30" y="54" fill="#555">ESP32-C3 Super Mini on the station PC's USB; BS170s switch the lamps; MAX98357 module drives the speaker; OLED and room-air sensor on I2C.</text>
+  <text x="30" y="54" fill="#555">ESP32-C3 Super Mini on the station PC's USB; BS170s switch the button LEDs; MAX98357 module drives the speaker; OLED and room-air sensor on I2C.</text>
   <text x="30" y="72" fill="#555">Every ground symbol joins the C3's G pin and every 5V flag its 5V pin; same-named labels (SDA, SCL, BCLK, LRC, DIN, 3V3, LAMP_Y, LAMP_R) are joined.</text>
   <text x="30" y="90" fill="#555">Assembled on an ElectroCookie full-size prototype board; parts off the board plug into labelled JST-XH headers J1-J5, the speaker into J6.</text>
 
@@ -81,7 +81,7 @@
   <text x="356" y="470" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_Y</text>
   <text x="220" y="306" text-anchor="middle" font-weight="600" fill="#9a2f2c">DISCARD (red) switch, SW2</text>
   <text x="220" y="450" text-anchor="middle" font-weight="600" fill="#8a5a10">HOLD (yellow) switch, SW1</text>
-  <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via 4-pin J4 / J3 (GND SW 5V LAMP-); internal pull-ups, no resistor</text>
+  <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via 4-pin J4 / J3 (GND SW 5V LED-); internal pull-ups, no resistor</text>
   <text x="250" y="281" text-anchor="middle" font-size="11" fill="#555">ground bus to G</text>
 
   <!-- ===== buzzer (GPIO 0), via J5 ===== -->
@@ -100,7 +100,7 @@
   <text x="266" y="692" font-size="11" fill="#555">J5 (3-pin) order:</text>
   <text x="266" y="706" font-size="11" fill="#555">GND 3V3 S</text>
 
-  <!-- ===== right: I2C and red lamp labels ===== -->
+  <!-- ===== right: I2C and red LED labels ===== -->
   <g stroke-width="2" fill="none">
     <line x1="580" y1="250" x2="620" y2="250" stroke="#2c7a9a"/>
     <line x1="580" y1="286" x2="620" y2="286" stroke="#7a4a9a"/>
@@ -156,7 +156,7 @@
   <text x="990" y="554" text-anchor="end" font-size="10" fill="#555">red +, black −</text>
   <text x="990" y="567" text-anchor="end" font-size="10" fill="#555">neither is a ground</text>
 
-  <!-- ===== row A: HOLD lamp (LAMP_Y, GPIO 1), lamp in SW1 via J3 ===== -->
+  <!-- ===== row A: HOLD LED (LAMP_Y, GPIO 1), LED in SW1 via J3 ===== -->
   <g stroke="#222" stroke-width="2" fill="none">
     <line x1="595" y1="740" x2="625" y2="740" stroke="#c08a2c"/>
     <rect x="625" y="734" width="40" height="12" fill="#fff"/>
@@ -178,10 +178,10 @@
   <text x="688" y="780" text-anchor="end" font-size="11" fill="#555">RP1 100 kΩ</text>
   <text x="792" y="744" font-size="11" fill="#555">Q1 BS170</text>
   <text x="780" y="720" font-size="10" fill="#777">D</text><text x="780" y="768" font-size="10" fill="#777">S</text><text x="740" y="730" font-size="10" fill="#777">G</text>
-  <text x="794" y="683" font-weight="600" fill="#8a5a10">HOLD lamp (in SW1, J3)</text>
+  <text x="794" y="683" font-weight="600" fill="#8a5a10">HOLD LED (in SW1, J3)</text>
   <text x="794" y="697" font-size="11" fill="#555">+ to 5V, − to D; at most 50 mA</text>
 
-  <!-- ===== row B: DISCARD lamp (LAMP_R, GPIO 7), lamp in SW2 via J4 ===== -->
+  <!-- ===== row B: DISCARD LED (LAMP_R, GPIO 7), LED in SW2 via J4 ===== -->
   <g stroke="#222" stroke-width="2" fill="none">
     <line x1="595" y1="930" x2="625" y2="930" stroke="#c0504d"/>
     <rect x="625" y="924" width="40" height="12" fill="#fff"/>
@@ -203,7 +203,7 @@
   <text x="688" y="970" text-anchor="end" font-size="11" fill="#555">RP2 100 kΩ</text>
   <text x="792" y="934" font-size="11" fill="#555">Q2 BS170</text>
   <text x="780" y="910" font-size="10" fill="#777">D</text><text x="780" y="958" font-size="10" fill="#777">S</text><text x="740" y="920" font-size="10" fill="#777">G</text>
-  <text x="794" y="873" font-weight="600" fill="#9a2f2c">DISCARD lamp (in SW2, J4)</text>
+  <text x="794" y="873" font-weight="600" fill="#9a2f2c">DISCARD LED (in SW2, J4)</text>
   <text x="794" y="887" font-size="11" fill="#555">+ to 5V, − to D; at most 50 mA</text>
 
   <!-- ===== air sensor (I2C on 5 / 6, joined by label), via J2 ===== -->
@@ -246,12 +246,12 @@
   <!-- ===== notes ===== -->
   <line x1="30" y1="1030" x2="970" y2="1030" stroke="#ddd"/>
   <g fill="#333" font-size="12">
-    <text x="30" y="1052"><tspan font-weight="600">Parts:</tspan> Q1, Q2 BS170 (TO-92, flat face toward you, legs D G S left to right; a 2N7000 is S G D). RG 220 Ω gate resistors.</text>
-    <text x="30" y="1070">RP 100 kΩ gate pull-downs keep the lamps dark while the C3 resets. Each button's lamp is 5 V with its resistor built in.</text>
-    <text x="30" y="1092"><tspan font-weight="600">Lamps:</tspan> at most 50 mA each; the BS170 conducts only weakly at a 3.3 V gate. Higher or dim: use a logic-level MOSFET (see guide).</text>
+    <text x="30" y="1052"><tspan font-weight="600">Parts:</tspan> Q1, Q2 BS170 (TO-92, flat face toward you, legs D G S left to right; a 2N7000, legs S G D, fits turned round). RG 220 Ω gate resistors.</text>
+    <text x="30" y="1070">RP 100 kΩ gate pull-downs keep the LEDs dark while the C3 resets. Each button's LED is 5 V with its series resistor built in.</text>
+    <text x="30" y="1092"><tspan font-weight="600">LEDs:</tspan> 10 to 20 mA each, at most 50 mA; the BS170 conducts only weakly at a 3.3 V gate. Higher or dim: use a logic-level MOSFET (see guide).</text>
     <text x="30" y="1114"><tspan font-weight="600">Speaker:</tspan> only to the screw terminal, ferrules or twisted untinned wire, no capacitor, short leads.</text>
     <text x="30" y="1136"><tspan font-weight="600">Buzzer:</tspan> + to 3V3, not 5V. I2C pull-ups: keep the sensor board's, or add 4.7 kΩ from SDA and SCL to 3V3.</text>
     <text x="30" y="1158"><tspan font-weight="600">Never use</tspan> GPIO 2, 8, 9 (strapping) or 18, 19 (USB). Pin positions vary between Super Mini boards: follow the labels on yours.</text>
-    <text x="30" y="1180">Firmware: station/panel in filament-kit. Pins: 3 / 4 buttons (yellow / red), 1 / 7 lamps, 0 buzzer, 5 SDA, 6 SCL, 10 BCLK, 20 LRC, 21 DIN.</text>
+    <text x="30" y="1180">Firmware: station/panel in filament-kit. Pins: 3 / 4 buttons (yellow / red), 1 / 7 LEDs, 0 buzzer, 5 SDA, 6 SCL, 10 BCLK, 20 LRC, 21 DIN.</text>
   </g>
 </svg>

@@ -6,10 +6,12 @@ Mini and plugs into the station PC's USB. This guide covers firmware 10 and late
 
 The panel's behaviour, its serial protocol, the speech format and the firmware update notes are in the kit's
 [station/PANEL.md](https://github.com/thompsonfabco/filament-kit/blob/main/station/PANEL.md). This guide covers the parts, wiring, assembly, first flash and bench checks. The checked data
-for this device is in [catalogue.xml](catalogue.xml), and the full circuit is in
-[images/wiring.svg](images/wiring.svg).
+for this device is in [catalogue.xml](catalogue.xml). The full circuit is the KiCad schematic in [kicad/](kicad/),
+exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.pdf](images/schematic.pdf).
+[images/wiring.svg](images/wiring.svg) is an overview drawing, not the full circuit: it leaves out the PN532 reader
+(U7) and its header (J7).
 
-![Intake panel wiring](images/wiring.svg)
+![Intake panel wiring overview](images/wiring.svg)
 
 ## Parts
 
@@ -17,16 +19,16 @@ for this device is in [catalogue.xml](catalogue.xml), and the full circuit is in
 |---|---|---|---|
 | BRD1 | ElectroCookie solderable breadboard prototype board, full size (Amazon ASIN B07ZYNWJ1S) | 1 | Main board |
 | U1 | ESP32-C3 Super Mini | 1 | Controller, on the station PC's USB |
-| Q1, Q2 | BS170 N-MOSFET (TO-92) | 2 | Yellow and red lamp switches |
+| Q1, Q2 | BS170 N-MOSFET (TO-92); a 2N7000 also fits, turned round (see "LED MOSFET stages") | 2 | Yellow and red LED switches |
 | RG1, RG2 | 220 Ω | 2 | Gate resistors |
-| RP1, RP2 | 100 kΩ | 2 | Gate pull-downs, so the lamps stay dark during reset |
+| RP1, RP2 | 100 kΩ | 2 | Gate pull-downs, so the LEDs stay dark during reset |
 | U2 | AITRIP MAX98357 I2S amplifier module, "No Welding" version (Amazon ASIN B0912CWB7Z, pack of 3) | 1 | Speaker amplifier |
 | LS1 | Shutao double-cavity speaker, 8 Ω, 3 W, sealed body about 100 x 45 x 21 mm (Amazon ASIN B0DL9SFH49) | 1 | Speech |
 | U3 | SSD1306 OLED module, 128x64, I2C address 0x3C | 1 | Display |
 | U4, or U5 + U6 | GY-BME/P280 board with a BMP280 chip (6 pins), or a BMP280 + AHT20 combination board | 1 | Room air |
 | U7 | Elechouse NFC Module V3 (PN532), set to I2C mode (address 0x24) | 0 or 1 | Tag reader, optional (see "PN532 reader") |
 | BZ1 | 3-pin buzzer module, low-level trigger (active-low) | 1 | Beeps |
-| SW1, SW2 | Illuminated normally-open push buttons with 5 V lamps (resistor built in), yellow and red | 2 | Hold and Discard |
+| SW1, SW2 | Illuminated normally-open push buttons with built-in 5 V LEDs (series resistor built in), yellow and red | 2 | Hold and Discard |
 | RI1, RI2 | 4.7 kΩ | 0 or 2 | I2C pull-ups, only if neither I2C board has them |
 | RSD | 10 kΩ | 0 or 1 | Amplifier SD pull-up to 3V3, only if the module has none (see "Amplifier") |
 | C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks |
@@ -46,8 +48,8 @@ The datasheet limits for each active part, with their sources, are in [catalogue
 | Buzzer signal | 0 | `PIN_BUZZER` |
 | Yellow (Hold) switch, other side to G | 3 | `PIN_BTN_HOLD` |
 | Red (Discard) switch, other side to G | 4 | `PIN_BTN_DISCARD` |
-| Yellow lamp MOSFET gate | 1 | `PIN_LAMP_HOLD` |
-| Red lamp MOSFET gate | 7 | `PIN_LAMP_DISCARD` |
+| Yellow LED MOSFET gate | 1 | `PIN_LAMP_HOLD` |
+| Red LED MOSFET gate | 7 | `PIN_LAMP_DISCARD` |
 | Amplifier BCLK | 10 | `PIN_I2S_BCLK` |
 | Amplifier LRC | 20 | `PIN_I2S_LRC` |
 | Amplifier DIN | 21 | `PIN_I2S_DIN` |
@@ -58,6 +60,8 @@ GPIO 21 is harmless, because the amplifier stays silent with no I2S clock.
 
 The buttons use the C3's internal pull-ups, so each switch goes between its pin and G with nothing else.
 
+"Lamp" in the firmware's pin and net names (`PIN_LAMP_HOLD`, `LAMP_HOLD`, `HOLD_LAMP-` and the like) means the LED built into each button; the names stay as the firmware has them.
+
 ## Connectors
 
 Every part off the main board plugs in through a JST-XH connector (2.50 mm pitch), so the board can come out of its
@@ -67,8 +71,8 @@ case without desoldering. The speaker is the one exception: it goes into the amp
 |---|---|---|---|
 | J1 | JST-XH 4-pin | GND 3V3 SDA SCL | OLED (U3) |
 | J2 | JST-XH 4-pin | GND 3V3 SDA SCL | Air sensor (U4, or U5 and U6) |
-| J3 | JST-XH 4-pin | GND SW 5V LAMP- | Yellow button SW1: SW to GPIO 3, LAMP- to Q1's drain |
-| J4 | JST-XH 4-pin | GND SW 5V LAMP- | Red button SW2: SW to GPIO 4, LAMP- to Q2's drain |
+| J3 | JST-XH 4-pin | GND SW 5V LED- | Yellow button SW1: SW to GPIO 3, LED- to Q1's drain |
+| J4 | JST-XH 4-pin | GND SW 5V LED- | Red button SW2: SW to GPIO 4, LED- to Q2's drain |
 | J5 | JST-XH 3-pin | GND 3V3 S | Buzzer BZ1: S to GPIO 0 |
 | J6 | Amplifier screw terminal | + - | Speaker LS1 |
 | J7 | JST-XH 4-pin | GND 3V3 SDA SCL | PN532 reader U7, optional |
@@ -136,9 +140,9 @@ Suggested layout, from the USB end of the board to the far end:
 | USB end, past the first mounting hole | Straddling the channel | U1, the C3 Super Mini, in female headers, its USB-C socket toward the board's short edge so the cable can reach it over the hole |
 | Next to U1 | One half | U2, the MAX98357 module, its pin row in the strips and its screw terminal toward the board's long edge, so the speaker leads stay short |
 | Next to U1 | Other half | J5 (buzzer), then J1 and J2 (I2C) |
-| Middle | One half | The yellow lamp stage: Q1, RG1 and RP1 |
+| Middle | One half | The yellow LED stage: Q1, RG1 and RP1 |
 | Middle | Other half | J3, the yellow button |
-| Far end, before the second mounting hole | One half | The red lamp stage: Q2, RG2 and RP2 |
+| Far end, before the second mounting hole | One half | The red LED stage: Q2, RG2 and RP2 |
 | Far end, before the second mounting hole | Other half | J4, the red button |
 
 Each header pin needs its own strip, and no two nets may share a strip. Check this on the breadboard before
@@ -152,7 +156,7 @@ The case for the intake station is in `enclosures/intake-station/`. The controll
 ## Power
 
 Power comes from the station PC's USB 5 V. The panel's measured total must stay at or under 500 mA, the USB 2.0
-limit, which the bench checklist measures. The C3's 5V pin feeds the 5 V rail: the amplifier and the lamps. The C3's
+limit, which the bench checklist measures. The C3's 5V pin feeds the 5 V rail: the amplifier and the button LEDs. The C3's
 3V3 pin feeds the 3V3 rail: the OLED, the air sensor, the buzzer and, if fitted, the PN532. The PN532 is the largest
 3V3 load: its short form data sheet (Rev. 1.2, Table 1) gives a continuous total current of 91 mA typical and
 140 mA at most. An SSD1306 OLED module draws roughly 10 to 20 mA
@@ -160,17 +164,24 @@ from 3V3, an estimate (UNCONFIRMED) because the chip's datasheet gives no module
 path from USB to its 5V pin are not in the sources found (UNCONFIRMED), so the current and rail check on the bench
 covers both.
 
-## Lamp MOSFET stages
+## LED MOSFET stages
 
-Each lamp is the 5 V lamp built into its button, switched by a BS170 on the low side, because a GPIO pin can't drive
-it directly.
+Each button has a 5 V LED built in, switched by a BS170 on the low side, because a GPIO pin can't drive it directly.
+The button's LED has its own series resistor, so the board adds none: the resistor built into the button is the LED's
+series resistor. Each LED draws 10 to 20 mA.
 
-- Lamp + to 5 V, lamp - to the BS170's drain (D), source (S) to G.
-- Gate (G) to the lamp's GPIO through 220 Ω (RG1, RG2). 100 kΩ (RP1, RP2) from gate to G keeps the lamp dark while
+- LED + to 5 V, LED - to the BS170's drain (D), source (S) to G.
+- Gate (G) to the LED's GPIO through 220 Ω (RG1, RG2). 100 kΩ (RP1, RP2) from gate to G keeps the LED dark while
   the C3 resets.
-- BS170 legs, flat face toward you: D G S, left to right. The look-alike 2N7000 is S G D.
+- BS170 legs, flat face toward you: D G S, left to right.
 
-**Each lamp may draw at most 50 mA.** The C3 drives the gate at only 3.3 V, and the BS170 barely conducts there:
+**2N7000 alternative.** A 2N7000 (TO-92, 60 V, 200 mA) can take the place of either BS170; 200 mA is ample for a
+10 to 20 mA LED. Its pinout is mirrored: flat face toward you, its legs are S G D, left to right. Fit it turned round,
+flat face away from you, so its drain and source land where the BS170's did, or swap the drain and source wires. The
+gate stays in the middle. Keep the same 220 Ω and 100 kΩ, and run the same two checks below.
+
+**Each LED may draw at most 50 mA**, well above its 10 to 20 mA. The C3 drives the gate at only 3.3 V, and the BS170
+barely conducts there:
 
 - Its gate threshold is 0.8 V min, 2.1 V typ and 3 V max, so 3.3 V can be only just above it.
 - Its datasheet gives no RDS(on) below VGS = 10 V. At 10 V it is 1.2 Ω typ and 5 Ω max.
@@ -178,17 +189,17 @@ it directly.
   3.3 V. Both are estimates read from the curves (UNCONFIRMED as figures), not ratings.
 - The 500 mA rating is for full gate drive and doesn't apply here.
 
-The BS170 limits the current itself, so a lamp measured through it can read under 50 mA even when it would draw
-more. Check each lamp in two steps:
+The MOSFET limits the current itself, so an LED measured through it can read under 50 mA even when it would draw
+more. Check each LED in two steps:
 
-1. **Before wiring it to Q1 or Q2,** measure the lamp alone: lamp + to 5 V, lamp - to G, with the meter in series. It
-   must draw 50 mA or less. If it draws more, use a logic-level MOSFET for that lamp, as below.
-2. **In circuit,** with the lamp lit by the station, measure the voltage from the MOSFET's drain to its source. At the
-   flow's ready step both lamps are on. It should be under 0.3 V. A higher reading means the BS170 isn't fully on, so
-   swap it. Use the station to light the lamps, not a manual `L 1 1` over serial: with no further `L` line, the panel's
-   5 s watchdog turns the lamps off.
+1. **Before wiring it to Q1 or Q2,** measure the LED alone: LED + to 5 V, LED - to G, with the meter in series. It
+   must draw 50 mA or less; 10 to 20 mA is expected. If it draws more, use a logic-level MOSFET for that LED, as below.
+2. **In circuit,** with the LED lit by the station, measure the voltage from the MOSFET's drain to its source. At the
+   flow's ready step both LEDs are on. It should be under 0.3 V. A higher reading means the MOSFET isn't fully on, so
+   swap it. Use the station to light the LEDs, not a manual `L 1 1` over serial: with no further `L` line, the panel's
+   5 s watchdog turns the LEDs off.
 
-If a lamp fails either step, replace that BS170 with a logic-level N-MOSFET, for example an AO3400A on a SOT-23 adapter. Pick a part
+If an LED fails either step, replace that BS170 with a logic-level N-MOSFET, for example an AO3400A on a SOT-23 adapter. Pick a part
 whose datasheet gives RDS(on) at a gate voltage of 2.5 V or lower. Keep the same 220 Ω and 100 kΩ. Wire it by the
 adapter's G, D and S labels, not the BS170's leg order, and add it to the catalogue with its datasheet limits.
 
@@ -315,10 +326,10 @@ that, the station keeps the panel's firmware current by itself.
 Build checks, before the panel goes into service:
 
 - [ ] SD on the amplifier measured with nothing connected, and tied to 3V3 through 10 kΩ (RSD) if it sat near 0 V.
-- [ ] Each lamp measured alone, before wiring it to its MOSFET, from 5 V to G with the meter in series: 50 mA or
-  less. If more, use a logic-level MOSFET for it (see "Lamp MOSFET stages").
-- [ ] With both lamps lit by the station (the flow's ready step), drain to source on Q1 and on Q2 is under 0.3 V, and
-  both lamps are fully bright. If higher, swap that BS170 for a logic-level MOSFET.
+- [ ] Each LED measured alone, before wiring it to its MOSFET, from 5 V to G with the meter in series: 50 mA or
+  less (10 to 20 mA expected). If more, use a logic-level MOSFET for it (see "LED MOSFET stages").
+- [ ] With both LEDs lit by the station (the flow's ready step), drain to source on Q1 and on Q2 is under 0.3 V, and
+  both LEDs are fully bright. If higher, swap that MOSFET for a logic-level one.
 - [ ] With the board screwed into the case, the USB-C cable plugs into U1 fully without touching the M3 screw or
   standoff.
 - [ ] Each harness is in its labelled header, pin 1 to pin 1.
@@ -327,14 +338,14 @@ Build checks, before the panel goes into service:
 
 Panel checklist:
 
-- [ ] A cold boot gives `HELLO intake-panel 10 esp32c3`, with both lamps dark during reset.
+- [ ] A cold boot gives `HELLO intake-panel 10 esp32c3`, with both LEDs dark during reset.
 - [ ] The station finds the panel. With U7 fitted, the panel reports `NFC ok` after `HELLO`; without it, `NFC none`.
 - [ ] With U7 fitted, a tag tapped at the panel reader starts one intake.
 - [ ] If the USB reader is also connected, it opens as the station's reader, and the same tag tapped at both
   readers within 2 s starts one intake.
 - [ ] Unplugging and replugging the panel recovers without a service restart.
 - [ ] The station updates the panel from an older C3 firmware by itself.
-- [ ] Each button gives a short and a long press, and each lamp shows all modes.
+- [ ] Each button gives a short and a long press, and each LED shows all modes.
 - [ ] The OLED shows all rows, and "Station offline" 5 s after the service stops.
 - [ ] Air readings appear in `/state` for the fitted sensor.
 - [ ] Beeps play at the flow's frequencies, and a beep during speech leaves the speech intact.
@@ -342,7 +353,7 @@ Panel checklist:
 - [ ] Power-up, reset, phrase start, phrase end and a phrase cut off by a newer one make no thump.
 - [ ] Idle hiss between phrases is not noticeable at working distance.
 - [ ] A full intake runs from scan to save with a real spool.
-- [ ] USB current with both lamps lit and speech at the chosen volume is at or under 500 mA, and the 5 V and 3V3 rails
+- [ ] USB current with both LEDs lit and speech at the chosen volume is at or under 500 mA, and the 5 V and 3V3 rails
   hold. If 5 V sags on speech peaks, fit C1, a 470 µF electrolytic rated 10 V or more, at the module: + to VIN and
   - to GND. Then measure again.
 

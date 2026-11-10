@@ -9,7 +9,7 @@ Firmware and the station code that talks to these devices live in filament-kit, 
 
 | Device | What it is | Status |
 |---|---|---|
-| [`intake-panel`](devices/intake-panel/guide.md) | Buttons, lamps, OLED, speaker and room-air sensor for the intake station | Moving from ESP8266 to ESP32-C3 |
+| [`intake-panel`](devices/intake-panel/guide.md) | Illuminated buttons (LEDs), OLED, speaker and room-air sensor for the intake station | Moving from ESP8266 to ESP32-C3 |
 | [`bench-reader`](devices/bench-reader/guide.md) | NFC reader with a knob that loads a spool into a printer slot | ESP32-C3; case in `enclosures/bench-reader/`, fit unchecked |
 | [`station-nfc`](devices/station-nfc/guide.md) | PN532 NFC reader on the intake station's USB | Bought board, to be documented |
 | [`scale`](devices/scale/guide.md) | DYMO USB postal scale | Bought, to be documented |
