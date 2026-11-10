@@ -1,4 +1,0 @@
-(sym_lib_table
-  (version 7)
-  (lib (name "filament-kit")(type "KiCad")(uri "${KIPRJMOD}/../../../kicad/filament-kit.kicad_sym")(options "")(descr "Shared filament-kit symbols"))
-)
