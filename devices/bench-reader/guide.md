@@ -122,7 +122,8 @@ The through-hole board is `kicad/bench-reader.kicad_pcb`, in the same KiCad proj
 the outline and hole pattern of the ElectroCookie full board, so it fits cases made for that board: M3 holes at
 (7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.625, 8.25), (5.375, 43.75) and (83.625, 43.75), in mm from
 one corner. It has two layers with a GND pour on both sides, 0.25 mm signal tracks and 0.5 mm 3V3 tracks, and every
-part is through-hole.
+part is through-hole. Both copper layers stay clear of each mounting hole out to 3.5 mm (M3) and 2.5 mm (M2) from its
+centre, so a screw head or a metal standoff can't touch the pour.
 
 - Top: [board/board-tht-top.svg](board/board-tht-top.svg). Bottom (mirrored):
   [board/board-tht-bottom.svg](board/board-tht-bottom.svg). Both, with the title block:
@@ -138,7 +139,7 @@ and the GND pour out from under that end.
 ### Connectors
 
 Every module plugs in through a JST-XH header along the bottom edge. The silkscreen names each header's function
-above it and each pin below it, with a dot under pin 1.
+and each pin above it, and puts its reference and a dot under pin 1 below it.
 
 | Ref | Type | Pin order (pin 1 first) | To |
 |---|---|---|---|
