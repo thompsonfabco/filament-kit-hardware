@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <components>
+    <comp ref="U1">
+      <value>ESP32-C3 Super Mini</value>
+      <footprint>filament-kit:ESP32-C3_SuperMini_Socket</footprint>
+    </comp>
+    <comp ref="J1">
+      <value>XH-3</value>
+      <footprint>Connector_JST:JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical</footprint>
+    </comp>
+  </components>
+  <nets>
+    <net code="1" name="/GND" class="Default">
+      <node ref="U1" pin="10" pinfunction="GND_10" pintype="power_in"/>
+      <node ref="J1" pin="1" pintype="passive"/>
+    </net>
+    <net code="2" name="/3V3" class="Default">
+      <node ref="U1" pin="11" pinfunction="3V3_11" pintype="power_out"/>
+      <node ref="J1" pin="2" pintype="passive"/>
+    </net>
+    <net code="3" name="/SIG" class="Default">
+      <node ref="U1" pin="16" pinfunction="GPIO0_16" pintype="bidirectional"/>
+      <node ref="J1" pin="3" pintype="passive"/>
+    </net>
+    <net code="4" name="unconnected-(U1-GPIO7-Pad3)" class="Default">
+      <node ref="U1" pin="3" pinfunction="GPIO7_3" pintype="bidirectional+no_connect"/>
+    </net>
+  </nets>
+</export>

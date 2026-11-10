@@ -61,8 +61,20 @@ jobs:
       # .kicad_pro), then the paper check, which exports each netlist with
       # this container's kicad-cli.
       - run: |
-          for pro in devices/*/kicad/*.kicad_pro; do
+          for pro in devices/*/kicad/*.kicad_pro devices/*/kicad-smt/*.kicad_pro; do
+            [ -e "$pro" ] || continue
             kicad-cli sch erc --exit-code-violations "${pro%.kicad_pro}.kicad_sch"
           done
 
       - run: python3 tools/paper_check.py --kit kit
+
+      # A device's surface-mount board (kicad-smt/) must wire exactly what its
+      # through-hole board (kicad/) wires.
+      - run: |
+          for pro in devices/*/kicad-smt/*.kicad_pro; do
+            [ -e "$pro" ] || continue
+            dev="${pro%/kicad-smt/*}"
+            for tht in "$dev"/kicad/*.kicad_pro; do
+              python3 tools/netlist_parity.py "${tht%.kicad_pro}.kicad_sch" "${pro%.kicad_pro}.kicad_sch"
+            done
+          done
