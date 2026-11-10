@@ -25,6 +25,13 @@ bus-powered from the station computer's USB 5 V.
 2. The listing names I2C, SPI and HSU as interfaces. The USB link uses the board's serial (HSU) path, so check the
    board's silkscreen for any mode switch and set it for HSU, with the board unplugged.
 
+## Mounting
+
+The reader mounts in a slot on top of the Intake Station Camera Stand, on the RFID Arm. The Simple Arm is the same arm
+without the reader slot. The stand's parts are the Base, Column, two Legs, Camera Mount, Simple Arm and RFID Arm.
+
+![Intake Station Camera Stand parts: Base, Column, two Legs, Camera Mount, Simple Arm and RFID Arm](images/camera-stand-parts.webp)
+
 ## Checks
 
 - `lsusb` shows vendor `1a86`, and a `ttyUSB` port appears.

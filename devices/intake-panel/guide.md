@@ -308,6 +308,22 @@ soldering, then note the row numbers you used in the bench results.
 The case for the intake station is in `enclosures/intake-station/`. The controller case's speaker grille is
 100 x 45 mm, the speaker's size. The simple controller variant has no grille.
 
+### Case and mounting
+
+![Intake controller case parts: Main Housing, Base Plate, Sensor Hold-down strap, RFID Reader Cover and Speaker Grille with RFID scanner cutout](images/intake-controller-parts.png)
+
+The full station's case has these parts: the Main Housing, the Base Plate, the Sensor Hold-down strap, the RFID Reader
+Cover and the Speaker Grille with its RFID scanner cutout.
+
+- **Front of the Main Housing:** holes for the Yellow Button, the Buzzer, the OLED Display and the Red Button.
+- **Sides of the Main Housing:** holes for the Climate Sensor and the USB Port.
+- **Inside the Main Housing:** the Speaker mount and the Speaker Grille mount.
+- **PN532 reader (U7):** it mounts on top of the Intake Station. On the full station it sits on the Speaker Grille,
+  under the RFID Reader Cover, and its cable runs down through the grille's cutout to J7. On the simple station it
+  mounts from the inside.
+- **USB reader:** the external USB reader ([station-nfc](../station-nfc/guide.md)) is separate and mounts on the
+  camera stand's RFID Arm.
+
 ## Power
 
 Power comes from the station PC's USB 5 V. The panel's measured total must stay at or under 500 mA, the USB 2.0
