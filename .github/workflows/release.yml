@@ -28,6 +28,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "Enclosure models for $GITHUB_REF_NAME."
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "Enclosure models for $GITHUB_REF_NAME. The models (STEP zips and 3MF print files) are licensed CC BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/ (each zip also carries the LICENSE)."
           fi
           gh release upload "$GITHUB_REF_NAME" dist/* --clobber
