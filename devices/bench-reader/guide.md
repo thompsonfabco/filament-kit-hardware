@@ -18,7 +18,7 @@ parts, wiring, case, first flash and bench checks. The checked data for this dev
 | Ref | Part | Qty | Use |
 |---|---|---|---|
 | U1 | ESP32-C3 Super Mini | 1 | Controller, powered from USB |
-| U2 | PN532 NFC module, set to I2C mode (address 0x24) | 1 | Tag reader |
+| U2 | Elechouse NFC Module V3 (PN532), set to I2C mode (address 0x24) | 1 | Tag reader |
 | U3 | SSD1306 OLED module, 128x64, I2C address 0x3C | 1 | Display |
 | SW1 | Rotary encoder with push switch, KY-040 style (see "Encoder") | 1 | Slot and printer knob |
 | BZ1 | 3-pin buzzer module, low-level trigger (active-low) | 1 | Beeps and speech |
@@ -71,9 +71,11 @@ The PN532 picks its host interface from two pins, I0 and I1. For I2C the chip ne
 PN532 User Manual, Table 7). Modules bring these out as two small switches or jumpers, with a table on the
 silkscreen. Set them to the silkscreen's I2C setting, with the power off.
 
-Which switch carries I0 and which I1 differs between module makers, so the switch positions for this build are
-UNCONFIRMED. Follow the module's own silkscreen, not a table from another board. A module left in HSU (UART) mode
-gives no answer at 0x24, and the serial log at boot says `PN532 not found`.
+On the Elechouse NFC Module V3 the two-position switch is labelled 1 and 2, with a silkscreen table for HSU, I2C and
+SPI. Switch 1 is I0 (its row reads HSU 0, I2C 1, SPI 0). For I2C set switch 1 ON and switch 2 OFF; for HSU set both
+OFF. Switch 2 is I1, so its OFF setting for I2C follows Table 7 (I2C needs I1 low).
+Follow the module's own silkscreen, not a table from another board. A module left in HSU (UART) mode gives no answer
+at 0x24, and the serial log at boot says `PN532 not found`.
 
 ### Encoder
 
@@ -104,7 +106,7 @@ rows run top to bottom with the USB connector at the top.
 | Module | Pin order | Notes |
 |---|---|---|
 | U1 ESP32-C3 Super Mini | Right row: 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0. Left row: GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 | Top view, from the board |
-| U2 PN532 | GND VCC SDA SCL on the I2C header; IRQ and RSTO on the side header | UNCONFIRMED: a common module's order, not photographed |
+| U2 PN532 | GND VCC SDA SCL on the 4-pin header, component side; the back labels the same holes GND VCC TXD RXD. Side header: SCK MISO MOSI SS VCC GND IRQ RSTO | Confirmed from the board; IRQ and RSTO stay unconnected |
 | U3 OLED | GND VCC SCL SDA | The panel's module order; this module UNCONFIRMED |
 | SW1 encoder | KY-040 style: CLK DT SW + GND | UNCONFIRMED: a common module's order, not photographed; see "Encoder" |
 | BZ1 buzzer | VCC S GND | The panel's module order; this module UNCONFIRMED |
@@ -138,7 +140,7 @@ After that, updates go over Wi-Fi: publish a signed build, then hold the knob 4 
 
 ## Bench checklist
 
-- [ ] The PN532's mode switches are at the I2C setting on its silkscreen. The serial log at boot shows SDA and SCL
+- [ ] The PN532's mode switches are at the I2C setting on its silkscreen (switch 1 ON, switch 2 OFF). The serial log at boot shows SDA and SCL
   idle at 1 with no pull, and `PN532 found`.
 - [ ] The OLED shows the printer name, the slot label and the slot's contents.
 - [ ] **Tap:** a known tag sends to the shown slot. The screen, beeps and speech show the result (`set`: two short
@@ -164,8 +166,6 @@ Record the result below, and the firmware build, date and measured current in `c
 
 Values marked UNCONFIRMED in this guide, the catalogue or the schematic, and the photos that would settle them:
 
-- **PN532 module pin order** (I2C header and the IRQ and RSTO pins): a photo of the module's pin labels, both sides.
-- **PN532 mode switch positions for I2C:** a photo of the switches and the silkscreen table.
 - **PN532 supply:** which pin VCC feeds on this module (VBAT direct or through a regulator), from a photo of the
   module's back.
 - **Encoder type and pin order:** a photo of the encoder or module and its wiring, to show whether the push switch

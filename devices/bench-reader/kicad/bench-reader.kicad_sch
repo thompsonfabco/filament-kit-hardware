@@ -519,7 +519,7 @@
 					)
 				)
 			)
-			(property "Pin_order" "UNCONFIRMED (not photographed): common module I2C header left to right GND VCC SDA SCL; IRQ and RSTO on the side header. Pin numbers here are symbol numbers, not header positions"
+			(property "Pin_order" "Elechouse NFC Module V3, confirmed from the board: 4-pin header left to right GND VCC SDA SCL on the component side (the back labels the same holes GND VCC TXD RXD); side header SCK MISO MOSI SS VCC GND IRQ RSTO; IRQ and RSTO stay unconnected. Pin numbers here are symbol numbers, not header positions"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -530,7 +530,7 @@
 					)
 				)
 			)
-			(property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). Set the module's mode switches to its silkscreen's I2C setting"
+			(property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). On the Elechouse NFC Module V3 switch 1 is I0 (its silkscreen reads I2C 1): set switch 1 ON and switch 2 OFF. Switch 2's silkscreen row is not legible, so its OFF setting comes from Table 7"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -1758,10 +1758,10 @@
     (property "Imax_basis" "operating maximum, Table 1; Table 13 gives no supply-current limit (PN532/C1 short form data sheet Rev. 1.2; vmax is the Table 13 VBAT limit, 6.0 V). The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under the VBAT 6.0 V limit, and under the PVDD 4 V limit if VCC also reaches PVDD" (at 167.64 76.2 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
-    (property "Pin_order" "UNCONFIRMED (not photographed): common module I2C header left to right GND VCC SDA SCL; IRQ and RSTO on the side header, both unconnected" (at 167.64 76.2 0)
+    (property "Pin_order" "Elechouse NFC Module V3, confirmed from the board: 4-pin header left to right GND VCC SDA SCL on the component side (the back labels the same holes GND VCC TXD RXD); side header SCK MISO MOSI SS VCC GND IRQ RSTO; IRQ and RSTO both unconnected" (at 167.64 76.2 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
-    (property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). Set the module's mode switches to its silkscreen's I2C setting; switch positions UNCONFIRMED" (at 167.64 76.2 0)
+    (property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). On the Elechouse NFC Module V3 switch 1 is I0 (its silkscreen reads I2C 1): set switch 1 ON and switch 2 OFF. Switch 2's silkscreen row is not legible, so its OFF setting comes from Table 7" (at 167.64 76.2 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
 		(pin "1"
@@ -2442,7 +2442,7 @@
 		(at 177.79999999999998 83.82000000000001)
 		(uuid "979084d9-5cd6-42e3-bd63-de153a322fcc")
 	)
-	(text "Bench reader. Firmware: reader/src/main.cpp (filament-kit).\nPower: the C3's USB 5 V; every module on the C3's 3V3 pin.\nI2C: PN532 (0x24, mode switches set to I2C) and OLED (0x3C) share SDA/SCL.\nPN532 IRQ and RSTO stay unconnected (firmware polls over I2C).\nEncoder: A/B to GPIO 3/4 with internal pull-ups, common C to GND;\npush switch S1-S2 between GPIO 1 and 3V3, internal pull-down.\nBuzzer module is active-low: firmware idles GPIO 0 high.\nUNCONFIRMED: PN532 and encoder module pin orders, PN532 supply pin, encoder type."
+	(text "Bench reader. Firmware: reader/src/main.cpp (filament-kit).\nPower: the C3's USB 5 V; every module on the C3's 3V3 pin.\nI2C: Elechouse NFC Module V3 PN532 (0x24, switch 1 ON, switch 2 OFF) and OLED (0x3C) share SDA/SCL.\nPN532 IRQ and RSTO stay unconnected (firmware polls over I2C).\nEncoder: A/B to GPIO 3/4 with internal pull-ups, common C to GND;\npush switch S1-S2 between GPIO 1 and 3V3, internal pull-down.\nBuzzer module is active-low: firmware idles GPIO 0 high.\nUNCONFIRMED: encoder module pin order, PN532 supply pin, encoder type."
 		(exclude_from_sim no)
 		(at 30.48 152.4 0)
 		(effects

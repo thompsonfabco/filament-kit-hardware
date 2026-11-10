@@ -30,6 +30,9 @@ This is the setting on common boards, but it is UNCONFIRMED for yours: check the
 because boards label the positions differently. Set the switches with the board unpowered. Record the positions in
 the bench results.
 
+On an Elechouse NFC Module V3 the HSU setting is both switches OFF. The back of its 4-pin header is labelled GND VCC
+TXD RXD: TXD goes to the adapter's RX, and RXD goes to the adapter's TX.
+
 ## Wiring to the adapter
 
 TX and RX cross: the adapter's TX goes to the board's RX, and the adapter's RX goes to the board's TX.
