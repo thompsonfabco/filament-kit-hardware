@@ -253,21 +253,36 @@ def check_netlist(cat: Catalogue, bad, netlist: Path) -> dict:
             bad(f"{const} is GPIO {pins[const]} in the schematic but not in the catalogue")
         elif cat_gpio[const] != pins[const]:
             bad(f"{const} is GPIO {cat_gpio[const]} in the catalogue but {pins[const]} in the schematic")
+    sch_active = set()
     for ref, props in sorted(parts.items()):
         prefix = re.match(r"[A-Za-z]*", ref).group(0)
         cp = cat_parts.get(ref)
-        if prefix in ACTIVE_PREFIXES or "vmax" in props:
+        # A schematic part is active when its ref prefix is an active one or it carries a Vmax property.
+        is_active = prefix in ACTIVE_PREFIXES or "vmax" in props
+        if is_active:
+            sch_active.add(ref)
             for a in ACTIVE_ATTRS:
                 # "~" is KiCad's empty-datasheet placeholder; "UNCONFIRMED" stays allowed.
                 if props.get(a, "") in ("", "~"):
                     bad(f"active part {ref} lacks {a}")
-                if cp is None or not getattr(cp, a):
-                    bad(f"active part {ref} is in the schematic but the catalogue lacks {a} for it")
         if cp is not None:
+            if is_active != (cp.kind == "active"):
+                bad(f"part {ref} is {cp.kind or 'unmarked'} in the catalogue but "
+                    f"{'active' if is_active else 'passive'} in the schematic")
             for a in ACTIVE_ATTRS:
                 have = getattr(cp, a)
                 if have and props.get(a, "") not in ("", "~") and have != props[a]:
                     bad(f"part {ref} {a} is {have} in the catalogue but {props[a]} in the schematic")
+    # Every catalogue active part needs ratings and a schematic counterpart. A range ref such as J1-J5
+    # has no counterpart, so it is exempt only while passive.
+    for part in cat.parts:
+        if part.kind != "active":
+            continue
+        if part.ref not in parts:
+            bad(f"active part {part.ref} is in the catalogue but not in the schematic")
+        for a in ACTIVE_ATTRS:
+            if not getattr(part, a):
+                bad(f"active part {part.ref}: the catalogue lacks {a}")
     return pins
 
 
@@ -280,6 +295,10 @@ def check_device(dir: Path, kit, export=export_netlist) -> list:
 
     def bad(msg):
         out.append(f"{cat.id}: {msg}")
+
+    refs = [p.ref for p in cat.parts]
+    for ref in sorted({r for r in refs if refs.count(r) > 1}):
+        bad(f"duplicate part ref {ref} in the catalogue")
 
     schematics = kicad_projects(dir)
     if schematics:

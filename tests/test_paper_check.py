@@ -341,3 +341,41 @@ def test_bad_kicad_cli_path_exits_2(ktree, monkeypatch, capsys):
     code = pc.main(["--kit", str(ktree[1]), "--devices", str(ktree[0].parent)])
     assert code == 2
     assert "KICAD_CLI" in capsys.readouterr().err
+
+
+def test_netlist_part_kind_flip_reported(ktree):
+    edit(ktree[0] / "catalogue.xml", 'name="10k" kind="passive"', 'name="10k" kind="active"')
+    edit(ktree[0] / "catalogue.xml", 'name="BS170" kind="active"', 'name="BS170" kind="passive"')
+    problems = kcheck(ktree)
+    assert any("R1" in p and "active in the catalogue but passive" in p for p in problems)
+    assert any("Q1" in p and "passive in the catalogue but active" in p for p in problems)
+
+
+def test_catalogue_only_active_part_reported(ktree):
+    edit(ktree[0] / "catalogue.xml", '    <part ref="R1"',
+         '    <part ref="U9" name="ghost" kind="active" qty="1" use="none"/>\n    <part ref="R1"')
+    problems = kcheck(ktree)
+    assert any("U9" in p and "not in the schematic" in p for p in problems)
+    assert any("U9" in p and "lacks vmax" in p for p in problems)
+
+
+def test_catalogue_active_range_ref_reported(ktree):
+    edit(ktree[0] / "catalogue.xml", 'ref="R1"', 'ref="R1-R2"')
+    assert kcheck(ktree) == []
+    edit(ktree[0] / "catalogue.xml", 'name="10k" kind="passive"', 'name="10k" kind="active"')
+    assert any("R1-R2" in p and "not in the schematic" in p for p in kcheck(ktree))
+
+
+def test_duplicate_catalogue_ref_reported(ktree):
+    edit(ktree[0] / "catalogue.xml", '    <part ref="R1"',
+         '    <part ref="Q1" name="bogus" kind="passive" qty="1" use="none"/>\n    <part ref="R1"')
+    assert any("duplicate part ref Q1" in p for p in kcheck(ktree))
+
+
+def test_duplicate_catalogue_ref_reported_without_schematic(tree):
+    path = dev(tree) / "catalogue.xml"
+    text = path.read_text()
+    i = text.index("<part ")
+    j = text.index("/>", i) + 2
+    path.write_text(text[:j] + text[i:j] + text[j:])
+    assert any("duplicate part ref" in p for p in pc.check_device(dev(tree), tree[1]))

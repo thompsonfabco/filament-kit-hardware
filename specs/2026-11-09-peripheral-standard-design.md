@@ -298,7 +298,7 @@ The owner decided on 2026-11-09 to keep the hardware designs in KiCad 10.
   `LAMP_HOLD`.
 - Parts carry their datasheet limits as symbol properties: `Vmax`, `Imax`, `Imax_basis` and `Datasheet`.
 - `catalogue.xml` keeps what a schematic can't hold: the link, firmware paths, mounting, measured power and bench
-  results. Its `pins` and `parts` sections are dropped once the paper check reads them from the schematic.
+  results. Its `pins` and `parts` sections stay, and the paper check compares them with the netlist.
 - `images/schematic.svg` and `schematic.pdf` are exports made with `kicad-cli`. They replace the hand-drawn
   `wiring.svg`.
 
@@ -310,6 +310,10 @@ The owner decided on 2026-11-09 to keep the hardware designs in KiCad 10.
   - every GPIO net against the firmware constant;
   - that no strapping or USB pin is used;
   - that every active part has `Vmax`, `Imax` and `Datasheet`;
+  - that the catalogue agrees with the netlist: pin GPIOs, `vmax`, `imax` and `datasheet` per part, and part kind
+    (a part is active when its ref prefix is an active one or it carries `Vmax`);
+  - that every active catalogue part has a schematic counterpart and ratings, and no catalogue ref is duplicated;
+  - that a `usb-serial` device with firmware declares a HELLO on its `<link>`;
   - that the guide's pin table matches.
 - **CI:** both checks run in a `kicad/kicad:10.0` container next to the existing jobs.
 - **Fit:** dropped on 2026-11-09 by the owner: no proto-board layout, so no STEP export of a placed board.
