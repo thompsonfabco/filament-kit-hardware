@@ -1,8 +1,4 @@
 Comment,Designator,Footprint,LCSC
-"JST XH 4-pin vertical, B4B-XH-A","J1,J2,J3,J4,J7",JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical,C144395
-"JST XH 3-pin vertical, B3B-XH-A",J5,JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical,C144394
 "AO3400A N-MOSFET, SOT-23, in place of the BS170","Q1,Q2",SOT-23_BS170_Pinout,C20917
 220 ohm 1% 0603,"RG1,RG2",R_0603_1608Metric,C22962
 100k 1% 0603,"RP1,RP2",R_0603_1608Metric,C25803
-"Female header 1x8, 2.54 mm, socket for U1","U1A,U1B",PinSocket_1x08_P2.54mm_Vertical,C27438
-"Female header 1x7, 2.54 mm, socket for U2",U2,PinSocket_1x07_P2.54mm_Vertical,C225504

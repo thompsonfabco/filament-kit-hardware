@@ -21,7 +21,7 @@ covers the quantity shown.
 | BZ1 | Buzzer module | 1 | DIYables passive piezo buzzer module, 5 pieces | [B0DHGP95K4](https://www.amazon.com/dp/B0DHGP95K4) | yes | The listing describes a passive piezo module for 3.3 to 5 V and does not give its pin count or say whether a transistor drives it. The guide's part is a 3-pin low-level-trigger module (VCC, I/O, GND; I/O low = on): check the module before fitting it |
 | SW1, SW2 | Illuminated push button, normally open, built-in 5 V LED, yellow and red | 2 | EG Starts 30 mm arcade LED push buttons, 5 V, one each of 5 colours | [B01N11BDX9](https://www.amazon.com/dp/B01N11BDX9) | yes | Use the yellow and the red. Each 5 V LED has its resistor built in, and that is the LED's series resistor: the board adds none. The listing states only "5V", so measure each LED as the bench checklist says (10 to 20 mA expected, 50 mA at most). Needs a 30 mm mounting hole |
 | XU1 | Female pin header, 2.54 mm, cut to 8 pins | 2 | Haobase 40-pin female headers, 10 pieces | [B01DLX6RSQ](https://www.amazon.com/dp/B01DLX6RSQ) | yes | Cut two 8-pin lengths; a cut loses one pin |
-| XU2 | Female pin header, 2.54 mm, cut to 7 pins | 0 or 1 | Same listing as XU1 | [B01DLX6RSQ](https://www.amazon.com/dp/B01DLX6RSQ) | suggested | Through-hole board only: the socket for U2 (the JLCPCB board comes with it fitted). Cut one 7-pin length from the same strips |
+| XU2 | Female pin header, 2.54 mm, cut to 7 pins | 0 or 1 | Same listing as XU1 | [B01DLX6RSQ](https://www.amazon.com/dp/B01DLX6RSQ) | suggested | Custom boards only: the socket for U2. Cut one 7-pin length from the same strips |
 | J1-J5, J7 | JST-XH headers and plugs: 4-pin x5 (J7 only if U7 is fitted), 3-pin x1 | 5 or 6 | CQRobot JST-XH kit, 2-, 3- and 4-pin headers, housings and crimp terminals | [B0731NHS9R](https://www.amazon.com/dp/B0731NHS9R) | yes | The listing says 2.54 mm; JST-XH is 2.50 mm pitch and fits a 0.1" board. Crimping needs a crimp tool, not listed here |
 | J1-J5, J7 (alternative) | JST-XH headers and plugs | 5 or 6 | GeeBat 460-piece JST-XH kit, 2- to 6-pin | [B01MCZE2HM](https://www.amazon.com/dp/B01MCZE2HM) | yes | Same use as the row above |
 | F1, F2 | Wire ferrules for the speaker leads | 2 | cnaodun 800-piece insulated ferrule kit, AWG 22-7 | [B09WMNTVSH](https://www.amazon.com/dp/B09WMNTVSH) | suggested | Use the smallest size that grips the speaker wire; needs a ferrule crimper |
@@ -32,20 +32,16 @@ covers the quantity shown.
 
 The parts JLCPCB fits to the JLCPCB assembly board (see "Board" in the [build guide](guide.md)), with their LCSC
 part numbers; search a number in JLCPCB's parts library to see the part. The same rows are in
-[board/jlcpcb-bom-smt.csv](board/jlcpcb-bom-smt.csv). The board replaces the PCB, Q1, Q2, the resistors and the
-headers soldered to it (XU1, XU2, J1-J5, J7) in the list above; the modules, U1, the buttons, the speaker and the
-harness parts still come from that list. Stock is JLCPCB's figure from its October 2026 parts list and changes daily;
-check it when ordering.
+[board/jlcpcb-bom-smt.csv](board/jlcpcb-bom-smt.csv). JLCPCB fits surface-mount parts only. The board replaces the
+PCB, Q1, Q2 and the resistors in the list above; the end user fits the through-hole headers (XU1, XU2, J1-J5, J7)
+from that list, and the modules, U1, the buttons, the speaker and the harness parts still come from it too. Stock is
+JLCPCB's figure from its October 2026 parts list and changes daily; check it when ordering.
 
 | Ref | Part | Qty | Maker part number | LCSC | Type | Stock (Oct 2026) |
 |---|---|---|---|---|---|---|
 | Q1, Q2 | AO3400A N-MOSFET, SOT-23, logic-level, in place of the BS170 (see "LED MOSFET stages" in the guide) | 2 | Alpha & Omega AO3400A | C20917 | Basic | 757,862 |
 | RG1, RG2 | 220 Ω resistor, 1%, 0603 | 2 | UNI-ROYAL 0603WAF2200T5E | C22962 | Basic | 2,050,208 |
 | RP1, RP2 | 100 kΩ resistor, 1%, 0603 | 2 | UNI-ROYAL 0603WAF1003T5E | C25803 | Basic | 19,748,113 |
-| J1-J4, J7 | JST-XH header, 4-pin, vertical, through-hole | 5 | JST B4B-XH-A(LF)(SN) | C144395 | Extended | 478,892 |
-| J5 | JST-XH header, 3-pin, vertical, through-hole | 1 | JST B3B-XH-A(LF)(SN) | C144394 | Extended | 152,263 |
-| U1A, U1B | Female header, 1x8, 2.54 mm, through-hole, socket for U1 | 2 | BOOMELE 2.54-1*8P | C27438 | Extended | 104,134 |
-| U2 | Female header, 1x7, 2.54 mm, through-hole, socket for U2 | 1 | CJT A2541HWV-7P | C225504 | Extended | 1,819 |
 | PCB | Intake panel JLCPCB assembly board, 89 x 52 mm, 2 layers, 1.6 mm, from [gerbers-smt.zip](board/gerbers-smt.zip) | 1 | - | - | - | - |
 
 JLCPCB leaves the parts below off the board, as the through-hole board does (see "Parts fitted only when needed" in
@@ -61,3 +57,13 @@ if a bench check calls for it.
 
 The 2N7002 row is not a bench-check part: it is a stand-in for the AO3400A in the BOM, for when the AO3400A is out of
 stock. It is not specified at a 3.3 V gate, so each LED then needs both checks in the guide's "LED MOSFET stages" section.
+
+The end user fits the through-hole headers on the JLCPCB board as on the through-hole board, from the main list. The
+same headers are in JLCPCB's parts library, to order with the board as loose parts if you prefer:
+
+| Ref | Part | Qty | Maker part number | LCSC | Type | Stock (Oct 2026) |
+|---|---|---|---|---|---|---|
+| J1-J4, J7 | JST-XH header, 4-pin, vertical, through-hole | 4 or 5 | JST B4B-XH-A(LF)(SN) | C144395 | Extended | 478,892 |
+| J5 | JST-XH header, 3-pin, vertical, through-hole | 1 | JST B3B-XH-A(LF)(SN) | C144394 | Extended | 152,263 |
+| XU1 | Female header, 1x8, 2.54 mm, through-hole, socket for U1 | 2 | BOOMELE 2.54-1*8P | C27438 | Extended | 104,134 |
+| XU2 | Female header, 1x7, 2.54 mm, through-hole, socket for U2 | 1 | CJT A2541HWV-7P | C225504 | Extended | 1,819 |

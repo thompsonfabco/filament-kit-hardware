@@ -105,14 +105,16 @@ The board comes in two variants with the same outline, holes, connectors and pin
   board and solder the parts yourself.
 - **JLCPCB assembly**: `kicad-smt/intake-panel-smt.kicad_pcb`, a second KiCad project whose schematic is a copy of the
   first with surface-mount footprints and an LCSC part number on each board part. JLCPCB makes the board and fits the
-  parts (see "Ordering the JLCPCB board").
+  surface-mount parts (see "Ordering the JLCPCB board"); the end user fits the through-hole headers.
 
 Without either, the panel is built on the ElectroCookie board as "Board and layout" describes.
 
 Both wire exactly the same pins together; `python tools/netlist_parity.py` with the two schematics checks that. On
 the JLCPCB board the resistors are 0603, Q1 and Q2 are AO3400A in SOT-23 (see "LED MOSFET stages") and C1 is a
 6.3 mm surface-mount electrolytic. The JST-XH headers and the female headers for U1 and U2 stay through-hole on both,
-so the two boards take the same plugs and modules; JLCPCB solders those by hand.
+so the two boards take the same plugs and modules. On either board the end user fits the JST-XH headers (J1-J5, J7)
+and the female headers for U1 and U2 (XU1, XU2): JLCPCB fits surface-mount parts only, and hand-fitting these is
+cheaper than paying JLCPCB to solder them.
 
 The board is 89 x 52 mm, the outline and hole pattern of the ElectroCookie full board, so it fits cases made for that
 board: M3 holes at (7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.625, 8.25), (5.375, 43.75) and
@@ -191,34 +193,32 @@ solder by hand later.
 ### Ordering the JLCPCB board
 
 1. On jlcpcb.com, upload `board/gerbers-smt.zip` as the board, 2 layers, 1.6 mm; JLCPCB reads the size from the Gerbers.
-2. Turn on assembly, top side, and pick the assembly service that fits through-hole parts as well as surface-mount
-   ones.
+2. Turn on assembly, top side. Every part in the BOM is surface-mount, so the economic assembly service is enough.
 3. Upload `board/jlcpcb-bom-smt.csv` as the BOM and `board/jlcpcb-cpl-smt.csv` as the pick-and-place (CPL) file.
 4. Check each part in the placement preview against the silkscreen:
    - Q1 and Q2: the single drain pin points down, toward J3 and J4, and the gate and source pins point up. Correct the
      rotation in the preview if a part shows otherwise.
-   - Every JST-XH header has its pin 1 over the silkscreen dot below it. J7, J1, J2, J3 and J4 have pin 1 on the
-     left; J5 has its pin 1 on the right (it is turned round). A header turned the wrong way reverses the plug's pin
-     order: on J3 and J4 it puts 5 V on the button's switch wire and GND on the LED's - wire, and pressing a lit button
-     then shorts 5 V to GND through the MOSFET, so correct the rotation in the preview if a pin 1 sits away from its dot.
-   - The rows marked U1A and U1B are the two female headers for U1, which share one footprint on the board; the row
-     marked U2 is U2's 1x7 female header.
 
-The positions are each part's centre, or the centre of its pins for the through-hole headers. The BOM lists only
-the parts JLCPCB solders: RSD1, RI1, RI2 and C1 stay off (see "Parts fitted only when needed"). U1 and U2 are modules
-that plug into their headers and are never soldered. The off-board modules and the harnesses are not part of the
-order; buy them from the main parts list. Every part number and its stock are in the [bill of materials](bom.md).
+The positions are each part's centre. The BOM lists only the surface-mount parts JLCPCB solders: RSD1, RI1, RI2 and
+C1 stay off (see "Parts fitted only when needed"), and the through-hole JST-XH headers and the female headers for U1
+and U2 are left for the end user (see "Assembly order"). U1 and U2 are modules that plug into their headers and are
+never soldered. The off-board modules and the harnesses are not part of the order; buy them from the main parts
+list. Every part number and its stock are in the [bill of materials](bom.md).
 
 ### Assembly order
 
-For the JLCPCB board, the resistors, Q1, Q2 and every header come fitted: start at step 5.
+For the JLCPCB board, the resistors, Q1 and Q2 come fitted: start at step 3.
 
 1. Solder the resistors that are always fitted: RG1 and RG2 (220 Ω), RP1 and RP2 (100 kΩ).
 2. Solder Q1 and Q2 (BS170), each with its flat face matching its outline on the silkscreen. A 2N7000 has its pins
    mirrored: turn it round against the outline (see "LED MOSFET stages").
 3. Solder the two 1x8 female headers for U1. Plug U1 into them while soldering so the rows stay square and 15.24 mm
    apart, then take U1 out. Solder the 1x7 female header for U2 the same way, with U2 plugged in.
-4. Solder J1-J5, and J7 if the PN532 reader is fitted, each with its body over its outline on the silkscreen.
+4. Solder J1-J5, and J7 if the PN532 reader is fitted, each with its body over its outline on the silkscreen and its
+   pin 1 over the silkscreen dot. J7, J1, J2, J3 and J4 have pin 1 on the left; J5 has its pin 1 on the right (it is
+   turned round). A header turned the wrong way reverses the plug's pin order: on J3 and J4 it puts 5 V on the
+   button's switch wire and GND on the LED's - wire, and pressing a lit button then shorts 5 V to GND through the
+   MOSFET.
 5. Before fitting anything else, check with a meter that 3V3, 5V and GND are not shorted to each other (on J5: pin 1
    GND, pin 2 3V3; on J3: pin 3 5V).
 6. Plug in U1 with its USB-C socket at the board edge, and U2 with its terminal toward the left edge. Run "First
