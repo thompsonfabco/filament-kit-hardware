@@ -199,7 +199,7 @@ One file per device, `devices/<device>/catalogue.xml` in this repository. For th
 ```
 
 The `firmware` paths are paths inside `filament-kit`. Bought devices use the same file with no `pins` or `firmware`,
-and with `<tested model="..."/>` entries. These files are documentation and are not shipped to installed systems.
+and with `<example model="..." source="..."/>` entries for models named in the kit's docs (a bench test is recorded in the guide's Bench results table, not here). These files are documentation and are not shipped to installed systems.
 
 ## Validation
 

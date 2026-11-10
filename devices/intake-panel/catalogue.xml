@@ -79,7 +79,10 @@
           UNCONFIRMED as an absolute maximum. The datasheet gives no current limit"
           i_typ_basis="typical current while measuring (Table 2, 3.3 V)"
           datasheet="https://cdn-learn.adafruit.com/assets/assets/000/091/676/original/AHT20-datasheet-2020-4-16.pdf"/>
-    <part ref="BZ1" name="3-pin buzzer module, low-level trigger (active-low), VCC I/O GND" kind="passive" qty="1" use="beeps, VCC to 3V3, I/O low = on"/>
+    <part ref="BZ1" name="3-pin buzzer module, low-level trigger (active-low), VCC I/O GND" kind="active" qty="1" use="beeps, VCC to 3V3, I/O low = on"
+          vmax="UNCONFIRMED" imax="UNCONFIRMED"
+          imax_basis="no datasheet for the 3-wire active-low buzzer module (low-level trigger)"
+          datasheet="UNCONFIRMED"/>
     <part ref="SW1" name="illuminated push button, normally open, 5 V lamp with built-in resistor, yellow"
           kind="passive" qty="1" use="Hold; its lamp at most 50 mA through Q1"/>
     <part ref="SW2" name="illuminated push button, normally open, 5 V lamp with built-in resistor, red"
