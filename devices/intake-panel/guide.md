@@ -128,10 +128,13 @@ What sits on the board, and why:
   antenna; the board keeps tracks, vias and the GND pour out from under that end.
 - **U2, the amplifier**, plugs into a 1x7 female header (XU2) beside U1, with its pin row facing U1 and its screw
   terminal toward the left short edge. It sits on the board because its I2S lines run straight to U1's pins, it
-  draws the panel's largest 5 V current over a short 0.8 mm track, and the speaker is wired to its own screw terminal,
-  so it needs no harness. The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one,
+  draws the panel's largest 5 V current, and the speaker is wired to its own screw terminal, so it needs no harness.
+  Its VIN takes 5 V straight from U1's 5V pin over a 22.5 mm, 0.8 mm track along the top edge, on the bottom layer. The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one,
   before you plug U2 in. The module's outline and the terminal position are UNCONFIRMED; nothing else on the board
   sits under it.
+- **C1**, the optional 470 µF capacitor, has its pads below U1, by the "C1" mark: there is no room for an 8 mm can
+  beside U2's header. Its + pad reaches U2's VIN over 45.5 mm of 0.8 mm track (down the left side of U1 and up to VIN),
+  so on this board it steadies the 5 V rail as a whole rather than sitting at the module.
 - **Off the board**: the OLED, the air sensor, the buzzer, the two buttons and the PN532 reader mount on the case,
   where each one has to be seen, pressed, heard or reach the room air or the tags, so each one plugs into a JST-XH
   header, as the schematic shows.
@@ -447,8 +450,8 @@ Panel checklist:
 - [ ] Idle hiss between phrases is not noticeable at working distance.
 - [ ] A full intake runs from scan to save with a real spool.
 - [ ] USB current with both LEDs lit and speech at the chosen volume is at or under 500 mA, and the 5 V and 3V3 rails
-  hold. If 5 V sags on speech peaks, fit C1, a 470 µF electrolytic rated 10 V or more, at the module: + to VIN and
-  - to GND. Then measure again.
+  hold. If 5 V sags on speech peaks, fit C1, a 470 µF electrolytic rated 10 V or more: on the prototype board at the
+  module, + to VIN and - to GND; on a custom board in its C1 pads (see "Board"). Then measure again.
 
 Record the result below, and the firmware version, date and measured current in `catalogue.xml` (`validated` and
 `power`).

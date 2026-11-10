@@ -100,7 +100,8 @@
     <part ref="RSD" name="10 kohm" kind="passive" qty="0-1"
           use="amplifier SD pull-up to 3V3, only if the module has none"/>
     <part ref="C1" name="470 uF electrolytic, 10 V or more" kind="passive" qty="0-1"
-          use="across U2's VIN (+) and GND (-) at the module, only if 5 V sags on speech peaks"/>
+          use="across the 5 V rail (+) and GND (-), only if 5 V sags on speech peaks: at U2's VIN on the prototype board;
+          below U1 on the through-hole board, 45.5 mm of track from U2's VIN"/>
     <part ref="XU1" name="female pin header, 2.54 mm, 8-pin" kind="passive" qty="2"
           use="socket for U1, so its USB-C plug clears the M3 screw head"/>
     <part ref="XU2" name="female pin header, 2.54 mm, 7-pin" kind="passive" qty="0-1"
