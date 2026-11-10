@@ -62,3 +62,32 @@ def test_new_folder_picked_up(enc, tmp_path):
     (enc / "fresh" / "a.step").write_text("a")
     assets = mr.build(enc, "v1", tmp_path / "out")
     assert "fresh-step-v1.zip" in names(assets)
+
+
+@pytest.fixture
+def groups(tmp_path):
+    root = tmp_path / "enclosures"
+    for d in ("intake-station-base", "intake-station-lid", "intake-station", "bench-reader", "intake-stationery"):
+        (root / d).mkdir(parents=True)
+        (root / d / "a.step").write_text(d)
+    (root / "LICENSE").write_text("licence text")
+    return root
+
+
+def test_only_group(groups, tmp_path):
+    assets = mr.build(groups, "v1.0", tmp_path / "out", only="intake-station")
+    assert names(assets) == [
+        "intake-station-base-step-v1.0.zip",
+        "intake-station-lid-step-v1.0.zip",
+        "intake-station-step-v1.0.zip",
+    ]
+
+
+def test_only_single(groups, tmp_path):
+    assets = mr.build(groups, "v1.0", tmp_path / "out", only="bench-reader")
+    assert names(assets) == ["bench-reader-step-v1.0.zip"]
+
+
+def test_only_no_match_fails(groups, tmp_path):
+    with pytest.raises(SystemExit, match="no enclosure folders match"):
+        mr.build(groups, "v1.0", tmp_path / "out", only="nope")

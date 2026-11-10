@@ -27,6 +27,8 @@ Each release (a `vX.Y.Z` tag) carries the enclosure models from `enclosures/`:
 
 Names are lowercase with hyphens. `python -I tools/make_release.py --version vX.Y.Z --out <dir>` builds the same files locally.
 
+A tag `<group>-vX.Y` (for example `intake-station-v1.0`) releases one group: only the enclosure folders named `<group>` or `<group>-...` are built, and the version in the file names is the `vX.Y` part. Locally, add `--only <group>`.
+
 ## License
 
 Everything outside `enclosures/` is licensed under GPL-3.0-only (see `LICENSE`), (c) 2026 thompsonfabco.

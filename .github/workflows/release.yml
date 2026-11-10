@@ -2,7 +2,7 @@ name: release
 
 on:
   push:
-    tags: ['v*']
+    tags: ['v*', '*-v*']
 
 permissions:
   contents: write
@@ -21,13 +21,32 @@ jobs:
       # patterns. That is expected.
       - run: python -I tools/check_owner_data.py
 
-      - run: python -I tools/make_release.py --version "$GITHUB_REF_NAME" --out dist
+      # Tag forms: vX.Y.Z (everything) or <group>-vX.Y (one group).
+      - name: Parse the tag
+        run: |
+          if [[ "$GITHUB_REF_NAME" =~ ^(.+)-(v[0-9].*)$ ]]; then
+            group="${BASH_REMATCH[1]}"
+            version="${BASH_REMATCH[2]}"
+            label="${group//-/ }"
+            title="${label^} models $version"
+          else
+            group=""
+            version="$GITHUB_REF_NAME"
+            title="$version"
+          fi
+          {
+            echo "GROUP=$group"
+            echo "VERSION=$version"
+            echo "TITLE=$title"
+          } >> "$GITHUB_ENV"
+
+      - run: python -I tools/make_release.py --version "$VERSION" ${GROUP:+--only "$GROUP"} --out dist
 
       - name: Create or update the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "Enclosure models for $GITHUB_REF_NAME. The models (STEP zips and 3MF print files) are licensed CC BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/ (each zip also carries the LICENSE)."
+            gh release create "$GITHUB_REF_NAME" --title "$TITLE" --notes "Enclosure models for $TITLE. The models (STEP zips and 3MF print files) are licensed CC BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/ (each zip also carries the LICENSE)."
           fi
           gh release upload "$GITHUB_REF_NAME" dist/* --clobber

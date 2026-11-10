@@ -13,6 +13,9 @@ Asset names are lowercase slugs with the version at the end:
   <3mf-name-slug>-<version>.3mf
 
     python -I tools/make_release.py --version vX.Y.Z --out <dir>
+    python -I tools/make_release.py --version vX.Y --only <group> --out <dir>
+
+--only keeps the devices whose slug is the group or starts with "<group>-".
 """
 import argparse
 import re
@@ -48,15 +51,21 @@ def write_zip(path, folder, step_files, license_file):
             z.writestr(info, entries[name].read_bytes())
 
 
-def build(enclosures, version, out):
+def build(enclosures, version, out, only=None):
     """Write the assets into out and return their paths."""
     license_file = enclosures / "LICENSE"
     if not license_file.is_file():
         raise SystemExit(f"missing {license_file}")
     out.mkdir(parents=True, exist_ok=True)
+    devices = [
+        (slug("-".join(d.relative_to(enclosures).parts)), d) for d in find_devices(enclosures)
+    ]
+    if only:
+        devices = [(n, d) for n, d in devices if n == only or n.startswith(only + "-")]
+        if not devices:
+            raise SystemExit(f"no enclosure folders match group {only!r}")
     assets = []
-    for device in find_devices(enclosures):
-        name = slug("-".join(device.relative_to(enclosures).parts))
+    for name, device in devices:
         steps = sorted(
             f for f in device.iterdir() if f.is_file() and f.suffix.lower() in (".step", ".stp")
         )
@@ -77,9 +86,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--version", required=True)
     ap.add_argument("--out", required=True, type=Path)
+    ap.add_argument("--only", help="build only this group of enclosure folders")
     ap.add_argument("--enclosures", type=Path, default=ROOT / "enclosures")
     args = ap.parse_args()
-    for asset in build(args.enclosures, args.version, args.out):
+    for asset in build(args.enclosures, args.version, args.out, args.only):
         print(asset)
 
 
