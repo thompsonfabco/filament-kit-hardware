@@ -325,6 +325,17 @@ The case for the intake station is in `enclosures/intake-station/`. The controll
 The full station's case has these parts: the Main Housing, the Base Plate, the Sensor Hold-down strap, the RFID Reader
 Cover and the Speaker Grille with its RFID scanner cutout.
 
+The part names above are the names used in this guide. The STEP files in `enclosures/intake-station/` are named
+differently:
+
+| Part | Controller folder file | Simple Controller folder file |
+|---|---|---|
+| Main Housing | `intake station controller-Body.step` | `intake station controller simple-Body.step` |
+| Base Plate | `intake station controller-Base.step` | `intake station controller simple-Base.step` |
+| Sensor Hold-down strap / Sensor Clip | `intake station controller-Sensor Strap.step` | `intake station controller simple-Sensor Strap.step` |
+| RFID Reader Cover / Scanner Clip | `intake station controller-Scanner Cover.step` | `intake station controller simple-RFID strap.step` |
+| Speaker Grille | `intake station controller-Speaker Grille.step` | (none) |
+
 - **Front of the Main Housing:** holes for the Yellow Button, the Buzzer, the OLED Display and the Red Button.
 - **Sides of the Main Housing:** holes for the Climate Sensor and the USB Port.
 - **Inside the Main Housing:** the Speaker mount and the Speaker Grille mount.
@@ -444,12 +455,19 @@ the module and try again. If the swap fixes it, note it in the bench results.
 ### MAX98357A chip on the JLCPCB board
 
 The JLCPCB board carries the MAX98357A chip in place of the module: MAX98357AETE+T, TQFN-16 3 x 3 mm, LCSC C910544
-(a JLCPCB extended part). With its parts and J6 it takes well under half the module's area. It costs less in cash per
-order: for a 2-board order the chip, C2, C3, RSD2 and the extended-part fee come to about $5.90 to $7.44, against $7.99
-for the module, which is sold only in 3-packs. Averaged per board it is not cheaper at 2 boards, about $2.95 to $3.72
-a board against $2.66 per module, and it comes out cheaper from about 3 or 4 boards up, as the one fee spreads over
-more boards. JLCPCB may also bill a minimum placement quantity for a part, so check the quote. The through-hole board
-keeps the module. The schematic for the JLCPCB board names
+(a JLCPCB extended part). With its parts and J6 it takes well under half the module's area. It is kept because it is
+smaller, and it costs less in cash at every size shown below except exactly 3 boards. The chip figures are the chip
+at $1.33 each, C2, C3 and RSD2 (20-piece minimums, about $1.70) and one $3 extended-part fee per order; the module
+is $7.99 per 3-pack. JLCPCB may also bill a minimum placement quantity for a part, so check the quote.
+
+| Boards | Chip, cash | Module, cash |
+|---|---|---|
+| 2 | $5.90-7.44 | $7.99 (one pack) |
+| 3 | about $8.69 | $7.99 |
+| 4 | about $10.02 | $15.98 (two packs) |
+| 5 | about $11.35 | $15.98 |
+
+The through-hole board keeps the module. The schematic for the JLCPCB board names
 the chip U2 with the circuit from the chip's datasheet (Maxim 19-6779 Rev 7, the [catalogue's](catalogue.xml) U2
 datasheet), set as the module is set:
 

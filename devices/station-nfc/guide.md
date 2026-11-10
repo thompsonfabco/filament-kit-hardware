@@ -28,7 +28,17 @@ bus-powered from the station computer's USB 5 V.
 ## Mounting
 
 The reader mounts in a slot on top of the Intake Station Camera Stand, on the RFID Arm. The Simple Arm is the same arm
-without the reader slot. The stand's parts are the Base, Column, two Legs, Camera Mount, Simple Arm and RFID Arm.
+without the reader slot. The stand's parts are the Base, Column, two Legs, Camera Mount, Simple Arm and RFID Arm (the files are in `enclosures/intake-station/Camera Stand/`):
+
+| Part | File |
+|---|---|
+| Base | `intake station camera stand-Base.step` |
+| Column | `intake station camera stand-Column.step` |
+| Legs (two) | `intake station camera stand-Legs.step` |
+| Camera Mount | `intake station camera stand-Mount.step` |
+| Simple Arm | `intake station camera stand-Arm.step` |
+| RFID Arm | `intake station camera stand with reader-Arm.step` |
+| Lens (reader version) | `intake station camera stand with reader-Lens.step` |
 
 ![Intake Station Camera Stand parts: Base, Column, two Legs, Camera Mount, Simple Arm and RFID Arm](images/camera-stand-parts.webp)
 
