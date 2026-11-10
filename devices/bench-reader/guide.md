@@ -10,7 +10,8 @@ The reader's server API, firmware build and update steps are in the kit's
 parts, wiring, case, first flash and bench checks. The checked data for this device is in
 [catalogue.xml](catalogue.xml), the parts to buy, with Amazon listing links, are in [bom.md](bom.md), and the
 circuit is the KiCad schematic in [kicad/](kicad/), exported as
-[images/schematic.svg](images/schematic.svg) and [images/schematic.pdf](images/schematic.pdf).
+[images/schematic.svg](images/schematic.svg) and [images/schematic.pdf](images/schematic.pdf). The reader can be built
+on its own through-hole board (see "Board") or wired module to module (see "Wiring").
 
 ![Bench reader schematic](images/schematic.svg)
 
@@ -23,6 +24,9 @@ circuit is the KiCad schematic in [kicad/](kicad/), exported as
 | U3 | SSD1306 OLED module, 128x64, I2C address 0x3C | 1 | Display |
 | SW1 | EC11 rotary encoder with push switch, 5 pins, switch legs separate from the common (see "Encoder") | 1 | Slot and printer knob |
 | BZ1 | 3-pin buzzer module, low-level trigger (active-low) | 1 | Beeps and speech |
+| J1-J4 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x2 (J1, J2), 5-pin x1 (J3), 3-pin x1 (J4) | 4 | Off-board connectors, board build only |
+| U1 socket | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1 on the board, board build only |
+| PCB | Bench reader through-hole board, 89 x 52 mm, 2 layers | 1 | Board build only |
 
 The datasheet limits for each active part, with their sources, are in [catalogue.xml](catalogue.xml) and in the
 schematic's symbol properties.
@@ -63,8 +67,8 @@ modules). At boot the firmware prints the idle levels of SDA and SCL to the USB 
 must read 1 in the "no pull" pair. It then lists every I2C address that answers: 0x24 is the PN532 and 0x3C the
 OLED.
 
-The reader is wired module to module, with no main board. The standard's JST-XH connector rule applies when the
-reader is next rebuilt; nothing is rewired for it alone.
+This is the no-board build: each module is wired straight to the C3. The board build (see "Board") makes the same
+connections through JST-XH headers.
 
 ### PN532 I2C mode
 
@@ -111,6 +115,55 @@ rows run top to bottom with the USB connector at the top.
 | U3 OLED | GND VCC SCL SDA | The panel's module order; this module UNCONFIRMED |
 | SW1 encoder | EC11: A C B on the three-pin side, switch S1 S2 on the two-pin side | The usual EC11 layout; check the part. C to G, S1 to GPIO 1, S2 to 3V3; see "Encoder" |
 | BZ1 buzzer | VCC S GND | The panel's module order; this module UNCONFIRMED |
+
+## Board
+
+The through-hole board is `kicad/bench-reader.kicad_pcb`, in the same KiCad project as the schematic. It is 89 x 52 mm,
+the outline and hole pattern of the ElectroCookie full board, so it fits cases made for that board: M3 holes at
+(7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.625, 8.25), (5.375, 43.75) and (83.625, 43.75), in mm from
+one corner. It has two layers with a GND pour on both sides, 0.25 mm signal tracks and 0.5 mm 3V3 tracks, and every
+part is through-hole.
+
+- Top: [board/board-tht-top.svg](board/board-tht-top.svg). Bottom (mirrored):
+  [board/board-tht-bottom.svg](board/board-tht-bottom.svg). Both, with the title block:
+  [board/board-tht.pdf](board/board-tht.pdf).
+- 3D model: [board/board-tht.step](board/board-tht.step).
+- Fabrication: [board/gerbers-tht.zip](board/gerbers-tht.zip) holds the Gerbers and the drill files (plated and
+  unplated holes in separate files). Any board maker that takes Gerbers can make it: 2 layers, 1.6 mm.
+
+U1 plugs into two 1x8 female headers and is never soldered to the board. Its USB-C end sits at the top edge, so a
+cable reaches it in a case. The end of U1 away from the USB socket carries its antenna; the board keeps tracks, vias
+and the GND pour out from under that end.
+
+### Connectors
+
+Every module plugs in through a JST-XH header along the bottom edge. The silkscreen names each header's function
+above it and each pin below it, with a dot under pin 1.
+
+| Ref | Type | Pin order (pin 1 first) | To |
+|---|---|---|---|
+| J1 | JST-XH 4-pin | GND 3V3 SDA SCL | PN532 (U2): GND, VCC, SDA, SCL |
+| J2 | JST-XH 4-pin | GND 3V3 SDA SCL | OLED (U3): GND, VCC, SDA, SCL |
+| J3 | JST-XH 5-pin | A B C SW 3V3 | Encoder (SW1): A, B, C, S1, S2 |
+| J4 | JST-XH 3-pin | GND 3V3 S | Buzzer (BZ1): GND, VCC, S |
+
+J1 is turned round on the board, so its pin 1 (GND) is its right-hand pin; follow the silkscreen, not the position.
+J1 and J2 carry the same signals, so their plugs are interchangeable. J3 is the only 5-pin header, so the encoder plug
+can't go into an I2C header.
+
+Make each harness with the header's pin order at the plug, and wire the other end to the module by name, not by
+position: the OLED's own order is GND VCC SCL SDA and the buzzer's is VCC S GND (see "Module pin orders"). On the
+encoder, A and B go to its A and B pins, C to its common, SW to switch leg S1 and 3V3 to switch leg S2.
+
+### Assembly order
+
+1. Solder the two 1x8 female headers. Plug U1 into them while soldering so the rows stay square and 15.24 mm apart,
+   then take U1 out.
+2. Solder J1-J4, each with its body over its outline on the silkscreen.
+3. Before fitting anything, check with a meter that 3V3 and GND are not shorted (J4 pins 1 and 2).
+4. Crimp the four harnesses (see "Connectors").
+5. Plug U1 in with its USB-C socket at the board edge, by the "USB-C" mark.
+6. Plug in each harness, pin 1 to pin 1, then work through the bench checklist.
 
 ## Power
 
@@ -173,7 +226,10 @@ Values marked UNCONFIRMED in this guide, the catalogue or the schematic, and the
 - **ESP32-C3 limits:** the per-pin GPIO current limit, the Super Mini's 3V3 regulator rating and its 5 V pin path.
 - **SSD1306 and buzzer module current:** no datasheet limit; the OLED's 10 to 20 mA is an estimate.
 - **Case fit** against this build.
+- **Antenna position** on the Super Mini: the board's keep-out assumes the antenna is at the end away from the
+  USB socket.
 
 ## ERC notes
 
-`kicad-cli sch erc` reports 0 errors and 0 warnings.
+`kicad-cli sch erc` reports 0 errors and 0 warnings. `kicad-cli pcb drc --schematic-parity` on the board reports 0
+violations, 0 unconnected items and 0 parity issues.

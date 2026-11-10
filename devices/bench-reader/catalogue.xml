@@ -45,8 +45,14 @@
           vmax="UNCONFIRMED" imax="UNCONFIRMED" datasheet="UNCONFIRMED"
           imax_basis="no datasheet for the 3-pin buzzer module"/>
   </parts>
-  <!-- The reader is wired module to module. The standard's JST-XH rule applies when it is next rebuilt. -->
-  <connectors/>
+  <!-- Headers on the through-hole board (kicad/bench-reader.kicad_pcb). Without the board the reader is wired module
+       to module, as the guide shows. U1 sits on two 1x8 female headers and is never soldered. -->
+  <connectors>
+    <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="PN532 reader (U2)"/>
+    <connector ref="J2" type="JST-XH-4" order="GND 3V3 SDA SCL" to="OLED (U3)"/>
+    <connector ref="J3" type="JST-XH-5" order="A B C SW 3V3" to="encoder SW1: A to GPIO 3, B to GPIO 4, C to GND, SW (switch S1) to GPIO 1, 3V3 to switch S2"/>
+    <connector ref="J4" type="JST-XH-3" order="GND 3V3 S" to="buzzer BZ1: S to GPIO 0"/>
+  </connectors>
   <power measured_ma=""/>
   <validated firmware="" date=""/>
 </device>

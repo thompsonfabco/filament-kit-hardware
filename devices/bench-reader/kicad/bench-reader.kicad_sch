@@ -1551,6 +1551,654 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Connector_Generic:Conn_01x04"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x04"
+				(at 0 -7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Conn_01x04_1_1"
+				(rectangle
+					(start -1.27 3.81)
+					(end 1.27 -6.35)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -4.953)
+					(end 0 -5.207)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -5.08 0)
+					(length 3.81)
+					(name "Pin_4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Connector_Generic:Conn_01x05"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x05"
+				(at 0 -7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x05, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Conn_01x05_1_1"
+				(rectangle
+					(start -1.27 6.35)
+					(end 1.27 -6.35)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 5.207)
+					(end 0 4.953)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -4.953)
+					(end 0 -5.207)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 5.08 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -5.08 0)
+					(length 3.81)
+					(name "Pin_5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Connector_Generic:Conn_01x03"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x03"
+				(at 0 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Conn_01x03_1_1"
+				(rectangle
+					(start -1.27 3.81)
+					(end 1.27 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(symbol
 		(lib_id "filament-kit:ESP32-C3_SuperMini")
@@ -1583,7 +2231,7 @@
 				)
 			)
 		)
-		(property "Footprint" "filament-kit:ESP32-C3_SuperMini"
+		(property "Footprint" "filament-kit:ESP32-C3_SuperMini_Socket"
 			(at 101.6 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -1616,18 +2264,42 @@
 				)
 			)
 		)
-    (property "Vmax" "3.6" (at 101.6 101.6 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Imax" "1.0" (at 101.6 101.6 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Imax_pin" "UNCONFIRMED" (at 101.6 101.6 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Imax_basis" "ESP32-C3 chip: vmax is the absolute maximum on the input power pins; imax is the absolute maximum cumulative IO output current, all pins (a whole-chip total, unlike the per-part imax elsewhere); the per-pin limit is UNCONFIRMED. The board's 3V3 regulator rating and 5 V pin path are UNCONFIRMED" (at 101.6 101.6 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
+		(property "Vmax" "3.6"
+			(at 101.6 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Imax" "1.0"
+			(at 101.6 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Imax_pin" "UNCONFIRMED"
+			(at 101.6 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Imax_basis" "ESP32-C3 chip: vmax is the absolute maximum on the input power pins; imax is the absolute maximum cumulative IO output current, all pins (a whole-chip total, unlike the per-part imax elsewhere); the per-pin limit is UNCONFIRMED. The board's 3V3 regulator rating and 5 V pin path are UNCONFIRMED"
+			(at 101.6 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "a8774696-9d32-40ae-a140-7322473ab5ce")
 		)
@@ -1692,7 +2364,7 @@
 		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "b23b669d-3dba-4118-9f37-ca7a1a37efa1")
@@ -1749,21 +2421,51 @@
 				)
 			)
 		)
-    (property "Vmax" "6.0" (at 167.64 76.2 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Imax" "0.14" (at 167.64 76.2 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Imax_basis" "operating maximum, Table 1; Table 13 gives no supply-current limit (PN532/C1 short form data sheet Rev. 1.2; vmax is the Table 13 VBAT limit, 6.0 V). The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under the VBAT 6.0 V limit, and under the PVDD 4 V limit if VCC also reaches PVDD" (at 167.64 76.2 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Pin_order" "Elechouse NFC Module V3, confirmed from the board: 4-pin header left to right GND VCC SDA SCL on the component side (the back labels the same holes GND VCC TXD RXD); side header SCK MISO MOSI SS VCC GND IRQ RSTO; IRQ and RSTO both unconnected" (at 167.64 76.2 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). On the Elechouse NFC Module V3 switch 1 is I0 (its silkscreen reads I2C 1): set switch 1 ON and switch 2 OFF. Switch 2's silkscreen row is not legible, so its OFF setting comes from Table 7" (at 167.64 76.2 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
+		(property "Vmax" "6.0"
+			(at 167.64 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Imax" "0.14"
+			(at 167.64 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Imax_basis" "operating maximum, Table 1; Table 13 gives no supply-current limit (PN532/C1 short form data sheet Rev. 1.2; vmax is the Table 13 VBAT limit, 6.0 V). The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under the VBAT 6.0 V limit, and under the PVDD 4 V limit if VCC also reaches PVDD"
+			(at 167.64 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Pin_order" "Elechouse NFC Module V3, confirmed from the board: 4-pin header left to right GND VCC SDA SCL on the component side (the back labels the same holes GND VCC TXD RXD); side header SCK MISO MOSI SS VCC GND IRQ RSTO; IRQ and RSTO both unconnected"
+			(at 167.64 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). On the Elechouse NFC Module V3 switch 1 is I0 (its silkscreen reads I2C 1): set switch 1 ON and switch 2 OFF. Switch 2's silkscreen row is not legible, so its OFF setting comes from Table 7"
+			(at 167.64 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "09c39e2a-b194-471d-b69c-14d7e936dfb1")
 		)
@@ -1798,7 +2500,7 @@
 		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "c5d8465d-93a4-45aa-87f0-509d3dd8ca94")
@@ -1855,18 +2557,42 @@
 				)
 			)
 		)
-    (property "Vmax" "4" (at 167.64 106.68 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Imax" "UNCONFIRMED" (at 167.64 106.68 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Imax_basis" "SSD1306: vmax is the VDD absolute maximum. The datasheet gives no current limit" (at 167.64 106.68 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Pin_order" "pins 1-4 left to right: GND VCC SCL SDA, as the panel's OLED (owner-confirmed on the panel's module); the reader's own module UNCONFIRMED" (at 167.64 106.68 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
+		(property "Vmax" "4"
+			(at 167.64 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Imax" "UNCONFIRMED"
+			(at 167.64 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Imax_basis" "SSD1306: vmax is the VDD absolute maximum. The datasheet gives no current limit"
+			(at 167.64 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Pin_order" "pins 1-4 left to right: GND VCC SCL SDA, as the panel's OLED (owner-confirmed on the panel's module); the reader's own module UNCONFIRMED"
+			(at 167.64 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "be71cf7c-0b5b-4516-b255-2399cf0b5082")
 		)
@@ -1895,7 +2621,7 @@
 		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "1af5916a-e1a3-486d-90d6-e9a85cf748df")
@@ -1952,18 +2678,42 @@
 				)
 			)
 		)
-    (property "Vmax" "UNCONFIRMED" (at 167.64 129.54 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Imax" "UNCONFIRMED" (at 167.64 129.54 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Imax_basis" "no datasheet for the 3-pin buzzer module" (at 167.64 129.54 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Pin_order" "VCC S GND, low-level trigger, as the panel's module (owner-confirmed on the panel); the reader's own module UNCONFIRMED" (at 167.64 129.54 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
+		(property "Vmax" "UNCONFIRMED"
+			(at 167.64 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Imax" "UNCONFIRMED"
+			(at 167.64 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Imax_basis" "no datasheet for the 3-pin buzzer module"
+			(at 167.64 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Pin_order" "VCC S GND, low-level trigger, as the panel's module (owner-confirmed on the panel); the reader's own module UNCONFIRMED"
+			(at 167.64 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "2c1b2d38-850b-4f51-b2c1-8ea24877a555")
 		)
@@ -1989,7 +2739,7 @@
 		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "71c91a3a-8da0-4dd2-b84a-367b674511cf")
@@ -2046,12 +2796,24 @@
 				)
 			)
 		)
-    (property "Pin_order" "EC11: A C B on the three-pin side, switch S1 S2 on the two-pin side (the usual EC11 layout). Bare encoder with a separate push switch: A to GPIO 3, B to GPIO 4, common C to GND, switch S1 to GPIO 1 and S2 to 3V3. A stock KY-040 module ties its switch to its GND pin, which this firmware (switch to 3V3, internal pull-down) cannot read" (at 45.72 104.14 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
-    (property "Type" "EC11 rotary encoder with push switch, 5 pins, switch legs separate from the common, wired switch-to-3V3" (at 45.72 104.14 0)
-      (effects (font (size 1.27 1.27)) (hide yes))
-    )
+		(property "Pin_order" "EC11: A C B on the three-pin side, switch S1 S2 on the two-pin side (the usual EC11 layout). Bare encoder with a separate push switch: A to GPIO 3, B to GPIO 4, common C to GND, switch S1 to GPIO 1 and S2 to 3V3. A stock KY-040 module ties its switch to its GND pin, which this firmware (switch to 3V3, internal pull-down) cannot read"
+			(at 45.72 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "EC11 rotary encoder with push switch, 5 pins, switch legs separate from the common, wired switch-to-3V3"
+			(at 45.72 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "A"
 			(uuid "f654e39e-79de-4925-9204-174c14c6d5de")
 		)
@@ -2442,7 +3204,7 @@
 		(at 177.79999999999998 83.82000000000001)
 		(uuid "979084d9-5cd6-42e3-bd63-de153a322fcc")
 	)
-	(text "Bench reader. Firmware: reader/src/main.cpp (filament-kit).\nPower: the C3's USB 5 V; every module on the C3's 3V3 pin.\nI2C: Elechouse NFC Module V3 PN532 (0x24, switch 1 ON, switch 2 OFF) and OLED (0x3C) share SDA/SCL.\nPN532 IRQ and RSTO stay unconnected (firmware polls over I2C).\nEncoder: A/B to GPIO 3/4 with internal pull-ups, common C to GND;\npush switch S1-S2 between GPIO 1 and 3V3, internal pull-down.\nBuzzer module is active-low: firmware idles GPIO 0 high.\nUNCONFIRMED: PN532 supply pin."
+	(text "Bench reader. Firmware: reader/src/main.cpp (filament-kit).\nPower: the C3's USB 5 V; every module on the C3's 3V3 pin.\nI2C: Elechouse NFC Module V3 PN532 (0x24, switch 1 ON, switch 2 OFF) and OLED (0x3C) share SDA/SCL.\nPN532 IRQ and RSTO stay unconnected (firmware polls over I2C).\nEncoder: A/B to GPIO 3/4 with internal pull-ups, common C to GND;\npush switch S1-S2 between GPIO 1 and 3V3, internal pull-down.\nBuzzer module is active-low: firmware idles GPIO 0 high.\nUNCONFIRMED: PN532 supply pin.\nBoard: U1 plugs into two 1x8 female headers. Off-board modules plug into JST-XH headers:\nJ1 PN532 and J2 OLED (GND 3V3 SDA SCL), J3 encoder (A B C SW 3V3), J4 buzzer (GND 3V3 S).\nU2, U3, SW1 and BZ1 are off the board (not placed on the PCB)."
 		(exclude_from_sim no)
 		(at 30.48 152.4 0)
 		(effects
@@ -2452,6 +3214,506 @@
 			(justify left bottom)
 		)
 		(uuid "cbb6bcc3-ee52-4fd1-b96e-3029c0f937c9")
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x04")
+		(at 226.06 73.66 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "7e6e3d09-5310-4b2c-bca9-e97d9b8e6588")
+		(property "Reference" "J1"
+			(at 226.06 68.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "PN532 XH-4"
+			(at 226.06 81.28 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical"
+			(at 226.06 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 226.06 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 226.06 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "817f2c7a-446c-4df4-9ba8-e6205c8b5cf1")
+		)
+		(pin "2"
+			(uuid "2e9b15ec-1308-4cf3-a04d-94e156ea7b3d")
+		)
+		(pin "3"
+			(uuid "7bc4da1d-a834-4cdc-adb9-fd3880b1f120")
+		)
+		(pin "4"
+			(uuid "00fa6f99-b93d-4cc6-be47-3ec051076aa4")
+		)
+		(instances
+			(project "bench-reader"
+				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
+					(reference "J1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x04")
+		(at 226.06 91.44 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "11d300ab-ca3c-4976-a5d2-e200d114ebc5")
+		(property "Reference" "J2"
+			(at 226.06 86.36 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "OLED XH-4"
+			(at 226.06 99.06 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical"
+			(at 226.06 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 226.06 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 226.06 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "76f580e5-7a92-439c-8b1e-686ff484c568")
+		)
+		(pin "2"
+			(uuid "6e29be9f-3c11-43cf-b795-ce5b47ca6fcf")
+		)
+		(pin "3"
+			(uuid "288e47f4-96c1-4735-8cff-2f117eee3c6c")
+		)
+		(pin "4"
+			(uuid "a4483e69-49a6-4e4d-8494-a37bf6beb599")
+		)
+		(instances
+			(project "bench-reader"
+				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
+					(reference "J2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x05")
+		(at 226.06 109.22 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "53b54d8b-26d0-424f-983b-b14e187e9d85")
+		(property "Reference" "J3"
+			(at 226.06 101.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Encoder XH-5"
+			(at 226.06 116.84 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B5B-XH-A_1x05_P2.50mm_Vertical"
+			(at 226.06 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 226.06 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x05, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 226.06 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d22254fe-948f-458a-ad98-a6f4ff962d8a")
+		)
+		(pin "2"
+			(uuid "f7bc68d4-7ca3-4ce2-9838-42cd68a89075")
+		)
+		(pin "3"
+			(uuid "189454f7-510b-4804-b1d0-47ac72168b47")
+		)
+		(pin "4"
+			(uuid "76c33d63-4aea-4c6b-9e9c-c2697690104a")
+		)
+		(pin "5"
+			(uuid "c9226173-4324-4431-ade1-14e6c8e6beae")
+		)
+		(instances
+			(project "bench-reader"
+				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
+					(reference "J3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x03")
+		(at 226.06 129.54 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "0341126b-95b5-48e2-9fa5-725111394df1")
+		(property "Reference" "J4"
+			(at 226.06 124.46 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Buzzer XH-3"
+			(at 226.06 134.62 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical"
+			(at 226.06 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 226.06 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 226.06 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "7767350c-7889-4725-8c19-9d1b498da6af")
+		)
+		(pin "2"
+			(uuid "6fbee2d1-cb0c-4c0e-bf66-828be9d35e42")
+		)
+		(pin "3"
+			(uuid "eb8a79c6-6ad3-4e6f-9ae2-33c98faf92c5")
+		)
+		(instances
+			(project "bench-reader"
+				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
+					(reference "J4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(label "GND"
+		(at 220.98 71.11999999999999 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "d289bb8a-0d9c-4fff-a284-4dd35e999e8d")
+	)
+	(label "3V3"
+		(at 220.98 73.66 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "25213fde-e602-4e20-b5b6-eac8a9916cb3")
+	)
+	(label "SDA"
+		(at 220.98 76.2 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "50849559-4c28-4102-ab78-400da4863f81")
+	)
+	(label "SCL"
+		(at 220.98 78.74 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "50340ee3-8a95-40c0-907f-33169a7bc062")
+	)
+	(label "GND"
+		(at 220.98 88.89999999999999 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "6f7d994d-4be7-4af6-b8ea-a917504ceab2")
+	)
+	(label "3V3"
+		(at 220.98 91.44 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "92e902c7-6278-40f8-865e-b0d934ce2016")
+	)
+	(label "SDA"
+		(at 220.98 93.98 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "2f2ce979-0ecc-486c-95a5-5d0960e323b8")
+	)
+	(label "SCL"
+		(at 220.98 96.52 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "4a301506-5b00-442e-a87b-4ad5b3298dfd")
+	)
+	(label "ENC_CLK"
+		(at 220.98 104.14 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "4c45ab94-b19c-4fc6-a7c8-eb5d4dc9c0b0")
+	)
+	(label "ENC_DT"
+		(at 220.98 106.67999999999999 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "fe932ccb-a54c-4146-845d-7d2f61de497a")
+	)
+	(label "GND"
+		(at 220.98 109.22 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "85f6dc91-fe22-4a06-ad19-3970be2bc588")
+	)
+	(label "ENC_SW"
+		(at 220.98 111.76 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "ded0a901-7c52-4dc7-8473-7a623b32f389")
+	)
+	(label "3V3"
+		(at 220.98 114.3 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "8067eb57-8eee-4de3-be0b-93aaaf7f8a20")
+	)
+	(label "GND"
+		(at 220.98 126.99999999999999 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "9fe3d059-8446-4107-b86e-a6d5206b387e")
+	)
+	(label "3V3"
+		(at 220.98 129.54 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "e700f05d-2d23-4b7a-88b6-b3a7f1084b84")
+	)
+	(label "BUZZER"
+		(at 220.98 132.07999999999998 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "3497fa6c-a497-4403-8824-20a36e4254c7")
 	)
 	(sheet_instances
 		(path "/"
