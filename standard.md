@@ -70,8 +70,10 @@ applies when a device is next built or rebuilt. Nothing is rewired for it alone.
 - This is a common size: a half-size (30-column) solderable breadboard sold by many brands. Boards with the same
   89 x 52 mm outline and hole pattern also fit the enclosures and match the custom boards' outline, for example:
   - EPLZON 3.5 x 2.05 in solderable breadboard, green ([B0D5XFJLFM](https://www.amazon.com/dp/B0D5XFJLFM); its listing
-    gives M3 3.2 mm and M2 2.2 mm mounting holes) and its other colour ([B0D5XN11DS](https://www.amazon.com/dp/B0D5XN11DS));
-  - USRJXY solderable prototype board, black ([B0CT5T29YB](https://www.amazon.com/dp/B0CT5T29YB)).
+    gives M3 3.2 mm and M2 2.2 mm mounting holes), also sold in blue ([B0D5XN11DS](https://www.amazon.com/dp/B0D5XN11DS))
+    and other colours;
+  - USRJXY 3.5 x 2.05 in prototype board, black ([B0CT5T29YB](https://www.amazon.com/dp/B0CT5T29YB)); its listing gives
+    the size but not the hole positions.
 
   Check any other brand's two M3 holes against the table above before buying: 73.5 mm apart on the long centreline.
 - Enclosures are designed around that board. They hold it on its two M3 holes with standoffs; the M2 holes are spare.
