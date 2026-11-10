@@ -109,3 +109,11 @@ def test_encrypted_archive_is_reported(tmp_path):
     data[data.index(b"PK\x01\x02") + 8] |= 1  # central directory entry
     p.write_bytes(bytes(data))
     assert cod.scan_file(p, "a.zip", []) == ["a.zip: cannot read archive"]
+
+
+def test_directory_in_listed_paths_is_skipped(tmp_path, monkeypatch, capsys):
+    (tmp_path / "folder").mkdir()
+    monkeypatch.setattr(cod, "ROOT", tmp_path)
+    monkeypatch.setattr(cod, "tracked", lambda: [tmp_path / "folder"])
+    assert cod.main() == 0
+    assert "0 finding(s)" in capsys.readouterr().out

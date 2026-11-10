@@ -109,7 +109,7 @@ def main() -> int:
     words = read_terms()
     found = 0
     for path in tracked():
-        if path == TERMS:
+        if path == TERMS or not path.is_file():  # directories (e.g. an untracked folder) are not read
             continue
         for line in scan_file(path, path.relative_to(ROOT).as_posix(), words):
             print(line)

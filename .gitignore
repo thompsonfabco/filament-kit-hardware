@@ -19,3 +19,5 @@ __pycache__/
 *-backups/
 fp-info-cache
 _autosave-*
+.history/
+~*.lck
