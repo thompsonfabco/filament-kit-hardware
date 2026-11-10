@@ -18,6 +18,15 @@ Firmware and the station code that talks to these devices live in filament-kit, 
 The peripheral standard is in [standard.md](standard.md). The current design is
 [specs/2026-11-09-peripheral-standard-design.md](specs/2026-11-09-peripheral-standard-design.md).
 
+## Releases
+
+Each release (a `vX.Y.Z` tag) carries the enclosure models from `enclosures/`:
+
+- one zip per enclosure folder, `<device>-step-<version>.zip`, holding that folder's STEP files and the model `LICENSE` inside a folder named `<device>`;
+- each print file (3MF), copied out as `<name>-<version>.3mf`.
+
+Names are lowercase with hyphens. `python -I tools/make_release.py --version vX.Y.Z --out <dir>` builds the same files locally.
+
 ## License
 
 Everything outside `enclosures/` is licensed under GPL-3.0-only (see `LICENSE`), (c) 2026 thompsonfabco.

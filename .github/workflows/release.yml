@@ -1,0 +1,33 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # CI has no tools/owner-terms.local, so the scan checks only the generic
+      # patterns. That is expected.
+      - run: python -I tools/check_owner_data.py
+
+      - run: python -I tools/make_release.py --version "$GITHUB_REF_NAME" --out dist
+
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "Enclosure models for $GITHUB_REF_NAME."
+          fi
+          gh release upload "$GITHUB_REF_NAME" dist/* --clobber
