@@ -3650,7 +3650,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Intake panel, ESP32-C3. Net names on U1 GPIOs are the firmware pin constants without PIN_.\nU2 OUT+ / OUT- are the module's screw terminal (J6): speaker LS1 red to +, black to -, nothing else.\nOff the board, on harnesses: U3 (J1), U4 or U5 (J2), SW1 (J3), SW2 (J4), BZ1 (J5), LS1 (J6).\nRoom air: fit U4 (BMP280 on a GY-BME/P280 board: temperature and pressure) or U5 (BMP280 + AHT20 board, adds humidity; catalogue U5 and U6), not both.\nDNP by default: RI1, RI2 (only if no I2C board has pull-ups), RSD1 (only if SD reads near 0 V),\nC1 (only if 5 V sags on speech peaks). U2 GAIN open = 9 dB. GPIO 2, 8, 9 are strapping pins: unused.\nNot drawn: BRD1 ElectroCookie full board; XU1, two 8-pin female headers socketing U1; F1, F2 speaker ferrules."
+	(text "Intake panel, ESP32-C3. Net names on U1 GPIOs are the firmware pin constants without PIN_.\nU2 OUT+ / OUT- are the module's screw terminal (J6): speaker LS1 red to +, black to -, nothing else.\nOff the board, on harnesses: U3 (J1), U4 or U5 (J2), SW1 (J3), SW2 (J4), BZ1 (J5), LS1 (J6).\nRoom air: fit U4 (BMP280 on a GY-BME/P280 board: temperature and pressure) or U5 + U6 (one BMP280 + AHT20 combination board on one 4-pin header: U5 the BMP280 half, U6 the AHT20 half; adds humidity), not both.\nDNP by default: RI1, RI2 (only if no I2C board has pull-ups), RSD1 (only if SD reads near 0 V),\nC1 (only if 5 V sags on speech peaks). U2 GAIN open = 9 dB. GPIO 2, 8, 9 are strapping pins: unused.\nNot drawn: BRD1 ElectroCookie full board; XU1, two 8-pin female headers socketing U1; F1, F2 speaker ferrules."
 		(exclude_from_sim no)
 		(at 20.32 248.92 0)
 		(effects
