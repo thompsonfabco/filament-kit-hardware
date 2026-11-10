@@ -462,7 +462,7 @@ is $7.99 per 3-pack. JLCPCB may also bill a minimum placement quantity for a par
 
 | Boards | Chip, cash | Module, cash |
 |---|---|---|
-| 2 | $5.90-7.44 | $7.99 (one pack) |
+| 2 | about $7.36 | $7.99 (one pack) |
 | 3 | about $8.69 | $7.99 |
 | 4 | about $10.02 | $15.98 (two packs) |
 | 5 | about $11.35 | $15.98 |
