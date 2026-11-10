@@ -28,3 +28,9 @@ python -I tools/check_owner_data.py
 ```
 
 The scan also opens zip-based files (`.FCStd`, `.3mf`, `.zip`) and reads their text members.
+
+## License
+
+Everything outside `enclosures/` is licensed under GPL-3.0-only (see `LICENSE`), (c) 2026 thompsonfabco.
+
+The model files in `enclosures/` are licensed under CC BY-NC 4.0 (see `enclosures/LICENSE`). You are free to use, share and adapt them for any non-commercial purpose, with attribution. No commercial use without permission.
