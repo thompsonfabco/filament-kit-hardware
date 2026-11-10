@@ -3141,6 +3141,245 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "filament-kit:PN532_I2C_Module"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at -7.62 3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "PN532_I2C_Module"
+				(at -7.62 -11.43 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "PN532 NFC module in I2C mode (address 0x24): I2C header plus the IRQ and RSTO pins, which stay unconnected"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://cdn-shop.adafruit.com/datasheets/pn532ds.pdf"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Vmax" "6.0"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Imax" "0.14"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Imax_basis" "operating maximum, Table 1; Table 13 gives no supply-current limit (PN532/C1 short form data sheet Rev. 1.2; vmax is the Table 13 VBAT limit, 6.0 V). The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under the VBAT 6.0 V limit, and under the PVDD 4 V limit if VCC also reaches PVDD"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Pin_order" "Elechouse NFC Module V3, confirmed from the board: 4-pin header left to right GND VCC SDA SCL on the component side (the back labels the same holes GND VCC TXD RXD); side header SCK MISO MOSI SS VCC GND IRQ RSTO; IRQ and RSTO stay unconnected. Pin numbers here are symbol numbers, not header positions"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). On the Elechouse NFC Module V3 switch 1 is I0 (its silkscreen reads I2C 1): set switch 1 ON and switch 2 OFF. Switch 2's silkscreen row is not legible, so its OFF setting comes from Table 7"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "PN532_I2C_Module_0_1"
+				(rectangle
+					(start -7.62 2.54)
+					(end 7.62 -10.16)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "PN532_I2C_Module_1_1"
+				(pin power_in line
+					(at -10.16 0 0)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -10.16 -2.54 0)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "SDA"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 10.16 -2.54 180)
+					(length 2.54)
+					(name "SCL"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 -5.08 180)
+					(length 2.54)
+					(name "IRQ"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 -7.62 180)
+					(length 2.54)
+					(name "RSTO"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "power:+3V3"
 			(power global)
 			(pin_numbers
@@ -3650,7 +3889,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Intake panel, ESP32-C3. Net names on U1 GPIOs are the firmware pin constants without PIN_.\nU2 OUT+ / OUT- are the module's screw terminal (J6): speaker LS1 red to +, black to -, nothing else.\nOff the board, on harnesses: U3 (J1), U4 or U5 + U6 (J2), SW1 (J3), SW2 (J4), BZ1 (J5), LS1 (J6).\nRoom air: fit U4 (BMP280 on a GY-BME/P280 board: temperature and pressure) or U5 + U6 (one BMP280 + AHT20 combination board on one 4-pin header: U5 is drawn as the combination board and U6 lists the AHT20's own ratings; adds humidity), not both.\nDNP by default: RI1, RI2 (only if no I2C board has pull-ups), RSD1 (only if SD reads near 0 V),\nC1 (only if 5 V sags on speech peaks). U2 GAIN open = 9 dB. GPIO 2, 8, 9 are strapping pins: unused.\nNot drawn: BRD1 ElectroCookie full board; XU1, two 8-pin female headers socketing U1; F1, F2 speaker ferrules."
+	(text "Intake panel, ESP32-C3. Net names on U1 GPIOs are the firmware pin constants without PIN_.\nU2 OUT+ / OUT- are the module's screw terminal (J6): speaker LS1 red to +, black to -, nothing else.\nOff the board, on harnesses: U3 (J1), U4 or U5 + U6 (J2), SW1 (J3), SW2 (J4), BZ1 (J5), LS1 (J6), U7 (J7).\nU7: PN532 reader (Elechouse NFC Module V3, I2C mode: switch 1 ON, switch 2 OFF), fitted but optional; IRQ and RSTO unconnected.\nI2C addresses: 0x3C U3, 0x76/0x77 U4 or U5, 0x38 U6, 0x24 U7.\nRoom air: fit U4 (BMP280 on a GY-BME/P280 board: temperature and pressure) or U5 + U6 (one BMP280 + AHT20 combination board on one 4-pin header: U5 is drawn as the combination board and U6 lists the AHT20's own ratings; adds humidity), not both.\nDNP by default: RI1, RI2 (only if no I2C board has pull-ups), RSD1 (only if SD reads near 0 V),\nC1 (only if 5 V sags on speech peaks). U2 GAIN open = 9 dB. GPIO 2, 8, 9 are strapping pins: unused.\nNot drawn: BRD1 ElectroCookie full board; XU1, two 8-pin female headers socketing U1; F1, F2 speaker ferrules."
 		(exclude_from_sim no)
 		(at 20.32 248.92 0)
 		(effects
@@ -11588,6 +11827,699 @@
 			(justify left bottom)
 		)
 		(uuid "34fdd55b-1151-46f4-8203-13389576319b")
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x04")
+		(at 279.4 149.86 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "efa51e33-b1ba-49d6-b9fa-6f0889e43084")
+		(property "Reference" "J7"
+			(at 279.4 144.78 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "NFC"
+			(at 279.4 157.48 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical"
+			(at 279.4 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 279.4 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 279.4 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "connector"
+			(at 279.4 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_fp_filters" "Connector*:*_1x??_*"
+			(at 279.4 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "a319d510-b624-48a6-926f-8525c458a437")
+		)
+		(pin "2"
+			(uuid "a6c6479e-a4ca-4194-8376-fd5eae2f26c2")
+		)
+		(pin "3"
+			(uuid "1d97c225-91ad-4c26-a133-74f6883cf32e")
+		)
+		(pin "4"
+			(uuid "b9c65c03-a008-4026-925f-8b4282853b2b")
+		)
+		(instances
+			(project "intake-panel"
+				(path "/a6f50535-0a93-506a-9081-531e4689aca7"
+					(reference "J7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 274.32 152.4) (xy 269.24 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cd9b44df-ddf1-4088-a894-fc26f3bd365b")
+	)
+	(wire
+		(pts
+			(xy 274.32 149.86) (xy 269.24 149.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "323edbb3-a949-43fc-ae39-2cc10474b063")
+	)
+	(wire
+		(pts
+			(xy 274.32 147.32) (xy 269.24 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f26d9e96-239b-4c50-8cdc-450a0fbbe725")
+	)
+	(wire
+		(pts
+			(xy 274.32 154.94) (xy 269.24 154.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "72fd4c04-966a-45a7-ae6f-bc0b29e8c4b7")
+	)
+	(label "SDA"
+		(at 269.24 152.4 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "2936a1ef-36af-4b60-bd1e-4f5c4e21e879")
+	)
+	(label "SCL"
+		(at 269.24 154.94 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "15b2c18a-467d-4354-9eb5-86a5c5c4be28")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 269.24 147.32 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "fc314207-5a22-402b-bbeb-28c6b127d59b")
+		(property "Reference" "#PWR41"
+			(at 269.24 147.32 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 261.62 147.32 270)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 269.24 147.32 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 269.24 147.32 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 269.24 147.32 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "global power"
+			(at 269.24 147.32 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "a7e3a4f2-9ef1-4220-8d00-511bb510b3ce")
+		)
+		(instances
+			(project "intake-panel"
+				(path "/a6f50535-0a93-506a-9081-531e4689aca7"
+					(reference "#PWR41")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 269.24 149.86 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "35cb3ae9-40b5-4075-9a4c-89dcd0bc557f")
+		(property "Reference" "#PWR42"
+			(at 269.24 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 261.62 149.86 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 269.24 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 269.24 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 269.24 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "global power"
+			(at 269.24 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "31f2add6-0e49-4e79-a0e5-1f5286879710")
+		)
+		(instances
+			(project "intake-panel"
+				(path "/a6f50535-0a93-506a-9081-531e4689aca7"
+					(reference "#PWR42")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 345.44 144.78) (xy 340.36 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "81cc7cd9-9b77-45fb-bb76-29569f95f3b1")
+	)
+	(wire
+		(pts
+			(xy 345.44 142.24) (xy 340.36 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b895b0c6-e722-4302-aaab-845d63776534")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 340.36 144.78 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "b8ae9287-f34f-46b0-9ba6-858492329951")
+		(property "Reference" "#PWR43"
+			(at 340.36 144.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 332.74 144.78 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 340.36 144.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 340.36 144.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 340.36 144.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "global power"
+			(at 340.36 144.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "a723352c-d60a-408e-85e9-882295e759c3")
+		)
+		(instances
+			(project "intake-panel"
+				(path "/a6f50535-0a93-506a-9081-531e4689aca7"
+					(reference "#PWR43")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 340.36 142.24 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "a4ace3cb-431f-493a-b937-35b9b01ea519")
+		(property "Reference" "#PWR44"
+			(at 340.36 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 332.74 142.24 270)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 340.36 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 340.36 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 340.36 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "global power"
+			(at 340.36 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "f547106b-7c6a-4e48-98fc-f293e96f5960")
+		)
+		(instances
+			(project "intake-panel"
+				(path "/a6f50535-0a93-506a-9081-531e4689aca7"
+					(reference "#PWR44")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 365.76 142.24) (xy 370.84 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6dd51538-5dee-4617-a032-0dbd6be72e8d")
+	)
+	(wire
+		(pts
+			(xy 365.76 144.78) (xy 370.84 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b1f9133b-99c5-433a-8776-8351b93b3a0f")
+	)
+	(label "SCL"
+		(at 370.84 144.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "be70f3e5-744f-4fa9-b672-c036018383ef")
+	)
+	(label "SDA"
+		(at 370.84 142.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "22d71039-1df2-4fb7-ba6d-2881256f0af7")
+	)
+	(no_connect
+		(at 365.76 147.32)
+		(uuid "721c219c-91c0-4c19-93a4-40cba35814f5")
+	)
+	(no_connect
+		(at 365.76 149.86)
+		(uuid "68512277-8d3c-46e8-bcc2-b2e58df4af1e")
+	)
+	(symbol
+		(lib_id "filament-kit:PN532_I2C_Module")
+		(at 355.6 142.24 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "068f12f3-7eff-46ae-ad31-56f3c79f009d")
+		(property "Reference" "U7"
+			(at 355.6 137.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "PN532 NFC Module V3"
+			(at 355.6 154.94 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 355.6 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://cdn-shop.adafruit.com/datasheets/pn532ds.pdf"
+			(at 355.6 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "PN532 NFC module in I2C mode (address 0x24): I2C header plus the IRQ and RSTO pins, which stay unconnected"
+			(at 355.6 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+    (property "Vmax" "6.0" (at 355.6 142.24 0)
+      (effects (font (size 1.27 1.27)) (hide yes))
+    )
+    (property "Imax" "0.14" (at 355.6 142.24 0)
+      (effects (font (size 1.27 1.27)) (hide yes))
+    )
+    (property "Imax_basis" "operating maximum, Table 1; Table 13 gives no supply-current limit (PN532/C1 short form data sheet Rev. 1.2; vmax is the Table 13 VBAT limit, 6.0 V). The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under the VBAT 6.0 V limit, and under the PVDD 4 V limit if VCC also reaches PVDD" (at 355.6 142.24 0)
+      (effects (font (size 1.27 1.27)) (hide yes))
+    )
+    (property "Pin_order" "Elechouse NFC Module V3, confirmed from the board: 4-pin header left to right GND VCC SDA SCL on the component side (the back labels the same holes GND VCC TXD RXD); side header SCK MISO MOSI SS VCC GND IRQ RSTO; IRQ and RSTO stay unconnected. Pin numbers here are symbol numbers, not header positions" (at 355.6 142.24 0)
+      (effects (font (size 1.27 1.27)) (hide yes))
+    )
+    (property "Mode" "I2C: the chip needs I0 high and I1 low (PN532 User Manual, Table 7). On the Elechouse NFC Module V3 switch 1 is I0 (its silkscreen reads I2C 1): set switch 1 ON and switch 2 OFF. Switch 2's silkscreen row is not legible, so its OFF setting comes from Table 7" (at 355.6 142.24 0)
+      (effects (font (size 1.27 1.27)) (hide yes))
+    )
+		(pin "1"
+			(uuid "d06ca911-dee9-43c2-b74b-2b1eb799d1c5")
+		)
+		(pin "2"
+			(uuid "f0c4bfb1-0a6f-4525-9cf3-5e204be11485")
+		)
+		(pin "3"
+			(uuid "a98af07f-064a-43bf-b833-b6ad67aa1646")
+		)
+		(pin "4"
+			(uuid "498bc273-45c8-4d33-8e41-c8d62b98e493")
+		)
+		(pin "5"
+			(uuid "90b3bc74-3d82-4784-b917-5f17ec7188f2")
+		)
+		(pin "6"
+			(uuid "98ea5a27-bb3b-49c2-ab59-4e9e66cb91f2")
+		)
+		(instances
+			(project "intake-panel"
+				(path "/a6f50535-0a93-506a-9081-531e4689aca7"
+					(reference "U7")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(sheet_instances
 		(path "/"

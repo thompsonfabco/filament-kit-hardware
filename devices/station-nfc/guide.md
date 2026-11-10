@@ -5,6 +5,10 @@ connects to the station PC through a CH340 USB serial adapter, and the station t
 covers the mode switches, the wiring to the adapter and the checks. The checked data is in
 [catalogue.xml](catalogue.xml). The station's behaviour is in the kit's user guide, in the station hardware section.
 
+This USB reader is the fallback. The main reader is the PN532 on the intake panel's I2C bus (U7 on header J7, see
+the [intake panel guide](../intake-panel/guide.md)). Both may be connected at the same time; the station counts the
+same tag from either reader within 2 s as one tap.
+
 ## Parts
 
 | Ref | Part | Qty | Use |

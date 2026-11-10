@@ -1,7 +1,7 @@
 # Intake panel build guide (ESP32-C3)
 
 The intake panel is the intake station's front panel. It has a yellow (Hold) and a red (Discard) illuminated button,
-a 128x64 OLED, a buzzer, a speaker on a MAX98357 amplifier, and a room-air sensor. It is built on an ESP32-C3 Super
+a 128x64 OLED, a buzzer, a speaker on a MAX98357 amplifier, a room-air sensor and an optional PN532 tag reader. It is built on an ESP32-C3 Super
 Mini and plugs into the station PC's USB. This guide covers firmware 10 and later.
 
 The panel's behaviour, its serial protocol, the speech format and the firmware update notes are in the kit's
@@ -24,6 +24,7 @@ for this device is in [catalogue.xml](catalogue.xml), and the full circuit is in
 | LS1 | Shutao double-cavity speaker, 8 Ω, 3 W, sealed body about 100 x 45 x 21 mm (Amazon ASIN B0DL9SFH49) | 1 | Speech |
 | U3 | SSD1306 OLED module, 128x64, I2C address 0x3C | 1 | Display |
 | U4, or U5 + U6 | GY-BME/P280 board with a BMP280 chip (6 pins), or a BMP280 + AHT20 combination board | 1 | Room air |
+| U7 | Elechouse NFC Module V3 (PN532), set to I2C mode (address 0x24) | 0 or 1 | Tag reader, optional (see "PN532 reader") |
 | BZ1 | 3-pin buzzer module, low-level trigger (active-low) | 1 | Beeps |
 | SW1, SW2 | Illuminated normally-open push buttons with 5 V lamps (resistor built in), yellow and red | 2 | Hold and Discard |
 | RI1, RI2 | 4.7 kΩ | 0 or 2 | I2C pull-ups, only if neither I2C board has them |
@@ -31,6 +32,7 @@ for this device is in [catalogue.xml](catalogue.xml), and the full circuit is in
 | C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks |
 | XU1 | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1, so its USB-C plug clears the M3 screw head (see "Board and layout") |
 | J1-J5 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x4 (J1-J4) and 3-pin x1 (J5) | 5 | Off-board connectors |
+| J7 | JST-XH (2.50 mm pitch) header and plug, 4-pin | 0 or 1 | Off-board connector for U7, only if U7 is fitted |
 | F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the screw terminal |
 
 The datasheet limits for each active part, with their sources, are in [catalogue.xml](catalogue.xml).
@@ -39,8 +41,8 @@ The datasheet limits for each active part, with their sources, are in [catalogue
 
 | Function | C3 GPIO | Constant |
 |---|---|---|
-| I2C SDA (OLED, air sensor) | 5 | `PIN_SDA` |
-| I2C SCL (OLED, air sensor) | 6 | `PIN_SCL` |
+| I2C SDA (OLED, air sensor, PN532) | 5 | `PIN_SDA` |
+| I2C SCL (OLED, air sensor, PN532) | 6 | `PIN_SCL` |
 | Buzzer signal | 0 | `PIN_BUZZER` |
 | Yellow (Hold) switch, other side to G | 3 | `PIN_BTN_HOLD` |
 | Red (Discard) switch, other side to G | 4 | `PIN_BTN_DISCARD` |
@@ -69,19 +71,21 @@ case without desoldering. The speaker is the one exception: it goes into the amp
 | J4 | JST-XH 4-pin | GND SW 5V LAMP- | Red button SW2: SW to GPIO 4, LAMP- to Q2's drain |
 | J5 | JST-XH 3-pin | GND 3V3 S | Buzzer BZ1: S to GPIO 0 |
 | J6 | Amplifier screw terminal | + - | Speaker LS1 |
+| J7 | JST-XH 4-pin | GND 3V3 SDA SCL | PN532 reader U7, optional |
 
 A plug fits any header with the same pin count, and a smaller XH plug can be forced in offset: the buzzer plug in a
 button header puts 5 V on the buzzer's 3V3 pin. An OLED or sensor plug in a button header would put 5 V on a 3.3 V
 part, and a button plug in an I2C header would short 3V3 to G when the button is pressed. You are responsible for
 plugging each harness into the right header:
 
-1. Label each header on the board (I2C, YELLOW, RED, BUZZER) with a marker or label, next to the header.
+1. Label each header on the board (I2C, NFC, YELLOW, RED, BUZZER) with a marker or label, next to the header.
 2. Find pin 1 on the header: it is the pin at the header's pin-1 mark, and it carries the first signal in the pin order above (GND).
    If the header has no mark, mate a plug before soldering and solder GND to the header pin under the plug's cavity 1.
    Find pin 1 on the plug: the triangle or the cavity number 1 moulded on the housing, which takes the GND wire.
 3. Plug each harness into its labelled header with pin 1 to pin 1.
 
-J3 and J4 are the same type, which is safe because both carry the same signals. If the buttons end up swapped, set
+J3 and J4 are the same type, which is safe because both carry the same signals. So are J1, J2 and J7, the three
+I2C headers. If the buttons end up swapped, set
 `panel_swap` as `PANEL.md` describes instead of rewiring.
 
 ## Board and layout
@@ -149,7 +153,9 @@ The case for the intake station is in `enclosures/intake-station/`. The controll
 
 Power comes from the station PC's USB 5 V. The panel's measured total must stay at or under 500 mA, the USB 2.0
 limit, which the bench checklist measures. The C3's 5V pin feeds the 5 V rail: the amplifier and the lamps. The C3's
-3V3 pin feeds the 3V3 rail: the OLED, the air sensor and the buzzer. An SSD1306 OLED module draws roughly 10 to 20 mA
+3V3 pin feeds the 3V3 rail: the OLED, the air sensor, the buzzer and, if fitted, the PN532. The PN532 is the largest
+3V3 load: its short form data sheet (Rev. 1.2, Table 1) gives a continuous total current of 91 mA typical and
+140 mA at most. An SSD1306 OLED module draws roughly 10 to 20 mA
 from 3V3, an estimate (UNCONFIRMED) because the chip's datasheet gives no module figure. The Super Mini's 3V3 regulator rating and the
 path from USB to its 5V pin are not in the sources found (UNCONFIRMED), so the current and rail check on the bench
 covers both.
@@ -253,6 +259,31 @@ default volume of 50 keeps peak speaker current near 310 mA.
   it, so I/O low means on. The panel firmware holds GPIO 0 high when silent. Use 3V3, not 5 V: a 3.3 V signal can't
   turn off a module whose input is pulled up to 5 V.
 
+## PN532 reader (optional)
+
+U7 is the same PN532 module as the bench reader's, an Elechouse NFC Module V3 in I2C mode at address 0x24. It is
+optional: build the panel without it, and the station's USB reader ([station-nfc](../station-nfc/guide.md)) reads
+tags instead. Both readers may be connected at the same time; the station counts the same tag from either reader
+within 2 s as one tap.
+
+- **Wiring (J7):** GND to G, VCC to 3V3, SDA to GPIO 5, SCL to GPIO 6. Leave IRQ and RSTO unconnected. J7's pin
+  order, GND 3V3 SDA SCL, is the module's own 4-pin header order.
+- **Bus:** U7 shares the I2C bus with the OLED (0x3C) and the air sensor (0x76 or 0x77, and 0x38 for the AHT20).
+- **Panel lines:** firmware 11 and later reports `NFC ok` or `NFC none` after `HELLO`, and sends `TAG <uid hex>`
+  for a tag at the reader. The full protocol is in `PANEL.md`.
+
+### PN532 I2C mode
+
+The PN532 picks its host interface from two pins, I0 and I1. For I2C the chip needs I0 high and I1 low (NXP
+PN532 User Manual, Table 7). Modules bring these out as two small switches or jumpers, with a table on the
+silkscreen. Set them to the silkscreen's I2C setting, with the power off.
+
+On the Elechouse NFC Module V3 the two-position switch is labelled 1 and 2, with a silkscreen table for HSU, I2C and
+SPI. Switch 1 is I0 (its row reads HSU 0, I2C 1, SPI 0). For I2C set switch 1 ON and switch 2 OFF; for HSU set both
+OFF. Switch 2 is I1, so its OFF setting for I2C follows Table 7 (I2C needs I1 low).
+Follow the module's own silkscreen, not a table from another board. A module left in HSU (UART) mode gives no answer
+at 0x24, and the panel reports `NFC none`.
+
 ### Module pin orders
 
 Wire each harness from the module's silkscreen, not from the header order above. Pins are listed left to right, except U1, whose two rows run top to bottom with the USB connector at the top.
@@ -264,6 +295,7 @@ Wire each harness from the module's silkscreen, not from the header order above.
 | U3 OLED | GND VCC SCL SDA | |
 | U4 GY-BME/P280 (BMP280) | VCC GND SCL SDA CSB SDO | CSB and SDO use the module's pull-ups |
 | BZ1 buzzer | VCC I/O GND | Low-level trigger |
+| U7 PN532 | GND VCC SDA SCL on the 4-pin header, component side; the back labels the same holes GND VCC TXD RXD. Side header: SCK MISO MOSI SS VCC GND IRQ RSTO | Confirmed from the board; IRQ and RSTO stay unconnected |
 
 ## First flash
 
@@ -290,11 +322,16 @@ Build checks, before the panel goes into service:
 - [ ] With the board screwed into the case, the USB-C cable plugs into U1 fully without touching the M3 screw or
   standoff.
 - [ ] Each harness is in its labelled header, pin 1 to pin 1.
+- [ ] If U7 is fitted, its mode switches are at the I2C setting on its silkscreen (switch 1 ON, switch 2 OFF), set
+  with the power off.
 
 Panel checklist:
 
 - [ ] A cold boot gives `HELLO intake-panel 10 esp32c3`, with both lamps dark during reset.
-- [ ] The station finds the panel, and the PN532 opens as the station's reader.
+- [ ] The station finds the panel. With U7 fitted, the panel reports `NFC ok` after `HELLO`; without it, `NFC none`.
+- [ ] With U7 fitted, a tag tapped at the panel reader starts one intake.
+- [ ] If the USB reader is also connected, it opens as the station's reader, and the same tag tapped at both
+  readers within 2 s starts one intake.
 - [ ] Unplugging and replugging the panel recovers without a service restart.
 - [ ] The station updates the panel from an older C3 firmware by itself.
 - [ ] Each button gives a short and a long press, and each lamp shows all modes.
