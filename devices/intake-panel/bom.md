@@ -39,7 +39,7 @@ check it when ordering.
 
 | Ref | Part | Qty | Maker part number | LCSC | Type | Stock (Oct 2026) |
 |---|---|---|---|---|---|---|
-| Q1, Q2 | 2N7002 N-MOSFET, SOT-23, in place of the BS170 (see "LED MOSFET stages" in the guide) | 2 | Changjing 2N7002 | C8545 | Basic | 1,830,508 |
+| Q1, Q2 | AO3400A N-MOSFET, SOT-23, logic-level, in place of the BS170 (see "LED MOSFET stages" in the guide) | 2 | Alpha & Omega AO3400A | C20917 | Basic | 757,862 |
 | RG1, RG2 | 220 Ω resistor, 1%, 0603 | 2 | UNI-ROYAL 0603WAF2200T5E | C22962 | Basic | 2,050,208 |
 | RP1, RP2 | 100 kΩ resistor, 1%, 0603 | 2 | UNI-ROYAL 0603WAF1003T5E | C25803 | Basic | 19,748,113 |
 | J1-J4, J7 | JST-XH header, 4-pin, vertical, through-hole | 5 | JST B4B-XH-A(LF)(SN) | C144395 | Extended | 478,892 |
@@ -57,6 +57,7 @@ if a bench check calls for it.
 | RSD1 | 10 kΩ resistor, 1%, 0603 | 0 or 1 | UNI-ROYAL 0603WAF1002T5E | C25804 | Basic | 32,380,385 |
 | RI1, RI2 | 4.7 kΩ resistor, 1%, 0603 | 0 or 2 | UNI-ROYAL 0603WAF4701T5E | C23162 | Basic | 19,500,720 |
 | C1 | 470 µF 10 V aluminium electrolytic, SMD, 6.3 x 7.7 mm | 0 or 1 | ROQANG RVT1A471M0607 | C335982 | Extended | 404,316 |
-| Q1, Q2 (alternative) | AO3400A N-MOSFET, SOT-23, logic-level; same pads as the 2N7002 | 0 or 2 | Alpha & Omega AO3400A | C20917 | Basic | 757,862 |
+| Q1, Q2 (alternative) | 2N7002 N-MOSFET, SOT-23; same pads as the AO3400A | 0 or 2 | Changjing 2N7002 | C8545 | Basic | 1,830,508 |
 
-The AO3400A is only for an LED that fails a check in the guide's "LED MOSFET stages" section.
+The 2N7002 row is not a bench-check part: it is a stand-in for the AO3400A in the BOM, for when the AO3400A is out of
+stock. It is not specified at a 3.3 V gate, so each LED then needs both checks in the guide's "LED MOSFET stages" section.

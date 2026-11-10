@@ -8312,7 +8312,7 @@
 				(justify left)
 			)
 		)
-		(property "LCSC" "C8545"
+		(property "LCSC" "C20917"
 			(at 71.12 164.465 0)
 			(hide yes)
 			(effects
@@ -8321,7 +8321,7 @@
 				)
 			)
 		)
-		(property "MPN" "2N7002"
+		(property "MPN" "AO3400A"
 			(at 71.12 164.465 0)
 			(hide yes)
 			(effects
@@ -9763,7 +9763,7 @@
 				(justify left)
 			)
 		)
-		(property "LCSC" "C8545"
+		(property "LCSC" "C20917"
 			(at 71.12 227.965 0)
 			(hide yes)
 			(effects
@@ -9772,7 +9772,7 @@
 				)
 			)
 		)
-		(property "MPN" "2N7002"
+		(property "MPN" "AO3400A"
 			(at 71.12 227.965 0)
 			(hide yes)
 			(effects

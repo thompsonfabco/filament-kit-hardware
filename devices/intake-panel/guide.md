@@ -20,7 +20,7 @@ exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.p
 |---|---|---|---|
 | BRD1 | ElectroCookie solderable breadboard prototype board, full size (Amazon ASIN B07ZYNWJ1S) | 1 | Main board |
 | U1 | ESP32-C3 Super Mini | 1 | Controller, on the station PC's USB |
-| Q1, Q2 | BS170 N-MOSFET (TO-92); a 2N7000 also fits, turned round. The JLCPCB board carries a 2N7002 (SOT-23) instead (see "LED MOSFET stages") | 2 | Yellow and red LED switches |
+| Q1, Q2 | BS170 N-MOSFET (TO-92); a 2N7000 also fits, turned round. The JLCPCB board carries an AO3400A (SOT-23) instead (see "LED MOSFET stages") | 2 | Yellow and red LED switches |
 | RG1, RG2 | 220 Ω | 2 | Gate resistors |
 | RP1, RP2 | 100 kΩ | 2 | Gate pull-downs, so the LEDs stay dark during reset |
 | U2 | AITRIP MAX98357 I2S amplifier module, "No Welding" version (Amazon ASIN B0912CWB7Z, pack of 3) | 1 | Speaker amplifier |
@@ -110,7 +110,7 @@ The board comes in two variants with the same outline, holes, connectors and pin
 Without either, the panel is built on the ElectroCookie board as "Board and layout" describes.
 
 Both wire exactly the same pins together; `python tools/netlist_parity.py` with the two schematics checks that. On
-the JLCPCB board the resistors are 0603, Q1 and Q2 are 2N7002 in SOT-23 (see "LED MOSFET stages") and C1 is a
+the JLCPCB board the resistors are 0603, Q1 and Q2 are AO3400A in SOT-23 (see "LED MOSFET stages") and C1 is a
 6.3 mm surface-mount electrolytic. The JST-XH headers and the female headers for U1 and U2 stay through-hole on both,
 so the two boards take the same plugs and modules; JLCPCB solders those by hand.
 
@@ -197,7 +197,10 @@ solder by hand later.
 4. Check each part in the placement preview against the silkscreen:
    - Q1 and Q2: the single drain pin points down, toward J3 and J4, and the gate and source pins point up. Correct the
      rotation in the preview if a part shows otherwise.
-   - J5 has its pin 1 on the right (it is turned round).
+   - Every JST-XH header has its pin 1 over the silkscreen dot below it. J7, J1, J2, J3 and J4 have pin 1 on the
+     left; J5 has its pin 1 on the right (it is turned round). A header turned the wrong way reverses the plug's pin
+     order: on J3 and J4 it puts 5 V on the button's switch wire and GND on the LED's - wire, so correct the rotation
+     in the preview if a pin 1 sits away from its dot.
    - The rows marked U1A and U1B are the two female headers for U1, which share one footprint on the board; the row
      marked U2 is U2's 1x7 female header.
 
@@ -313,15 +316,15 @@ series resistor. Each LED draws 10 to 20 mA.
 flat face away from you, so its drain and source land where the BS170's did, or swap the drain and source wires. The
 gate stays in the middle. Keep the same 220 Ω and 100 kΩ, and run the same two checks below.
 
-**2N7002 on the JLCPCB board.** The JLCPCB board carries a 2N7002 (SOT-23, LCSC C8545) in place of each BS170: the
-schematic still names the BS170, and only the JLCPCB board's footprint and part number change. Its SOT-23 footprint
-numbers the pads to the BS170's drain, gate and source, so the wiring is the same. The figures in its LCSC listing:
-VDS 60 V, ID 115 mA continuous, 225 mW, VGS ±20 V, gate threshold 2.5 V, RDS(on) 5 Ω at VGS = 10 V. Like the BS170's
-datasheet, the listing gives no RDS(on) at a 3.3 V gate, and its 2.5 V threshold leaves 3.3 V only just above it, so
-it is driven no better than the BS170 and the same two checks below apply to it. Its 115 mA rating is above the 50 mA
-an LED may draw. If an LED fails a check on the JLCPCB board, an AO3400A (SOT-23, LCSC C20917; listing: VDS 30 V,
-gate threshold 1.45 V, RDS(on) 48 mΩ at VGS = 2.5 V) has the same gate, source and drain pins as the 2N7002 and fits
-the same pads: solder it in by hand, or put C20917 in place of C8545 in the BOM before ordering.
+**AO3400A on the JLCPCB board.** The JLCPCB board carries an AO3400A (SOT-23, LCSC C20917) in place of each BS170:
+the schematic still names the BS170, and only the JLCPCB board's footprint and part number change. Its SOT-23
+footprint numbers the pads to the BS170's drain, gate and source, so the wiring is the same. The figures in its LCSC
+listing: VDS 30 V, ID 5.7 A continuous, 1.4 W, VGS ±12 V, gate threshold 1.45 V, RDS(on) 48 mΩ at VGS = 2.5 V.
+Unlike the BS170, its on-resistance is specified at a gate voltage below the C3's 3.3 V, so it switches an LED fully
+on. Run step 1 of the checks below on each LED all the same: the 50 mA limit is the LED's, not the MOSFET's. A 2N7002
+(SOT-23, LCSC C8545; listing: VDS 60 V, ID 115 mA continuous, gate threshold 2.5 V, RDS(on) 5 Ω at VGS = 10 V) fits
+the same pads and can go in its place in the BOM, but its listing gives no RDS(on) at a 3.3 V gate and 3.3 V is only
+just above its 2.5 V threshold, so it is driven no better than the BS170 and needs both checks below.
 
 **Each LED may draw at most 50 mA**, well above its 10 to 20 mA. The C3 drives the gate at only 3.3 V, and the BS170
 barely conducts there:

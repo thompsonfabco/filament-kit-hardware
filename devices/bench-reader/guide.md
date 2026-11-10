@@ -178,9 +178,14 @@ encoder, A and B go to its A and B pins, C to its common, SW to switch leg S1 an
 1. On jlcpcb.com, upload `board/gerbers-smt.zip` as the board, 2 layers, 1.6 mm; JLCPCB reads the size from the Gerbers.
 2. Turn on assembly, top side, and pick the assembly service that fits through-hole parts.
 3. Upload `board/jlcpcb-bom-smt.csv` as the BOM and `board/jlcpcb-cpl-smt.csv` as the pick-and-place (CPL) file.
-4. Check each part in the placement preview against the silkscreen: J1 has its pin 1 on the right (it is turned
-   round), and the rows marked U1A and U1B are the two female headers for U1. The positions are the centre of each
-   part's pins.
+4. Check each part in the placement preview against the silkscreen:
+   - Every JST-XH header has its pin 1 over the silkscreen dot below it. J2, J3 and J4 have pin 1 on the left; J1
+     has its pin 1 on the right (it is turned round). A header turned the wrong way reverses the plug's pin order
+     and puts 3V3 and GND on the wrong wires, so correct the rotation in the preview if a pin 1 sits away from its
+     dot.
+   - The rows marked U1A and U1B are the two female headers for U1.
+
+   The positions are the centre of each part's pins.
 
 The BOM lists only parts soldered to the board. U1 (the C3) is never soldered: it plugs into the two headers, U1A and
 U1B, which share one footprint on the board. The modules (U2, U3, SW1, BZ1) are off the board, and the harnesses are
