@@ -34,6 +34,7 @@ exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.p
 | RSD | 10 kΩ | 0 or 1 | Amplifier SD pull-up to 3V3, only if the module has none (see "Amplifier") |
 | C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks |
 | XU1 | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1, so its USB-C plug clears the M3 screw head (see "Board and layout") |
+| XU2 | Female pin header, 2.54 mm, 7-pin | 0 or 1 | Socket for U2, through-hole board only (see "Board") |
 | J1-J5 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x4 (J1-J4) and 3-pin x1 (J5) | 5 | Off-board connectors |
 | J7 | JST-XH (2.50 mm pitch) header and plug, 4-pin | 0 or 1 | Off-board connector for U7, only if U7 is fitted |
 | F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the screw terminal |
@@ -96,7 +97,94 @@ J3 and J4 are the same type, which is safe because both carry the same signals. 
 I2C headers. If the buttons end up swapped, set
 `panel_swap` as `PANEL.md` describes instead of rewiring.
 
+## Board
+
+The through-hole board is `kicad/intake-panel.kicad_pcb`, in the same KiCad project as the schematic. Order the bare
+board and solder the parts yourself. Without it, the panel is built on the ElectroCookie board as "Board and layout"
+describes.
+
+The board is 89 x 52 mm, the outline and hole pattern of the ElectroCookie full board, so it fits cases made for that
+board: M3 holes at (7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.625, 8.25), (5.375, 43.75) and
+(83.625, 43.75), in mm from one corner. It has two layers with a GND pour on both sides, 0.25 mm signal tracks,
+0.5 mm 3V3 tracks and 0.8 mm 5V tracks (the amplifier supply and the button LEDs), and every part is through-hole.
+Both copper layers stay clear of each mounting hole out to 3.5 mm (M3) and 2.5 mm (M2) from its centre, so a screw
+head or a metal standoff can't touch the pour.
+
+| | Through-hole (DIY) |
+|---|---|
+| Top | [board-tht-top.svg](board/board-tht-top.svg) |
+| Bottom (mirrored) | [board-tht-bottom.svg](board/board-tht-bottom.svg) |
+| Both, with the title block | [board-tht.pdf](board/board-tht.pdf) |
+| 3D model | [board-tht.step](board/board-tht.step) |
+| Gerbers and drill files | [gerbers-tht.zip](board/gerbers-tht.zip) |
+
+The zip holds the Gerbers and the drill files (plated and unplated holes in separate files). Any board maker that
+takes Gerbers can make the board: 2 layers, 1.6 mm.
+
+What sits on the board, and why:
+
+- **U1, the C3**, plugs into two 1x8 female headers (XU1) and is never soldered to the board. Its USB-C end sits at
+  the top edge, by the "USB-C" mark, so a cable reaches it in a case. The end away from the USB socket carries its
+  antenna; the board keeps tracks, vias and the GND pour out from under that end.
+- **U2, the amplifier**, plugs into a 1x7 female header (XU2) beside U1, with its pin row facing U1 and its screw
+  terminal toward the left short edge. It sits on the board because its I2S lines run straight to U1's pins, it
+  draws the panel's largest 5 V current over a short 0.8 mm track, and the speaker is wired to its own screw terminal,
+  so it needs no harness. The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one,
+  before you plug U2 in. The module's outline and the terminal position are UNCONFIRMED; nothing else on the board
+  sits under it.
+- **Off the board**: the OLED, the air sensor, the buzzer, the two buttons and the PN532 reader mount on the case,
+  where each one has to be seen, pressed, heard or reach the room air or the tags, so each one plugs into a JST-XH
+  header, as the schematic shows.
+- **The LED stages** (Q1, RG1, RP1 and Q2, RG2, RP2) sit above J3 and J4, each drain straight above its header's
+  LED- pin.
+
+### Connectors
+
+Five headers run along the bottom edge and J5 sits at the top edge. The silkscreen names each header's function and
+each pin, and marks pin 1 with a dot.
+
+| Ref | Type | Pin order (pin 1 first) | To |
+|---|---|---|---|
+| J7 | JST-XH 4-pin | GND 3V3 SDA SCL | PN532 reader U7, optional (header NFC) |
+| J1 | JST-XH 4-pin | GND 3V3 SDA SCL | OLED U3 (header OLED) |
+| J2 | JST-XH 4-pin | GND 3V3 SDA SCL | Air sensor U4, or U5 and U6 (header AIR) |
+| J3 | JST-XH 4-pin | GND SW 5V LED- | Yellow button SW1 (header YELLOW) |
+| J4 | JST-XH 4-pin | GND SW 5V LED- | Red button SW2 (header RED) |
+| J5 | JST-XH 3-pin | GND 3V3 S | Buzzer BZ1 (header BUZZER) |
+| XU2 | Female header, 7-pin | LRC BCLK DIN GAIN SD GND VIN | Amplifier U2, pin 1 (LRC) nearest the bottom edge |
+
+J5 is turned round, so its pin 1 (GND) is its right-hand pin; follow the dot, not the position. The speaker goes
+into U2's own screw terminal, not into the board. Make each harness as "Connectors" describes, with the header's pin
+order at the plug.
+
+### Parts fitted only when needed
+
+The board has pads for four parts that are left out at first. Each is marked DNP on the silkscreen.
+
+| Ref | Value | Fit it when |
+|---|---|---|
+| RSD1 (RSD in the parts list) | 10 kΩ | The amplifier's SD reads near 0 V in the SD pull-up check (see "Amplifier") |
+| RI1, RI2 | 4.7 kΩ | Neither the OLED nor the air sensor board has I2C pull-ups |
+| C1 | 470 µF, 10 V or more | 5 V sags on speech peaks in the bench check. + to the pad by the + mark |
+
+### Assembly order
+
+1. Solder the resistors that are always fitted: RG1 and RG2 (220 Ω), RP1 and RP2 (100 kΩ).
+2. Solder Q1 and Q2 (BS170), each with its flat face matching its outline on the silkscreen. A 2N7000 has its pins
+   mirrored: turn it round against the outline (see "LED MOSFET stages").
+3. Solder the two 1x8 female headers for U1. Plug U1 into them while soldering so the rows stay square and 15.24 mm
+   apart, then take U1 out. Solder the 1x7 female header for U2 the same way, with U2 plugged in.
+4. Solder J1-J5, and J7 if the PN532 reader is fitted, each with its body over its outline on the silkscreen.
+5. Before fitting anything else, check with a meter that 3V3, 5V and GND are not shorted to each other (on J5: pin 1
+   GND, pin 2 3V3; on J3: pin 3 5V).
+6. Plug in U1 with its USB-C socket at the board edge, and U2 with its terminal toward the left edge. Run "First
+   flash" and the bench checklist, then fit RSD1, RI1, RI2 or C1 only if a check calls for it.
+7. Crimp the harnesses (see "Connectors") and wire the speaker into U2's screw terminal (see "Speaker").
+
 ## Board and layout
+
+This section is the build without the custom board, on the ElectroCookie prototype board (see "Board" for the
+custom board).
 
 The main board is an ElectroCookie full-size solderable breadboard prototype board. Its strips follow a standard
 breadboard: two halves of five-hole strips either side of a centre channel, with power rails along both long edges.

@@ -39,11 +39,16 @@ buzzer; the J1-J5 headers fix that order, whatever order a module's own pins are
 - `ESP32-C3_SuperMini_Socket`: the same pads and numbering as `ESP32-C3_SuperMini`, drawn as two 1x8 female headers
   (silkscreen outlines, stock 1x8 socket 3D models) so the module plugs in and is never soldered. A rule area between
   the rows at the end away from the USB socket, extending 3.85 mm past the module, keeps tracks, vias and copper pour
-  out from under the antenna; the antenna position is UNCONFIRMED. Used by the bench reader board.
+  out from under the antenna; the antenna position is UNCONFIRMED. Used by the bench reader and intake panel boards.
 - `MAX98357_Module`: one row of seven 1.7 mm pads, 1.0 mm drills, 2.54 mm pitch, viewed from the top with the header
   at the bottom: pad 1 (square) LRC, then BCLK, DIN, GAIN, SD, GND, VIN. Pads 8 (-) and 9 (+) are the screw terminal,
   on the opposite edge, - on the left. Their position (12.7 mm from the header, 5.08 mm apart) is a placeholder,
   UNCONFIRMED; the board outline and its two mounting holes aren't drawn.
+- `MAX98357_Module_Socket`: pads 1-7 as `MAX98357_Module`, drawn as a 1x7 female header (silkscreen outline, stock
+  1x7 socket 3D model) so the module plugs in. Pads 8 (-) and 9 (+) stay at the placeholder terminal position as
+  1 mm top-copper pads under the solder mask, with no hole: the speaker wires go into the module's own terminal, and
+  the pads only keep the footprint's pins matching the symbol. F.Fab shows a 17.8 x 19.3 mm module outline
+  (UNCONFIRMED). Used by the intake panel board.
 - The buzzer and the I2C modules use the stock 2.54 mm pin headers, whose pad 1-N order matches the symbols.
 - `ElectroCookie_Full`: the board as an outline, measured from the board. The origin is one corner, with x along the
   89 mm side.

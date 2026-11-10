@@ -5741,17 +5741,6 @@
 				)
 			)
 		)
-		(property "ki_fp_filters" "Connector*:*_1x??_*"
-			(at 279.4 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "0a675bb7-0011-5c96-b6ab-2fbca1bd6e1a")
 		)
@@ -6068,7 +6057,7 @@
 				)
 			)
 		)
-		(property "Footprint" "filament-kit:ESP32-C3_SuperMini"
+		(property "Footprint" "filament-kit:ESP32-C3_SuperMini_Socket"
 			(at 60.96 60.96 0)
 			(hide yes)
 			(show_name no)
@@ -7032,17 +7021,6 @@
 				)
 			)
 		)
-		(property "ki_fp_filters" "R_*"
-			(at 127 109.22 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "0529982d-8fdc-58d2-aaff-f02baf6eab2f")
 		)
@@ -7798,17 +7776,6 @@
 				)
 			)
 		)
-		(property "ki_fp_filters" "R_*"
-			(at 287.02 121.92 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "e8d95c18-63df-5be8-a79e-56bdc1de261a")
 		)
@@ -7891,17 +7858,6 @@
 			)
 		)
 		(property "ki_keywords" "cap capacitor"
-			(at 147.32 109.22 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "ki_fp_filters" "CP_*"
 			(at 147.32 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -8188,17 +8144,6 @@
 				)
 			)
 		)
-		(property "ki_fp_filters" "R_*"
-			(at 271.78 121.92 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "2c42f558-4b93-5351-9871-59e55a185c3f")
 		)
@@ -8326,17 +8271,6 @@
 				)
 			)
 		)
-		(property "ki_fp_filters" "TO?92*"
-			(at 66.04 162.56 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "29f6ddd0-689b-55f1-857e-c742435d8be8")
 		)
@@ -8422,17 +8356,6 @@
 			)
 		)
 		(property "ki_keywords" "R res resistor"
-			(at 38.1 162.56 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "ki_fp_filters" "R_*"
 			(at 38.1 162.56 0)
 			(hide yes)
 			(show_name no)
@@ -8711,17 +8634,6 @@
 				)
 			)
 		)
-		(property "ki_fp_filters" "R_*"
-			(at 38.1 226.06 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "0cf122af-dbb1-562d-85e4-1127ff05ab37")
 		)
@@ -8802,17 +8714,6 @@
 			)
 		)
 		(property "ki_keywords" "connector"
-			(at 134.62 226.06 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "ki_fp_filters" "Connector*:*_1x??_*"
 			(at 134.62 226.06 0)
 			(hide yes)
 			(show_name no)
@@ -8963,7 +8864,7 @@
 				)
 			)
 		)
-		(property "Footprint" "filament-kit:MAX98357_Module"
+		(property "Footprint" "filament-kit:MAX98357_Module_Socket"
 			(at 137.16 60.96 0)
 			(hide yes)
 			(show_name no)
@@ -9721,17 +9622,6 @@
 			)
 		)
 		(property "ki_keywords" "N-Channel MOSFET"
-			(at 66.04 226.06 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "ki_fp_filters" "TO?92*"
 			(at 66.04 226.06 0)
 			(hide yes)
 			(show_name no)
@@ -11008,17 +10898,6 @@
 				)
 			)
 		)
-		(property "ki_fp_filters" "Connector*:*_1x??_*"
-			(at 279.4 175.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "18f3f14c-e0e6-5bfe-9a70-3c1d3c138847")
 		)
@@ -11102,17 +10981,6 @@
 			)
 		)
 		(property "ki_keywords" "connector"
-			(at 134.62 162.56 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "ki_fp_filters" "Connector*:*_1x??_*"
 			(at 134.62 162.56 0)
 			(hide yes)
 			(show_name no)
@@ -11573,17 +11441,6 @@
 				)
 			)
 		)
-		(property "ki_fp_filters" "R_*"
-			(at 50.8 233.68 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(pin "1"
 			(uuid "9089b018-47dd-563d-97cd-f4479147d877")
 		)
@@ -11664,17 +11521,6 @@
 			)
 		)
 		(property "ki_keywords" "connector"
-			(at 279.4 50.8 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "ki_fp_filters" "Connector*:*_1x??_*"
 			(at 279.4 50.8 0)
 			(hide yes)
 			(show_name no)
@@ -11773,17 +11619,6 @@
 			)
 		)
 		(property "ki_keywords" "R res resistor"
-			(at 50.8 170.18 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "ki_fp_filters" "R_*"
 			(at 50.8 170.18 0)
 			(hide yes)
 			(show_name no)
@@ -11893,17 +11728,6 @@
 			)
 		)
 		(property "ki_keywords" "connector"
-			(at 279.4 149.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "ki_fp_filters" "Connector*:*_1x??_*"
 			(at 279.4 149.86 0)
 			(hide yes)
 			(show_name no)
