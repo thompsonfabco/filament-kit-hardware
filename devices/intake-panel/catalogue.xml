@@ -37,14 +37,12 @@
           i_typ_basis="typical source current per GPIO (IOH at PAD_DRIVER 3; IOL sink 28 mA typ), not a limit"
           datasheet="https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"/>
     <part ref="Q1" name="BS170" kind="active" qty="1" use="yellow LED switch" vmax="60" imax="0.5"
-          alt_part="2N7000 (TO-92, 60 V, 200 mA): pins mirrored (S G D against the BS170's D G S), so fit it turned round or swap the drain and source wires"
           imax_basis="continuous drain current with full gate drive. At the C3's 3.3 V gate the curves show
           roughly 0.1 A or less (read from the curves, an estimate) and no RDS(on) is given below VGS 10 V, so each
           LED is limited to 50 mA (it draws 10 to 20 mA). URL provenance UNCONFIRMED: the server refused downloads; the copy read is
           onsemi MMBF170/D Rev 7"
           datasheet="https://www.onsemi.com/download/data-sheet/pdf/bs170-d.pdf"/>
     <part ref="Q2" name="BS170" kind="active" qty="1" use="red LED switch" vmax="60" imax="0.5"
-          alt_part="2N7000, as Q1"
           imax_basis="as Q1"
           datasheet="https://www.onsemi.com/download/data-sheet/pdf/bs170-d.pdf"/>
     <part ref="RG1" name="220 ohm" kind="passive" qty="1" use="Q1 gate resistor"/>
@@ -82,7 +80,7 @@
           UNCONFIRMED as an absolute maximum. The datasheet gives no current limit"
           i_typ_basis="typical current while measuring (Table 2, 3.3 V)"
           datasheet="https://cdn-learn.adafruit.com/assets/assets/000/091/676/original/AHT20-datasheet-2020-4-16.pdf"/>
-    <part ref="U7" name="Elechouse NFC Module V3 (PN532), I2C mode (0x24)" kind="active" qty="1"
+    <part ref="U7" name="Elechouse NFC Module V3 (PN532), I2C mode (0x24)" kind="active" qty="0-1"
           use="tag reader, optional: on the panel I2C bus through J7, VCC to 3V3, IRQ and RSTO unconnected"
           vmax="6.0" imax="0.14" i_typ="0.091"
           imax_basis="operating maximum, Table 1; Table 13 gives no supply-current limit (PN532/C1 short form data sheet Rev. 1.2; vmax is the Table 13 VBAT limit, 6.0 V). The module's path from VCC to VBAT and PVDD is UNCONFIRMED; fed from 3V3, VCC is under the VBAT 6.0 V limit, and under the PVDD 4 V limit if VCC also reaches PVDD"
@@ -107,7 +105,7 @@
           use="socket for U1, so its USB-C plug clears the M3 screw head"/>
     <part ref="J1-J5" name="JST-XH 2.50 mm pitch header and plug, 4-pin x4 and 3-pin x1" kind="passive" qty="5"
           use="off-board connectors"/>
-    <part ref="J7" name="JST-XH 2.50 mm pitch header and plug, 4-pin" kind="passive" qty="1"
+    <part ref="J7" name="JST-XH 2.50 mm pitch header and plug, 4-pin" kind="passive" qty="0-1"
           use="off-board connector for the PN532 reader U7, only if U7 is fitted"/>
     <part ref="F1-F2" name="wire ferrule to suit the speaker wire" kind="passive" qty="2"
           use="speaker leads into U2's screw terminal"/>

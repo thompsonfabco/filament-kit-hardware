@@ -18,8 +18,7 @@
       <line x1="-72" y1="-14" x2="-28" y2="-14"/><line x1="-50" y1="-14" x2="-50" y2="-24"/>
     </g>
     <!-- button LED, leads at (0,-13) and (0,13) -->
-    <g id="lamp" stroke-width="2"><circle cx="0" cy="0" r="13" fill="#fff"/>
-      <line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
+    <g id="lamp" stroke-width="2" fill="none"><line x1="0" y1="-13" x2="0" y2="-7"/><polygon points="-8,-7 8,-7 0,6" fill="#fff"/><line x1="-8" y1="6" x2="8" y2="6"/><line x1="0" y1="6" x2="0" y2="13"/></g>
     <!-- speaker, leads at (0,0) and (0,30) -->
     <g id="spk" stroke="#222" stroke-width="2" fill="#fff">
       <line x1="0" y1="0" x2="0" y2="6"/><line x1="0" y1="24" x2="0" y2="30"/>
@@ -27,9 +26,9 @@
     </g>
   </defs>
 
-  <text x="30" y="34" font-size="18" font-weight="600" fill="#111">Intake panel (ESP32-C3): full circuit</text>
+  <text x="30" y="34" font-size="18" font-weight="600" fill="#111">Intake panel (ESP32-C3): overview</text>
   <text x="30" y="54" fill="#555">ESP32-C3 Super Mini on the station PC's USB; BS170s switch the button LEDs; MAX98357 module drives the speaker; OLED and room-air sensor on I2C.</text>
-  <text x="30" y="72" fill="#555">Every ground symbol joins the C3's G pin and every 5V flag its 5V pin; same-named labels (SDA, SCL, BCLK, LRC, DIN, 3V3, LAMP_Y, LAMP_R) are joined.</text>
+  <text x="30" y="72" fill="#555">Every ground symbol joins the C3's G pin and every 5V flag its 5V pin; same-named labels (SDA, SCL, BCLK, LRC, DIN, 3V3, LAMP_HOLD, LAMP_DISCARD) are joined.</text>
   <text x="30" y="90" fill="#555">Assembled on an ElectroCookie full-size prototype board; parts off the board plug into labelled JST-XH headers J1-J5, the speaker into J6.</text>
 
   <!-- ===== C3 Super Mini ===== -->
@@ -78,7 +77,7 @@
   <circle cx="130" cy="340" r="4" fill="#222"/>
   <text x="357" y="254" text-anchor="end" fill="#d22" font-weight="600">5V</text>
   <text x="356" y="326" text-anchor="end" font-weight="700" fill="#e08a00">3V3</text>
-  <text x="356" y="470" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_Y</text>
+  <text x="356" y="470" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_HOLD</text>
   <text x="220" y="306" text-anchor="middle" font-weight="600" fill="#9a2f2c">DISCARD (red) switch, SW2</text>
   <text x="220" y="450" text-anchor="middle" font-weight="600" fill="#8a5a10">HOLD (yellow) switch, SW1</text>
   <text x="200" y="484" text-anchor="middle" font-size="11" fill="#555">via 4-pin J4 / J3 (GND SW 5V LED-); internal pull-ups, no resistor</text>
@@ -108,7 +107,7 @@
   </g>
   <text x="624" y="254" font-weight="700" fill="#2c7a9a">SDA</text>
   <text x="624" y="290" font-weight="700" fill="#7a4a9a">SCL</text>
-  <text x="624" y="326" font-weight="700" fill="#9a2f2c">LAMP_R</text>
+  <text x="624" y="326" font-weight="700" fill="#9a2f2c">LAMP_DISCARD</text>
 
   <!-- ===== MAX98357 module (I2S on 10 / 20 / 21) and speaker ===== -->
   <g stroke-width="2" fill="none">
@@ -156,7 +155,7 @@
   <text x="990" y="554" text-anchor="end" font-size="10" fill="#555">red +, black −</text>
   <text x="990" y="567" text-anchor="end" font-size="10" fill="#555">neither is a ground</text>
 
-  <!-- ===== row A: HOLD LED (LAMP_Y, GPIO 1), LED in SW1 via J3 ===== -->
+  <!-- ===== row A: HOLD LED (LAMP_HOLD, GPIO 1), LED in SW1 via J3 ===== -->
   <g stroke="#222" stroke-width="2" fill="none">
     <line x1="595" y1="740" x2="625" y2="740" stroke="#c08a2c"/>
     <rect x="625" y="734" width="40" height="12" fill="#fff"/>
@@ -173,7 +172,7 @@
   <use href="#lamp" x="774" y="687" stroke="#c08a2c"/>
   <use href="#v5" x="774" y="654"/><use href="#gnd" x="774" y="778"/><use href="#gnd" x="700" y="808"/>
   <text x="774" y="647" text-anchor="middle" fill="#d22" font-weight="600">5V</text>
-  <text x="590" y="744" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_Y</text>
+  <text x="590" y="744" text-anchor="end" font-weight="700" fill="#8a5a10">LAMP_HOLD</text>
   <text x="645" y="728" text-anchor="middle" font-size="11" fill="#555">RG1 220 Ω</text>
   <text x="688" y="780" text-anchor="end" font-size="11" fill="#555">RP1 100 kΩ</text>
   <text x="792" y="744" font-size="11" fill="#555">Q1 BS170</text>
@@ -181,7 +180,7 @@
   <text x="794" y="683" font-weight="600" fill="#8a5a10">HOLD LED (in SW1, J3)</text>
   <text x="794" y="697" font-size="11" fill="#555">+ to 5V, − to D; at most 50 mA</text>
 
-  <!-- ===== row B: DISCARD LED (LAMP_R, GPIO 7), LED in SW2 via J4 ===== -->
+  <!-- ===== row B: DISCARD LED (LAMP_DISCARD, GPIO 7), LED in SW2 via J4 ===== -->
   <g stroke="#222" stroke-width="2" fill="none">
     <line x1="595" y1="930" x2="625" y2="930" stroke="#c0504d"/>
     <rect x="625" y="924" width="40" height="12" fill="#fff"/>
@@ -198,7 +197,7 @@
   <use href="#lamp" x="774" y="877" stroke="#c0504d"/>
   <use href="#v5" x="774" y="844"/><use href="#gnd" x="774" y="968"/><use href="#gnd" x="700" y="998"/>
   <text x="774" y="837" text-anchor="middle" fill="#d22" font-weight="600">5V</text>
-  <text x="590" y="934" text-anchor="end" font-weight="700" fill="#9a2f2c">LAMP_R</text>
+  <text x="590" y="934" text-anchor="end" font-weight="700" fill="#9a2f2c">LAMP_DISCARD</text>
   <text x="645" y="918" text-anchor="middle" font-size="11" fill="#555">RG2 220 Ω</text>
   <text x="688" y="970" text-anchor="end" font-size="11" fill="#555">RP2 100 kΩ</text>
   <text x="792" y="934" font-size="11" fill="#555">Q2 BS170</text>

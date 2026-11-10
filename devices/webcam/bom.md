@@ -1,6 +1,6 @@
 # Station webcam bill of materials
 
-Fit one of these three cameras. "Reference build: yes" marks a listing used in the reference build; "suggested" marks
+Fit one of these three cameras. "Reference build: yes" marks a listing used in a reference build; "suggested" marks
 a listing chosen to match the part. Whichever is fitted, the bench checklist in the [guide](guide.md) checks that it
 gives 1920x1080 in MJPEG.
 

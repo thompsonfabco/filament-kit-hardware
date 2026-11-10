@@ -179,7 +179,7 @@ series resistor. Each LED draws 10 to 20 mA.
   the C3 resets.
 - BS170 legs, flat face toward you: D G S, left to right.
 
-**2N7000 alternative.** A 2N7000 (TO-92, 60 V, 200 mA) can take the place of either BS170; 200 mA is ample for a
+**2N7000 alternative.** A 2N7000 (TO-92; Vishay 70226 gives VDS 60 V and ID 200 mA continuous) can take the place of either BS170; 200 mA is ample for a
 10 to 20 mA LED. Its pinout is mirrored: flat face toward you, its legs are S G D, left to right. Fit it turned round,
 flat face away from you, so its drain and source land where the BS170's did, or swap the drain and source wires. The
 gate stays in the middle. Keep the same 220 Ω and 100 kΩ, and run the same two checks below.
@@ -205,7 +205,7 @@ more. Check each LED in two steps:
 
 If an LED fails either step, replace that BS170 with a logic-level N-MOSFET, for example an AO3400A on a SOT-23 adapter. Pick a part
 whose datasheet gives RDS(on) at a gate voltage of 2.5 V or lower. Keep the same 220 Ω and 100 kΩ. Wire it by the
-adapter's G, D and S labels, not the BS170's leg order, and add it to the catalogue with its datasheet limits.
+adapter's G, D and S labels, not the BS170's leg order, and add it to the catalogue with its datasheet limits, unless this guide already documents it as a substitute with its datasheet limits, as it does the 2N7000 above.
 
 ## Amplifier (MAX98357 module)
 
@@ -284,8 +284,8 @@ within 2 s as one tap.
 - **Wiring (J7):** GND to G, VCC to 3V3, SDA to GPIO 5, SCL to GPIO 6. Leave IRQ and RSTO unconnected. J7's pin
   order, GND 3V3 SDA SCL, is the module's own 4-pin header order.
 - **Bus:** U7 shares the I2C bus with the OLED (0x3C) and the air sensor (0x76 or 0x77, and 0x38 for the AHT20).
-- **Panel lines:** firmware 11 and later reports `NFC ok` or `NFC none` after `HELLO`, and sends `TAG <uid hex>`
-  for a tag at the reader. The full protocol is in `PANEL.md`.
+- **Panel lines:** firmware 11 and later sends `NFC ok` or `NFC none` after every `HELLO` and whenever the state
+  changes (detection is retried every 5 s), and `TAG <uid hex>`, in lowercase hex, once per tag presentation. The full protocol is in `PANEL.md`.
 
 ### PN532 I2C mode
 
@@ -342,7 +342,7 @@ Build checks, before the panel goes into service:
 
 Panel checklist:
 
-- [ ] A cold boot gives `HELLO intake-panel 10 esp32c3`, with both LEDs dark during reset.
+- [ ] A cold boot gives `HELLO intake-panel 11 esp32c3`, with both LEDs dark during reset.
 - [ ] The station finds the panel. With U7 fitted, the panel reports `NFC ok` after `HELLO`; without it, `NFC none`.
 - [ ] With U7 fitted, a tag tapped at the panel reader starts one intake.
 - [ ] If the USB reader is also connected, it opens as the station's reader, and the same tag tapped at both
