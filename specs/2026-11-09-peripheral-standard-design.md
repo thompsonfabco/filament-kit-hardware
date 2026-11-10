@@ -45,7 +45,7 @@ covering it.
 
 | Device | Hardware | Link | Found by |
 |---|---|---|---|
-| Intake panel | Wemos D1 mini (ESP8266), CH340 | USB serial | `HELLO` answer on each `ttyUSB` port |
+| Intake panel | ESP32-C3 Super Mini, native USB (vendor 303a) | USB serial | `HELLO` answer on each `ttyUSB` port |
 | Bench reader | ESP32-C3 Super Mini, PN532 on I2C, OLED, encoder | Wi-Fi, HTTPS | Compiled-in server URL |
 | Station NFC reader | PN532 on a CH340 adapter, UART | USB serial | The `ttyUSB` port that is not the panel |
 | Scale | DYMO M10 | USB HID | Vendor ID 0922 on `hidraw` |
@@ -340,8 +340,7 @@ reader's first-run flow and how its update images are signed.
 The reader's case is four STEP files, copied into `enclosures/bench-reader/` from an older project. Their headers hold
 no personal data, and their fit against the current reader build is unchecked. The design for this piece checks that
 fit and adds printable files. Every enclosure is designed around the ElectroCookie prototype board the standard names,
-mounted on its M3 holes, using hole positions measured from a real board. The panel has no enclosure files today. Its enclosure is designed once the rebuilt panel's
-parts are final. The speaker's body is already sealed, so the enclosure needs only a mount using its two holes and an
+mounted on its M3 holes, using hole positions measured from a real board. The intake station's case files (Controller, Simple Controller and Camera Stand) are in `enclosures/intake-station/`. The speaker's body is already sealed, so the enclosure needs only a mount using its two holes and an
 opening in front of the speaker, with no baffle.
 
 ## Done means
