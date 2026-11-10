@@ -24,7 +24,7 @@ bus-powered from the station PC's USB.
 
 The station finds the scale by USB vendor `0922` (DYMO) among the `hidraw` devices and reads its data reports. A
 report carries a status (zero, moving, stable, negative, overload and so on), a unit (grams, ounces or pounds) and
-the weight. The station converts grams, ounces and pounds to grams (the unit table in the kit's `station/scale.py`, used by
+the weight. The station converts grams, ounces and pounds to grams (the unit table in the kit's `server/filament_kit/station/scale.py`, used by
 `parse_report`); a report with any other unit is read as if it were grams, with no conversion. It treats a reading as
 final only when the status is `stable`. Reading `hidraw` needs a udev rule, which the station installer adds.
 
