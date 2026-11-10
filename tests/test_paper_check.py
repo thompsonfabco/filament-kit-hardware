@@ -379,3 +379,45 @@ def test_duplicate_catalogue_ref_reported_without_schematic(tree):
     j = text.index("/>", i) + 2
     path.write_text(text[:j] + text[i:j] + text[j:])
     assert any("duplicate part ref" in p for p in pc.check_device(dev(tree), tree[1]))
+
+
+def test_schematic_only_active_part_reported(ktree):
+    edit(ktree[0] / "catalogue.xml", 'ref="Q1"', 'ref="Q1X"')
+    assert any("Q1" in p and "in the schematic but not in the catalogue" in p for p in kcheck(ktree))
+
+
+def test_schematic_active_part_renamed_in_case_reported(ktree):
+    edit(ktree[0] / "catalogue.xml", 'ref="Q1" name="BS170" kind="active"', 'ref="q1" name="BS170" kind="passive"')
+    assert any("Q1" in p and "in the schematic but not in the catalogue" in p for p in kcheck(ktree))
+
+
+def test_schematic_active_part_in_passive_range_reported(ktree):
+    edit(ktree[0] / "catalogue.xml", 'ref="Q1" name="BS170" kind="active"', 'ref="Q1-Q2" name="BS170" kind="passive"')
+    assert any("Q1" in p and "in the schematic but not in the catalogue" in p for p in kcheck(ktree))
+
+
+def test_duplicate_catalogue_ref_ignores_case(ktree):
+    edit(ktree[0] / "catalogue.xml", '    <part ref="R1"',
+         '    <part ref="q1" name="bogus" kind="passive" qty="1" use="none"/>\n    <part ref="R1"')
+    assert any("duplicate part ref" in p and "q1" in p for p in kcheck(ktree))
+
+
+@pytest.mark.parametrize("kind", ["Active", "ACTIVE", "", "other"])
+def test_catalogue_kind_must_be_active_or_passive(ktree, kind):
+    edit(ktree[0] / "catalogue.xml", 'name="10k" kind="passive"', f'name="10k" kind="{kind}"')
+    assert any("R1" in p and "must be exactly active or passive" in p for p in kcheck(ktree))
+
+
+@pytest.mark.parametrize("attr", ["vmax", "imax", "datasheet"])
+def test_catalogue_passive_part_must_not_carry_ratings(ktree, attr):
+    edit(ktree[0] / "catalogue.xml", 'name="10k" kind="passive"', f'name="10k" kind="passive" {attr}="9"')
+    assert any("passive part R1 carries " + attr in p for p in kcheck(ktree))
+
+
+def test_catalogue_kind_checked_without_schematic(tree):
+    path = dev(tree) / "catalogue.xml"
+    text = path.read_text()
+    i = text.index('kind="')
+    j = text.index('"', i + 6)
+    path.write_text(text[:i] + 'kind="Active' + text[j:])
+    assert any("must be exactly active or passive" in p for p in pc.check_device(dev(tree), tree[1]))

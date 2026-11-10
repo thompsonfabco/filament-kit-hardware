@@ -312,7 +312,11 @@ The owner decided on 2026-11-09 to keep the hardware designs in KiCad 10.
   - that every active part has `Vmax`, `Imax` and `Datasheet`;
   - that the catalogue agrees with the netlist: pin GPIOs, `vmax`, `imax` and `datasheet` per part, and part kind
     (a part is active when its ref prefix is an active one or it carries `Vmax`);
-  - that every active catalogue part has a schematic counterpart and ratings, and no catalogue ref is duplicated;
+  - that every active schematic part has a catalogue part of the same ref (exact, so a range or a case variant does
+    not count), and every active catalogue part has a schematic counterpart and ratings;
+  - that no catalogue ref is duplicated (case ignored), every `kind` is exactly `active` or `passive`, and a passive
+    part carries no `vmax`, `imax` or `datasheet`;
+  - that no net joins two GPIOs and no GPIO is wired to two nets;
   - that a `usb-serial` device with firmware declares a HELLO on its `<link>`;
   - that the guide's pin table matches.
 - **CI:** both checks run in a `kicad/kicad:10.0` container next to the existing jobs.

@@ -253,14 +253,14 @@ def check_netlist(cat: Catalogue, bad, netlist: Path) -> dict:
             bad(f"{const} is GPIO {pins[const]} in the schematic but not in the catalogue")
         elif cat_gpio[const] != pins[const]:
             bad(f"{const} is GPIO {cat_gpio[const]} in the catalogue but {pins[const]} in the schematic")
-    sch_active = set()
     for ref, props in sorted(parts.items()):
         prefix = re.match(r"[A-Za-z]*", ref).group(0)
         cp = cat_parts.get(ref)
         # A schematic part is active when its ref prefix is an active one or it carries a Vmax property.
         is_active = prefix in ACTIVE_PREFIXES or "vmax" in props
         if is_active:
-            sch_active.add(ref)
+            if cp is None:
+                bad(f"active part {ref} is in the schematic but not in the catalogue")
             for a in ACTIVE_ATTRS:
                 # "~" is KiCad's empty-datasheet placeholder; "UNCONFIRMED" stays allowed.
                 if props.get(a, "") in ("", "~"):
@@ -296,9 +296,18 @@ def check_device(dir: Path, kit, export=export_netlist) -> list:
     def bad(msg):
         out.append(f"{cat.id}: {msg}")
 
+    # Refs are compared ignoring case, so q1 beside Q1 is a duplicate.
     refs = [p.ref for p in cat.parts]
-    for ref in sorted({r for r in refs if refs.count(r) > 1}):
+    lowered = [r.lower() for r in refs]
+    for ref in sorted({r for r in refs if lowered.count(r.lower()) > 1}):
         bad(f"duplicate part ref {ref} in the catalogue")
+    for part in cat.parts:
+        if part.kind not in ("active", "passive"):
+            bad(f"part {part.ref} kind {part.kind!r} must be exactly active or passive")
+        elif part.kind == "passive":
+            for a in ACTIVE_ATTRS:
+                if getattr(part, a):
+                    bad(f"passive part {part.ref} carries {a}")
 
     schematics = kicad_projects(dir)
     if schematics:
