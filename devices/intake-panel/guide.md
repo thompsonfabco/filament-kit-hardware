@@ -70,7 +70,8 @@ The buttons use the C3's internal pull-ups, so each switch goes between its pin 
 ## Connectors
 
 Every part off the main board plugs in through a JST-XH connector (2.50 mm pitch), so the board can come out of its
-case without desoldering. The speaker is the one exception: it goes into the amplifier's screw terminal.
+case without desoldering. The speaker is the one exception: on the through-hole board it goes into the amplifier
+module's screw terminal.
 
 | Ref | Type | Pin order | To |
 |---|---|---|---|
@@ -79,13 +80,17 @@ case without desoldering. The speaker is the one exception: it goes into the amp
 | J3 | JST-XH 4-pin | GND SW 5V LED- | Yellow button SW1: SW to GPIO 3, LED- to Q1's drain |
 | J4 | JST-XH 4-pin | GND SW 5V LED- | Red button SW2: SW to GPIO 4, LED- to Q2's drain |
 | J5 | JST-XH 3-pin | GND 3V3 S | Buzzer BZ1: S to GPIO 0 |
-| J6 | Amplifier screw terminal | + - | Speaker LS1 |
+| J6 | Through-hole board: the amplifier module's 2-way screw terminal. JLCPCB board: a JST-XH 2-pin header on the board | + - | Speaker LS1 |
 | J7 | JST-XH 4-pin | GND 3V3 SDA SCL | PN532 reader U7, optional |
 
 A plug fits any header with the same pin count, and a smaller XH plug can be forced in offset: the buzzer plug in a
 button header puts 5 V on the buzzer's 3V3 pin. An OLED or sensor plug in a button header would put 5 V on a 3.3 V
 part, and a button plug in an I2C header would short 3V3 to G when the button is pressed. You are responsible for
 plugging each harness into the right header:
+
+J6 names a different part on each board. On the through-hole board it is the screw terminal on the MAX98357 module,
+the [catalogue's](catalogue.xml) J6 (screw-terminal-2), and the board itself has no J6. On the JLCPCB board, which
+carries the amplifier chip instead of the module, J6 is a JST-XH 2-pin header on the board, by the SPEAKER mark.
 
 1. Label each header on the board (I2C, NFC, YELLOW, RED, BUZZER) with a marker or label, next to the header.
 2. Find pin 1 on the header: it is the pin at the header's pin-1 mark, and it carries the first signal in the pin order above (GND).
@@ -117,7 +122,7 @@ and the JLCPCB board carries the MAX98357A chip as U2, with its own parts RSD2, 
 of the amplifier block on each board in full, and every other net must match exactly. On the JLCPCB board the
 resistors are 0603, Q1 and Q2 are AO3400A in SOT-23 (see "LED MOSFET stages") and C1 is a 6.3 mm surface-mount
 electrolytic. The JST-XH headers and the female headers for U1 stay through-hole on both, so the two boards take the
-same plugs and the same C3. The end user fits the JST-XH headers (J1-J5, J7, and J6 on the JLCPCB board) and the
+same plugs and the same ESP32-C3. The end user fits the JST-XH headers (J1-J5, J7, and J6 on the JLCPCB board) and the
 female headers (XU1, and XU2 on the through-hole board) on either board: JLCPCB fits surface-mount parts only, and
 hand-fitting these is cheaper than paying JLCPCB to solder them.
 
@@ -151,12 +156,14 @@ What sits on the board, and why:
   Its VIN takes 5 V straight from U1's 5V pin over a 22.5 mm, 0.8 mm track along the top edge, on the bottom layer.
   The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one, before you plug U2 in.
   The module's outline and the terminal position are UNCONFIRMED; nothing else on the board sits under it.
-- **U2 on the JLCPCB board** is the MAX98357A chip (TQFN-16, 3 x 3 mm) in the same corner, left of U1, with its
-  bypass capacitors C2 and C3 and its SD_MODE resistor RSD2 beside it and its exposed pad tied to the bottom GND
-  pour by a via. J6, the speaker header, sits by the left edge below the spare M2 hole, which stays free. The chip
-  block and J6 take about 71 mm² and 58 mm² of courtyard, against the module's 19 x 17.8 mm (338 mm²). Its I2S lines
-  reach U1 over the same bottom-layer tracks as the module's, and its VDD takes 5 V from the same bottom-layer 5 V
-  track through a via.
+- **U2 on the JLCPCB board** is the MAX98357A chip (TQFN-16, 3 x 3 mm) in the same corner, left of U1. C2 (100 nF)
+  sits directly above its VDD pins, about 0.5 mm from them, with a GND via beside its GND pad; C3 (10 µF) sits next
+  to C2 with its own GND via, and RSD2, the SD_MODE resistor, to their right. The exposed pad goes to the bottom GND
+  pour through four 0.3 mm thermal vias, and each GND pin (3, 11 and 15) also runs out into the top GND pour and down
+  a via of its own. J6, the speaker header, sits by the left edge below the spare M2 hole, which stays free. The chip
+  block and J6 take about 56 mm² and 58 mm² of courtyard, against the module's 19 x 17.8 mm (338 mm²). Its I2S lines
+  reach U1 on the bottom layer, as the module's do, and its VDD takes 5 V from the same bottom-layer 5 V track
+  through a via.
 - **C1**, the optional 470 µF capacitor, has its pads below U1, by the "C1" mark, on both boards: there is no room
   for the capacitor beside U2's header. Its + pad reaches U2's VIN over about 45 mm of 0.8 mm track (down the left
   side of U1 and up to VIN) on the through-hole board, and U2's VDD over about 35 mm on the JLCPCB board, so it
@@ -215,16 +222,19 @@ solder by hand later.
    - U2, the MAX98357A: its pin 1 corner sits at the silkscreen's pin 1 mark, at the chip's lower right, toward U1.
      The rotation in the CPL file is KiCad's, and JLCPCB's convention for this package is UNCONFIRMED: correct it in
      the preview if the chip's pin 1 dot shows elsewhere. A chip turned the wrong way has every pin on the wrong net.
+5. JLCPCB's design check may flag via-in-pad on U2. The four vias in its exposed pad are thermal vias and belong
+   there: they are open on top, under the chip, and covered by solder mask on the bottom, and the paste stencil
+   keeps 0.05 mm clear of their drills, so only a little solder runs into them. The board needs no via filling.
 
-The positions are each part's centre. The BOM lists only the surface-mount parts JLCPCB solders: RSD1, RI1, RI2 and
-C1 stay off (see "Parts fitted only when needed"), and the through-hole JST-XH headers and the female headers for U1
-and U2 are left for the end user (see "Assembly order"). U1 and U2 are modules that plug into their headers and are
-never soldered. The off-board modules and the harnesses are not part of the order; buy them from the main parts
+The positions are each part's centre. The BOM lists only the surface-mount parts JLCPCB solders: U2 (the MAX98357A
+chip), C2, C3, RSD2, Q1, Q2 and the resistors RG1, RG2, RP1 and RP2. RSD1, RI1, RI2 and C1 stay off (see "Parts
+fitted only when needed"), and the through-hole JST-XH headers (J1-J7) and the female headers for U1 are left for the
+end user (see "Assembly order"). U1 is a module that plugs into its headers and is never soldered. The off-board modules and the harnesses are not part of the order; buy them from the main parts
 list. Every part number and its stock are in the [bill of materials](bom.md).
 
 ### Assembly order
 
-For the JLCPCB board, the resistors, Q1 and Q2 come fitted: start at step 3.
+For the JLCPCB board, U2 (the MAX98357A chip), C2, C3, RSD2, the resistors, Q1 and Q2 come fitted: start at step 3.
 
 1. Solder the resistors that are always fitted: RG1 and RG2 (220 Ω), RP1 and RP2 (100 kΩ).
 2. Solder Q1 and Q2 (BS170), each with its flat face matching its outline on the silkscreen. A 2N7000 has its pins
@@ -434,8 +444,12 @@ the module and try again. If the swap fixes it, note it in the bench results.
 ### MAX98357A chip on the JLCPCB board
 
 The JLCPCB board carries the MAX98357A chip in place of the module: MAX98357AETE+T, TQFN-16 3 x 3 mm, LCSC C910544
-(a JLCPCB extended part). It costs less per board than the module and its socket, and with its parts and J6 it takes
-well under half the module's area. The through-hole board keeps the module. The schematic for the JLCPCB board names
+(a JLCPCB extended part). With its parts and J6 it takes well under half the module's area. It costs less in cash per
+order: for a 2-board order the chip, C2, C3, RSD2 and the extended-part fee come to about $5.90 to $7.44, against $7.99
+for the module, which is sold only in 3-packs. Averaged per board it is not cheaper at 2 boards, about $2.95 to $3.72
+a board against $2.66 per module, and it comes out cheaper from about 3 or 4 boards up, as the one fee spreads over
+more boards. JLCPCB may also bill a minimum placement quantity for a part, so check the quote. The through-hole board
+keeps the module. The schematic for the JLCPCB board names
 the chip U2 with the circuit from the chip's datasheet (Maxim 19-6779 Rev 7, the [catalogue's](catalogue.xml) U2
 datasheet), set as the module is set:
 
@@ -451,6 +465,18 @@ datasheet), set as the module is set:
   the speaker's lead, so the board has no ferrite beads.
 - **GND** (pins 3, 11 and 15) and the exposed pad to GND; the datasheet says the exposed pad is not connected inside
   the chip and goes to a ground plane for heat.
+
+The footprint is KiCad's TQFN-16 3 x 3 mm land (exposed pad 1.23 mm), checked against the package drawing in the
+datasheet, outline 21-0136, code T1633+4, the MAX98357AETE+ package and LCSC C910544's TQFN-16-EP(3x3): 0.5 mm pitch,
+terminals 0.20 to 0.30 mm wide (0.25 nominal) and 0.30 to 0.50 mm long, exposed pad 0.95 to 1.25 mm. Its lands are
+0.25 x 0.85 mm, reaching from 1.85 mm to 1.0 mm from the centre, so they cover the full terminal length. The paste
+for the exposed pad is a cross of two 1.13 x 0.33 mm windows, about 42% of the pad, kept clear of the four via
+drills.
+
+The [catalogue](catalogue.xml) describes the through-hole build: its U2 is the module and its J6 the module's screw
+terminal. The parts only the JLCPCB board has (the chip, C2, C3, RSD2 and the JST-XH J6) are in the JLCPCB schematic,
+the [bill of materials](bom.md) and `kicad-smt/parity-exceptions.txt`, and their limits are here. C2 is rated 50 V and
+C3 25 V, both well above the 5 V rail; RSD2 dissipates about 25 µW at 5 V, against 0.1 W for an 0603 resistor.
 
 The chip's datasheet limits: VDD, LRCLK, BCLK and DIN -0.3 to +6 V absolute maximum, every other pin -0.3 V to
 VDD + 0.3 V; ±1.6 A continuous into or out of VDD, GND and the outputs, ±20 mA on the other pins; VDD 2.5 to 5.5 V
