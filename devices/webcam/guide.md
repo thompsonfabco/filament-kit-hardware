@@ -25,7 +25,7 @@ gives. It skips the first 15 frames so the camera can set its exposure, then kee
 
 ## Mounting and lighting
 
-These are owner choices, measured on the bench, not fixed by the kit:
+These are builder choices, measured on the bench, not fixed by the kit:
 
 | What | Value |
 |---|---|

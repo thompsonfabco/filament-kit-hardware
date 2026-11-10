@@ -74,10 +74,10 @@ The kit never guesses a port when it can identify one.
 - Bought devices are matched by vendor ID or a stable `by-id` path, with a config override.
 - Wi-Fi devices reach the server by DNS name.
 
-### Data and owner information
+### Data and secrets
 
-Each peripheral has one XML catalogue file (see "Hardware catalogue"). Committed files hold no owner data: no
-addresses, hostnames, serial numbers or names. Secrets never go into a committed file or into a public firmware image.
+Each peripheral has one XML catalogue file (see "Hardware catalogue"). Committed files and public firmware
+images hold no secrets, network addresses, hostnames, serial numbers or personal names.
 
 ### Adding a peripheral
 

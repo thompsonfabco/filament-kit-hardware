@@ -195,7 +195,7 @@ adapter's G, D and S labels, not the BS170's leg order, and add it to the catalo
 
 The module sits on the main board itself, next to U1 (see "Board and layout"), so it needs no JST-XH connector.
 
-The module's listing has no schematic and is unreliable on electrical figures. The owner's photo of the board shows the
+The module's listing has no schematic and is unreliable on electrical figures. A photo of the board shows the
 pin labels LRC BCLK DIN GAIN SD GND VIN, and the back silkscreen says "Default 9db Gain & (L+R)/2 out", so the board
 has its own SD pull-up. It gives 5.5 V as both the minimum and maximum supply. The chip's datasheet gives 2.5 to 5.5 V
 operating and 6 V absolute maximum, and this panel uses 5 V.

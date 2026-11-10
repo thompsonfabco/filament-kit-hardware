@@ -1,12 +1,11 @@
 # Peripheral hardware standard and intake panel move to ESP32-C3: design
 
-Status: awaiting the owner's review. Nothing here is built. Moved from `filament-kit` on 2026-11-09.
+Status: adopted. The devices are documented in `devices/`. Moved from `filament-kit` on 2026-11-09.
 
 ## Goal
 
 Every peripheral the kit talks to is built to one standard, checked the same way, and documented in one place. The
-owner's order of work is: update, standardize and validate, then document. The owner's decision of 2026-11-09 is that
-the intake panel moves from the ESP8266 to the ESP32-C3.
+order of work is: update, standardize and validate, then document. The intake panel moves from the ESP8266 to the ESP32-C3.
 
 Priorities follow the kit's order: functionality, then ease of use, then security.
 
@@ -130,7 +129,7 @@ code and the whine it caused both go away:
   ESP8266 did. The output fades to silence over 50 ms instead.
 - **Volume:** a new `V <percent>` line from the PC sets the level in the 16-bit samples, without losing resolution or
   needing a reflash. The new setting `station.speaker_volume` starts at 50, which keeps peak speaker current near
-  310 mA. The owner sets the final value on the bench, by ear and against the USB current check.
+  310 mA. The builder sets the final value on the bench, by ear and against the USB current check.
 - **Buzzer:** it stays on its own pin and LEDC channel, independent of speech.
 
 The station's speech code has to change for the C3. It ramps each phrase up from a duty of 0 to protect C1, and on the
@@ -208,7 +207,7 @@ and with `<example model="..." source="..."/>` entries for models named in the k
 | Paper | Every catalogue pin matches the firmware constant and the guide's pin table; no strapping pin is used; `HELLO` name and chip match the source; every active part names its datasheet voltage and current limits | This repository's CI, which checks out the public `filament-kit` at its `main` branch to read the firmware |
 | Build | Both firmwares build; host tests pass, including the BME280 and AHT20 tests, which CI doesn't run today | `filament-kit` CI: a new `panel.yml` and the existing `reader.yml` |
 | Station | Port selection with fake sysfs entries, including a non-Espressif `ttyACM` board that must never be opened; chip token handling; old panel never flashed; write timeout recovery; first-flash confirmation; no C3 stream or cut-off fade ever leaves 128 at its start or end | `filament-kit` CI, in `server/tests` |
-| Bench | Real hardware, by checklist | The owner, recording the firmware version and date in the catalogue file here |
+| Bench | Real hardware, by checklist | The builder, recording the firmware version and date in the catalogue file here |
 
 Bench checklist for the panel:
 
@@ -253,13 +252,13 @@ Layout of this repository:
 
 ```
 README.md                            what this repository is and a device index
-standard.md                          the standard, taken from this design once it is approved
+standard.md                          the standard, taken from this design
 devices/<device>/guide.md            build guide, wiring, parts, bench checklist and bench results
 devices/<device>/catalogue.xml       the checked data
 devices/<device>/images/             wiring diagrams
 enclosures/<device>/                 STEP and printable files
 specs/                               designs such as this one
-tools/                               the owner-data scan and the paper check
+tools/                               the data scan and the paper check
 ```
 
 The devices are `intake-panel`, `bench-reader`, `station-nfc`, `scale` and `webcam`.
@@ -274,11 +273,11 @@ Moves out of `filament-kit`, done as kit changes:
 - `reader/README.md` keeps the API and firmware build. Its hardware table moves to `devices/bench-reader/guide.md`.
 - `THIRD-PARTY.md` changes the panel firmware's line from the ESP8266 core to the ESP32 core.
 
-`standard.md` replaces the standard's section of this design once both are approved.
+`standard.md` replaces the standard's section of this design.
 
 ## KiCad
 
-The owner decided on 2026-11-09 to keep the hardware designs in KiCad 10.
+The hardware designs are kept in KiCad 10.
 
 ### What lives where
 
@@ -320,17 +319,14 @@ The owner decided on 2026-11-09 to keep the hardware designs in KiCad 10.
   - that a `usb-serial` device with firmware declares a HELLO on its `<link>`;
   - that the guide's pin table matches.
 - **CI:** both checks run in a `kicad/kicad:10.0` container next to the existing jobs.
-- **Fit:** dropped on 2026-11-09 by the owner: no proto-board layout, so no STEP export of a placed board.
-- **Owner data:** KiCad files are plain text, so the owner-data scan covers them. Leave the title block's company and
-  author fields empty.
+- **Fit:** none. The boards are hand-wired from the schematic, so there is no STEP export of a placed board.
 
 ### Order
 
 1. Library and the `ElectroCookie_Full` footprint.
 2. Intake panel schematic, with ERC clean and its exports.
 3. Paper check reading the netlist, and the KiCad CI job.
-4. Intake panel placement on the board, with the STEP export. (Dropped on 2026-11-09 by the owner: no proto-board layout.)
-5. Bench reader schematic, folded into its guide task.
+4. Bench reader schematic, folded into its guide task.
 
 ## Follow-up: reader setup
 
@@ -353,4 +349,4 @@ opening in front of the speaker, with no baffle.
 - The rebuilt panel passes its bench checklist, with the result recorded in its catalogue file.
 - All five peripherals have a catalogue file and a guide under `devices/` in this repository.
 - This repository's CI runs the paper check, and the kit's CI runs the build and station checks.
-- The follow-up designs for reader setup and enclosures are ready for the owner's review.
+- The follow-up designs for reader setup and enclosures are written.

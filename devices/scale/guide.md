@@ -18,7 +18,7 @@ bus-powered from the station PC's USB.
 |---|---|
 | M10 | Example named in the kit's `docs/user-guide.md`; no bench test recorded |
 | M25 | Example named in the kit's `docs/user-guide.md`; no bench test recorded |
-| Other S-series | Not tested: the owner tries one and records it in the bench results |
+| Other S-series | Not tested: the builder tries one and records it in the bench results |
 
 ## How the station reads it
 

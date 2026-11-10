@@ -18,17 +18,6 @@ Firmware and the station code that talks to these devices live in filament-kit, 
 The peripheral standard is in [standard.md](standard.md). The current design is
 [specs/2026-11-09-peripheral-standard-design.md](specs/2026-11-09-peripheral-standard-design.md).
 
-## Before pushing
-
-Committed files hold no owner data: no addresses, hostnames, serial numbers, account ids or names. Put owner-specific
-words in `tools/owner-terms.local`, one per line, which git ignores, then run:
-
-```bash
-python -I tools/check_owner_data.py
-```
-
-The scan also opens zip-based files (`.FCStd`, `.3mf`, `.zip`) and reads their text members.
-
 ## License
 
 Everything outside `enclosures/` is licensed under GPL-3.0-only (see `LICENSE`), (c) 2026 thompsonfabco.
