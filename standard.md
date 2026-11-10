@@ -5,6 +5,11 @@
 New kit-built peripherals use the **ESP32-C3 Super Mini** on the same pinned platform as the reader: pioarduino
 53.03.13 (Arduino core 3.1.3), native USB serial. Bought devices such as the scale and webcam are exempt.
 
+### Bought devices
+
+- **Scale:** the intake station uses the DYMO M10, the DYMO Digital Postal Scale, 10-Pound (model 1772057, Amazon
+  ASIN B0053HCWRE). Other DYMO USB postal scales share its USB vendor ID but are untested.
+
 Pin rules:
 
 - Use GPIO 5 and 6 for I2C SDA and SCL on every device, as the reader does.
@@ -81,5 +86,5 @@ images hold no secrets, network addresses, hostnames, serial numbers or personal
 
 ### Adding a peripheral
 
-A new peripheral is complete when it has a catalogue file, a build guide with a bench checklist, passing paper and
-build checks, and a recorded bench result.
+A new peripheral is complete when it has a catalogue file, a build guide with a bench checklist, a bill of materials
+(`bom.md`) with listing links, passing paper and build checks, and a recorded bench result.

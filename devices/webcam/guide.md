@@ -1,7 +1,8 @@
 # Station webcam guide (USB camera)
 
 The station takes a picture of a new spool when yellow is pressed at the camera step. The server uses it to recognise
-the spool. The webcam is a bought part with no kit firmware. The checked data is in [catalogue.xml](catalogue.xml).
+the spool. The webcam is a bought part with no kit firmware. The checked data is in [catalogue.xml](catalogue.xml), and the camera options, with Amazon listing links, are in
+[bom.md](bom.md).
 
 ## Parts
 

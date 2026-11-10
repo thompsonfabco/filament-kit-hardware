@@ -6,7 +6,8 @@ Mini and plugs into the station PC's USB. This guide covers firmware 10 and late
 
 The panel's behaviour, its serial protocol, the speech format and the firmware update notes are in the kit's
 [station/PANEL.md](https://github.com/thompsonfabco/filament-kit/blob/main/station/PANEL.md). This guide covers the parts, wiring, assembly, first flash and bench checks. The checked data
-for this device is in [catalogue.xml](catalogue.xml). The full circuit is the KiCad schematic in [kicad/](kicad/),
+for this device is in [catalogue.xml](catalogue.xml), and the parts to buy, with Amazon listing links, are in
+[bom.md](bom.md). The full circuit is the KiCad schematic in [kicad/](kicad/),
 exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.pdf](images/schematic.pdf).
 [images/wiring.svg](images/wiring.svg) is an overview drawing, not the full circuit: it leaves out the PN532 reader
 (U7) and its header (J7).
@@ -36,6 +37,9 @@ exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.p
 | J1-J5 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x4 (J1-J4) and 3-pin x1 (J5) | 5 | Off-board connectors |
 | J7 | JST-XH (2.50 mm pitch) header and plug, 4-pin | 0 or 1 | Off-board connector for U7, only if U7 is fitted |
 | F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the screw terminal |
+
+Room-air option B (U5 + U6, the BMP280 + AHT20 board) is optional and not in the [BOM](bom.md), which lists the
+BMP280 board (U4).
 
 The datasheet limits for each active part, with their sources, are in [catalogue.xml](catalogue.xml).
 

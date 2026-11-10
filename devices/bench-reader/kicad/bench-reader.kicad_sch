@@ -2003,7 +2003,7 @@
 				)
 			)
 		)
-		(property "Value" "Rotary encoder with push switch"
+		(property "Value" "EC11 encoder with push switch"
 			(at 45.72 109.22 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2046,10 +2046,10 @@
 				)
 			)
 		)
-    (property "Pin_order" "UNCONFIRMED (not photographed). Shown as a bare encoder with a separate push switch: A to GPIO 3, B to GPIO 4, common C to GND, switch S1 to GPIO 1 and S2 to 3V3. A stock KY-040 module ties its switch to its GND pin, which this firmware (switch to 3V3, internal pull-down) cannot read" (at 45.72 104.14 0)
+    (property "Pin_order" "EC11: A C B on the three-pin side, switch S1 S2 on the two-pin side (the usual EC11 layout). Bare encoder with a separate push switch: A to GPIO 3, B to GPIO 4, common C to GND, switch S1 to GPIO 1 and S2 to 3V3. A stock KY-040 module ties its switch to its GND pin, which this firmware (switch to 3V3, internal pull-down) cannot read" (at 45.72 104.14 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
-    (property "Type" "UNCONFIRMED: KY-040 style rotary encoder with push switch, wired switch-to-3V3" (at 45.72 104.14 0)
+    (property "Type" "EC11 rotary encoder with push switch, 5 pins, switch legs separate from the common, wired switch-to-3V3" (at 45.72 104.14 0)
       (effects (font (size 1.27 1.27)) (hide yes))
     )
 		(pin "A"
@@ -2442,7 +2442,7 @@
 		(at 177.79999999999998 83.82000000000001)
 		(uuid "979084d9-5cd6-42e3-bd63-de153a322fcc")
 	)
-	(text "Bench reader. Firmware: reader/src/main.cpp (filament-kit).\nPower: the C3's USB 5 V; every module on the C3's 3V3 pin.\nI2C: Elechouse NFC Module V3 PN532 (0x24, switch 1 ON, switch 2 OFF) and OLED (0x3C) share SDA/SCL.\nPN532 IRQ and RSTO stay unconnected (firmware polls over I2C).\nEncoder: A/B to GPIO 3/4 with internal pull-ups, common C to GND;\npush switch S1-S2 between GPIO 1 and 3V3, internal pull-down.\nBuzzer module is active-low: firmware idles GPIO 0 high.\nUNCONFIRMED: encoder module pin order, PN532 supply pin, encoder type."
+	(text "Bench reader. Firmware: reader/src/main.cpp (filament-kit).\nPower: the C3's USB 5 V; every module on the C3's 3V3 pin.\nI2C: Elechouse NFC Module V3 PN532 (0x24, switch 1 ON, switch 2 OFF) and OLED (0x3C) share SDA/SCL.\nPN532 IRQ and RSTO stay unconnected (firmware polls over I2C).\nEncoder: A/B to GPIO 3/4 with internal pull-ups, common C to GND;\npush switch S1-S2 between GPIO 1 and 3V3, internal pull-down.\nBuzzer module is active-low: firmware idles GPIO 0 high.\nUNCONFIRMED: PN532 supply pin."
 		(exclude_from_sim no)
 		(at 30.48 152.4 0)
 		(effects

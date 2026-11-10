@@ -48,7 +48,7 @@ covering it.
 | Intake panel | Wemos D1 mini (ESP8266), CH340 | USB serial | `HELLO` answer on each `ttyUSB` port |
 | Bench reader | ESP32-C3 Super Mini, PN532 on I2C, OLED, encoder | Wi-Fi, HTTPS | Compiled-in server URL |
 | Station NFC reader | PN532 on a CH340 adapter, UART | USB serial | The `ttyUSB` port that is not the panel |
-| Scale | DYMO M10 or M25 | USB HID | Vendor ID 0922 on `hidraw` |
+| Scale | DYMO M10 | USB HID | Vendor ID 0922 on `hidraw` |
 | Webcam | Any USB camera | V4L2 | First `/dev/v4l/by-id` entry |
 
 ## The standard

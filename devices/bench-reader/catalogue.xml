@@ -38,7 +38,7 @@
           imax_basis="SSD1306: vmax is the VDD absolute maximum. The datasheet gives no current limit"
           i_typ_basis="an SSD1306 module draws roughly 10 to 20 mA from 3V3: an estimate, UNCONFIRMED"
           datasheet="https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf"/>
-    <part ref="SW1" name="rotary encoder with push switch, KY-040 style (type UNCONFIRMED)" kind="passive" qty="1"
+    <part ref="SW1" name="EC11 rotary encoder with push switch, 5 pins, switch legs separate from the common" kind="passive" qty="1"
           use="slot and printer knob: A and B to GPIO 3 and 4, common to G, switch between GPIO 1 and 3V3"/>
     <part ref="BZ1" name="3-pin buzzer module, low-level trigger (active-low), VCC S GND" kind="active" qty="1"
           use="beeps and speech, VCC to 3V3, S low = on"

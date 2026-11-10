@@ -1,24 +1,22 @@
-# Station scale guide (DYMO USB postal scale)
+# Station scale guide (DYMO M10)
 
-The station weighs a spool on a DYMO USB postal scale. The scale is a bought part with no kit firmware. The station
-reads it as a USB HID device. The checked data is in [catalogue.xml](catalogue.xml).
+The intake station weighs a spool on a DYMO M10, the DYMO Digital Postal Scale, 10-Pound (model 1772057). The scale is
+a bought part with no kit firmware. The station reads it as a USB HID device. The checked data is in
+[catalogue.xml](catalogue.xml), and the listing link is in [bom.md](bom.md).
 
 ## Parts
 
 | Ref | Part | Qty | Use |
 |---|---|---|---|
-| SC1 | DYMO USB postal scale, M10, M25 or an S-series model | 1 | Spool weight |
+| SC1 | DYMO M10, Digital Postal Scale, 10-Pound (model 1772057) | 1 | Spool weight |
 
 Its electrical limits are UNCONFIRMED in [catalogue.xml](catalogue.xml): no source was read for them. It is
 bus-powered from the station PC's USB.
 
-## Tested models
+## Model
 
-| Model | Status |
-|---|---|
-| M10 | Example named in the kit's `docs/user-guide.md`; no bench test recorded |
-| M25 | Example named in the kit's `docs/user-guide.md`; no bench test recorded |
-| Other S-series | Not tested: the builder tries one and records it in the bench results |
+The station is standardized on the DYMO M10; no bench test is recorded for it yet. Other DYMO USB postal scales share
+its USB vendor ID, `0922`, but are untested.
 
 ## How the station reads it
 
@@ -44,12 +42,10 @@ A DYMO shows up on USB only while it is switched on, and it switches itself off 
 - [ ] An empty scale reads zero, and a known weight reads within the scale's own tolerance, in grams.
 - [ ] With the scale set to ounces or pounds, the station still gives grams.
 - [ ] A scale that switched itself off comes back after its button is pressed, with no service restart.
-- [ ] Model tested, and any model beyond M10 and M25 noted below.
+- [ ] Result recorded below for the M10.
 
 ## Bench results
 
 | Date | Model | Result | Notes |
 |---|---|---|---|
 | | M10 | | |
-| | M25 | | |
-| | | | |

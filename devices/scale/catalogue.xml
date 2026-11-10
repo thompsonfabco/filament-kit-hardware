@@ -3,11 +3,10 @@
      that figure. -->
 <device id="scale" schema="1">
   <link type="usb-hid" vendor="0922" find="hidraw device whose HID_ID vendor is 0922"/>
-  <!-- M10 and M25 are examples named in the kit's docs/user-guide.md. No bench test is recorded for either. -->
-  <example model="M10" source="kit docs/user-guide.md"/>
-  <example model="M25" source="kit docs/user-guide.md"/>
+  <!-- The intake station is standardized on the DYMO M10. No bench test is recorded for it yet. -->
+  <model name="DYMO M10" product="DYMO Digital Postal Scale, 10-Pound" number="1772057" asin="B0053HCWRE" status="standard"/>
   <parts>
-    <part ref="SC1" name="DYMO USB postal scale (M10, M25 or S-series)" kind="active" qty="1" use="spool weight"
+    <part ref="SC1" name="DYMO M10 USB postal scale (model 1772057)" kind="active" qty="1" use="spool weight" asin="B0053HCWRE"
           vmax="UNCONFIRMED" imax="UNCONFIRMED" datasheet="UNCONFIRMED"/>
   </parts>
   <power measured_ma=""/>

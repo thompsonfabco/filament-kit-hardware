@@ -8,7 +8,8 @@ signed firmware updates over the air.
 The reader's server API, firmware build and update steps are in the kit's
 [reader/README.md](https://github.com/thompsonfabco/filament-kit/blob/main/reader/README.md). This guide covers the
 parts, wiring, case, first flash and bench checks. The checked data for this device is in
-[catalogue.xml](catalogue.xml), and the circuit is the KiCad schematic in [kicad/](kicad/), exported as
+[catalogue.xml](catalogue.xml), the parts to buy, with Amazon listing links, are in [bom.md](bom.md), and the
+circuit is the KiCad schematic in [kicad/](kicad/), exported as
 [images/schematic.svg](images/schematic.svg) and [images/schematic.pdf](images/schematic.pdf).
 
 ![Bench reader schematic](images/schematic.svg)
@@ -20,7 +21,7 @@ parts, wiring, case, first flash and bench checks. The checked data for this dev
 | U1 | ESP32-C3 Super Mini | 1 | Controller, powered from USB |
 | U2 | Elechouse NFC Module V3 (PN532), set to I2C mode (address 0x24) | 1 | Tag reader |
 | U3 | SSD1306 OLED module, 128x64, I2C address 0x3C | 1 | Display |
-| SW1 | Rotary encoder with push switch, KY-040 style (see "Encoder") | 1 | Slot and printer knob |
+| SW1 | EC11 rotary encoder with push switch, 5 pins, switch legs separate from the common (see "Encoder") | 1 | Slot and printer knob |
 | BZ1 | 3-pin buzzer module, low-level trigger (active-low) | 1 | Beeps and speech |
 
 The datasheet limits for each active part, with their sources, are in [catalogue.xml](catalogue.xml) and in the
@@ -86,9 +87,9 @@ The firmware reads the encoder this way:
   high (`ENC_SW_TO_VCC = true`).
 
 A stock KY-040 module joins its switch to its own GND pin, which is also the encoder's common. Wired as it comes,
-its switch pulls GPIO 1 to G, which the pull-down already holds low, so a press is never seen. Use an encoder whose
-switch legs are separate from the common, as the schematic shows, or rewire the module's switch to 3V3. The
-encoder actually fitted to this build is UNCONFIRMED.
+its switch pulls GPIO 1 to G, which the pull-down already holds low, so a press is never seen. The EC11 in the
+BOM is a bare encoder whose switch legs are separate from the common, as the schematic shows. If a KY-040 module is
+used instead, rewire its switch to 3V3.
 
 If turning the knob moves the wrong way, swap the CLK and DT wires.
 
@@ -108,7 +109,7 @@ rows run top to bottom with the USB connector at the top.
 | U1 ESP32-C3 Super Mini | Right row: 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0. Left row: GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 | Top view, from the board |
 | U2 PN532 | GND VCC SDA SCL on the 4-pin header, component side; the back labels the same holes GND VCC TXD RXD. Side header: SCK MISO MOSI SS VCC GND IRQ RSTO | Confirmed from the board; IRQ and RSTO stay unconnected |
 | U3 OLED | GND VCC SCL SDA | The panel's module order; this module UNCONFIRMED |
-| SW1 encoder | KY-040 style: CLK DT SW + GND | UNCONFIRMED: a common module's order, not photographed; see "Encoder" |
+| SW1 encoder | EC11: A C B on the three-pin side, switch S1 S2 on the two-pin side | The usual EC11 layout; check the part. C to G, S1 to GPIO 1, S2 to 3V3; see "Encoder" |
 | BZ1 buzzer | VCC S GND | The panel's module order; this module UNCONFIRMED |
 
 ## Power
@@ -168,8 +169,6 @@ Values marked UNCONFIRMED in this guide, the catalogue or the schematic, and the
 
 - **PN532 supply:** which pin VCC feeds on this module (VBAT direct or through a regulator), from a photo of the
   module's back.
-- **Encoder type and pin order:** a photo of the encoder or module and its wiring, to show whether the push switch
-  goes to 3V3 or to G.
 - **OLED and buzzer pin orders on this build:** a photo of each module's labels.
 - **ESP32-C3 limits:** the per-pin GPIO current limit, the Super Mini's 3V3 regulator rating and its 5 V pin path.
 - **SSD1306 and buzzer module current:** no datasheet limit; the OLED's 10 to 20 mA is an estimate.

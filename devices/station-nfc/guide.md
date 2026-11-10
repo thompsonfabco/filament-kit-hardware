@@ -3,7 +3,8 @@
 The station reads a spool's NFC tag with a PN532 board. The board is a bought part and has no kit firmware: it
 connects to the station PC through a CH340 USB serial adapter, and the station talks to it with nfcpy. This guide
 covers the mode switches, the wiring to the adapter and the checks. The checked data is in
-[catalogue.xml](catalogue.xml). The station's behaviour is in the kit's user guide, in the station hardware section.
+[catalogue.xml](catalogue.xml), and the parts to buy, with Amazon listing links, are in [bom.md](bom.md). The
+station's behaviour is in the kit's user guide, in the station hardware section.
 
 This USB reader is the fallback. The main reader is the PN532 on the intake panel's I2C bus (U7 on header J7, see
 the [intake panel guide](../intake-panel/guide.md)). Both may be connected at the same time; the station counts the
