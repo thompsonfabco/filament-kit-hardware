@@ -181,7 +181,7 @@ encoder, A and B go to its A and B pins, C to its common, SW to switch leg S1 an
 4. Check each part in the placement preview against the silkscreen:
    - Every JST-XH header has its pin 1 over the silkscreen dot below it. J2, J3 and J4 have pin 1 on the left; J1
      has its pin 1 on the right (it is turned round). A header turned the wrong way reverses the plug's pin order
-     and puts 3V3 and GND on the wrong wires, so correct the rotation in the preview if a pin 1 sits away from its
+     and puts the module's supply and signal pins on the wrong wires, so correct the rotation in the preview if a pin 1 sits away from its
      dot.
    - The rows marked U1A and U1B are the two female headers for U1.
 

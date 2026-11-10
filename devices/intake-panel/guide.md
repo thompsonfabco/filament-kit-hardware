@@ -199,8 +199,8 @@ solder by hand later.
      rotation in the preview if a part shows otherwise.
    - Every JST-XH header has its pin 1 over the silkscreen dot below it. J7, J1, J2, J3 and J4 have pin 1 on the
      left; J5 has its pin 1 on the right (it is turned round). A header turned the wrong way reverses the plug's pin
-     order: on J3 and J4 it puts 5 V on the button's switch wire and GND on the LED's - wire, so correct the rotation
-     in the preview if a pin 1 sits away from its dot.
+     order: on J3 and J4 it puts 5 V on the button's switch wire and GND on the LED's - wire, and pressing a lit button
+     then shorts 5 V to GND through the MOSFET, so correct the rotation in the preview if a pin 1 sits away from its dot.
    - The rows marked U1A and U1B are the two female headers for U1, which share one footprint on the board; the row
      marked U2 is U2's 1x7 female header.
 
@@ -321,7 +321,8 @@ the schematic still names the BS170, and only the JLCPCB board's footprint and p
 footprint numbers the pads to the BS170's drain, gate and source, so the wiring is the same. The figures in its LCSC
 listing: VDS 30 V, ID 5.7 A continuous, 1.4 W, VGS ±12 V, gate threshold 1.45 V, RDS(on) 48 mΩ at VGS = 2.5 V.
 Unlike the BS170, its on-resistance is specified at a gate voltage below the C3's 3.3 V, so it switches an LED fully
-on. Run step 1 of the checks below on each LED all the same: the 50 mA limit is the LED's, not the MOSFET's. A 2N7002
+on. Run step 1 of the checks below on each LED all the same: it confirms the LED and its built-in resistor draw the
+expected 10 to 20 mA (the 50 mA limit below is set by the BS170; an AO3400A has ample margin). A 2N7002
 (SOT-23, LCSC C8545; listing: VDS 60 V, ID 115 mA continuous, gate threshold 2.5 V, RDS(on) 5 Ω at VGS = 10 V) fits
 the same pads and can go in its place in the BOM, but its listing gives no RDS(on) at a 3.3 V gate and 3.3 V is only
 just above its 2.5 V threshold, so it is driven no better than the BS170 and needs both checks below.
