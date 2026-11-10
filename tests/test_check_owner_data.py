@@ -2,6 +2,8 @@ import sys
 import zipfile
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 
 import check_owner_data as cod  # noqa: E402
@@ -117,3 +119,23 @@ def test_directory_in_listed_paths_is_skipped(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(cod, "tracked", lambda: [tmp_path / "folder"])
     assert cod.main() == 0
     assert "0 finding(s)" in capsys.readouterr().out
+
+
+def test_missing_listed_file_is_a_finding(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(cod, "ROOT", tmp_path)
+    monkeypatch.setattr(cod, "tracked", lambda: [tmp_path / "gone.txt"])
+    assert cod.main() == 1
+    assert "gone.txt: listed but missing" in capsys.readouterr().out
+
+
+def test_dangling_symlink_with_user_path_is_a_finding(tmp_path, monkeypatch, capsys):
+    try:
+        (tmp_path / "link").symlink_to("C:/" + "Users/RealName/secret.txt")
+    except (OSError, NotImplementedError):
+        pytest.skip("this account cannot create symlinks on this system")
+    monkeypatch.setattr(cod, "ROOT", tmp_path)
+    monkeypatch.setattr(cod, "tracked", lambda: [tmp_path / "link"])
+    assert cod.main() == 1
+    out = capsys.readouterr().out
+    assert "link:1: Windows user path" in out
+    assert "link: dangling symlink" in out

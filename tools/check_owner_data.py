@@ -8,7 +8,8 @@ are decoded per line before matching (archive members and .xml, .svg, .model fil
 an address. Member names are scanned too; FreeCAD geometry members (.Map.txt, .brp, .brep) are skipped because their
 topological-naming strings look like IP addresses. Findings inside an archive read `path!member:line`. An archive that
 can't be read (or a file with an archive extension that isn't a readable zip) and a member too large to scan are
-findings. Exit status 1 means something was found.
+findings. A listed path that is missing or a dangling symlink is a finding; a symlink's target text is
+scanned too. Exit status 1 means something was found.
 
     python -I tools/check_owner_data.py
 """
@@ -16,6 +17,7 @@ from __future__ import annotations
 
 import codecs
 import html
+import os
 import pathlib
 import re
 import subprocess
@@ -105,13 +107,29 @@ def scan_file(path: pathlib.Path, rel: str, words: list[str]) -> list[str]:
     return scan_text(rel, text, words, unescape=path.suffix.lower() in ENTITY_SUFFIXES)
 
 
+def scan_path(path: pathlib.Path, rel: str, words: list[str]) -> list[str]:
+    out = []
+    if path.is_symlink():  # the link text is scanned, then the target if it exists
+        out += scan_text(rel, os.readlink(path), words)
+        if not path.exists():
+            return out + [f"{rel}: dangling symlink"]
+    elif not path.exists():
+        return [f"{rel}: listed but missing"]
+    if path.is_dir():  # e.g. an untracked folder; its files are listed separately
+        return out
+    try:
+        return out + scan_file(path, rel, words)
+    except OSError:
+        return out + [f"{rel}: cannot read file"]
+
+
 def main() -> int:
     words = read_terms()
     found = 0
     for path in tracked():
-        if path == TERMS or not path.is_file():  # directories (e.g. an untracked folder) are not read
+        if path == TERMS:
             continue
-        for line in scan_file(path, path.relative_to(ROOT).as_posix(), words):
+        for line in scan_path(path, path.relative_to(ROOT).as_posix(), words):
             print(line)
             found += 1
     if not words:
