@@ -320,9 +320,20 @@ Cover and the Speaker Grille with its RFID scanner cutout.
 - **Inside the Main Housing:** the Speaker mount and the Speaker Grille mount.
 - **PN532 reader (U7):** it mounts on top of the Intake Station. On the full station it sits on the Speaker Grille,
   under the RFID Reader Cover, and its cable runs down through the grille's cutout to J7. On the simple station it
-  mounts from the inside.
+  mounts from the inside, as below.
 - **USB reader:** the external USB reader ([station-nfc](../station-nfc/guide.md)) is separate and mounts on the
   camera stand's RFID Arm.
+
+![Simple intake controller case parts: Main Housing (shown flipped) with the RFID Scanner cutout, USB Port and Climate Sensor holes, Base Plate with the circuit board's mount points, Sensor Clip and Scanner Clip](images/simple-controller-parts.png)
+
+The simple station's case has these parts: the Main Housing, the Base Plate, the Sensor Clip and the Scanner Clip.
+
+- **PN532 reader (U7):** it sits inside the Main Housing, against the underside of the top at the RFID Scanner cutout,
+  held by the Scanner Clip.
+- **Climate sensor:** held at its side hole by the Sensor Clip.
+- **Sides of the Main Housing:** the USB Port and Climate Sensor holes on one side, the buttons and the OLED on the
+  other.
+- **Base Plate:** carries the mount points for the circuit board.
 
 ## Power
 
