@@ -1,0 +1,40 @@
+# Netlist parity exceptions for the intake panel:
+#   a = the through-hole board, kicad/intake-panel.kicad_sch
+#   b = the JLCPCB board, kicad-smt/intake-panel-smt.kicad_sch
+# Check: python tools/netlist_parity.py devices/intake-panel/kicad/intake-panel.kicad_sch
+#        devices/intake-panel/kicad-smt/intake-panel-smt.kicad_sch
+#        --exceptions devices/intake-panel/kicad-smt/parity-exceptions.txt
+#
+# The through-hole board plugs in the MAX98357 module U2 (pins 1-7 LRC BCLK DIN GAIN SD GND VIN on
+# its header, 8 OUT- and 9 OUT+ on its screw terminal). The JLCPCB board carries the MAX98357A chip
+# as U2 instead (TQFN-16: 1 DIN, 2 GAIN_SLOT, 3/11/15 GND, 4 SD_MODE, 5/6/12/13 NC, 7/8 VDD,
+# 9 OUTP, 10 OUTN, 14 LRCLK, 16 BCLK, 17 exposed pad), with RSD2 (1 MOhm SD_MODE pull-up to 5 V),
+# C2 and C3 (VDD bypass) and J6 (speaker header). Every net below is listed in full; every net
+# without these refs must match exactly.
+refs U2 RSD2 C2 C3 J6
+
+# Through-hole board: the module's nets.
+a U1.7 U2.1
+a U1.6 U2.2
+a U1.8 U2.3
+a U2.4
+a RSD1.2 U2.5
+a BZ1.3 C1.2 J1.1 J2.1 J3.1 J4.1 J5.1 J7.1 Q1.3 Q2.3 RP1.2 RP2.2 SW1.2 SW2.2 U1.10 U2.6 U3.1 U4.2 U5.2 U6.2 U7.1
+a C1.1 J3.3 J4.3 SW1.3 SW2.3 U1.9 U2.7
+a LS1.2 U2.8
+a LS1.1 U2.9
+
+# JLCPCB board: the same signals on the chip's pins.
+b U1.7 U2.14
+b U1.6 U2.16
+b U1.8 U2.1
+b U2.2
+b RSD1.2 RSD2.2 U2.4
+b BZ1.3 C1.2 C2.2 C3.2 J1.1 J2.1 J3.1 J4.1 J5.1 J7.1 Q1.3 Q2.3 RP1.2 RP2.2 SW1.2 SW2.2 U1.10 U2.3 U2.11 U2.15 U2.17 U3.1 U4.2 U5.2 U6.2 U7.1
+b C1.1 C2.1 C3.1 J3.3 J4.3 RSD2.1 SW1.3 SW2.3 U1.9 U2.7 U2.8
+b J6.2 LS1.2 U2.10
+b J6.1 LS1.1 U2.9
+b U2.5
+b U2.6
+b U2.12
+b U2.13

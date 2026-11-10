@@ -23,7 +23,7 @@ exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.p
 | Q1, Q2 | BS170 N-MOSFET (TO-92); a 2N7000 also fits, turned round. The JLCPCB board carries an AO3400A (SOT-23) instead (see "LED MOSFET stages") | 2 | Yellow and red LED switches |
 | RG1, RG2 | 220 Ω | 2 | Gate resistors |
 | RP1, RP2 | 100 kΩ | 2 | Gate pull-downs, so the LEDs stay dark during reset |
-| U2 | AITRIP MAX98357 I2S amplifier module, "No Welding" version (Amazon ASIN B0912CWB7Z, pack of 3) | 1 | Speaker amplifier |
+| U2 | AITRIP MAX98357 I2S amplifier module, "No Welding" version (Amazon ASIN B0912CWB7Z, pack of 3). The JLCPCB board carries the MAX98357A chip itself instead (see "MAX98357A chip on the JLCPCB board") | 1 | Speaker amplifier |
 | LS1 | Shutao double-cavity speaker, 8 Ω, 3 W, sealed body about 100 x 45 x 21 mm (Amazon ASIN B0DL9SFH49) | 1 | Speech |
 | U3 | SSD1306 OLED module, 128x64, I2C address 0x3C | 1 | Display |
 | U4, or U5 + U6 | GY-BME/P280 board with a BMP280 chip (6 pins), or a BMP280 + AHT20 combination board | 1 | Room air |
@@ -34,10 +34,10 @@ exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.p
 | RSD | 10 kΩ | 0 or 1 | Amplifier SD pull-up to 3V3, only if the module has none (see "Amplifier") |
 | C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks |
 | XU1 | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1, so its USB-C plug clears the M3 screw head (see "Board and layout") |
-| XU2 | Female pin header, 2.54 mm, 7-pin | 0 or 1 | Socket for U2, custom boards only (see "Board") |
+| XU2 | Female pin header, 2.54 mm, 7-pin | 0 or 1 | Socket for U2, through-hole board only (see "Board") |
 | J1-J5 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x4 (J1-J4) and 3-pin x1 (J5) | 5 | Off-board connectors |
 | J7 | JST-XH (2.50 mm pitch) header and plug, 4-pin | 0 or 1 | Off-board connector for U7, only if U7 is fitted |
-| F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the screw terminal |
+| F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the module's screw terminal (the JLCPCB board takes a JST-XH plug on J6 instead) |
 
 Room-air option B (U5 + U6, the BMP280 + AHT20 board) is optional and not in the [BOM](bom.md), which lists the
 BMP280 board (U4).
@@ -99,7 +99,8 @@ I2C headers. If the buttons end up swapped, set
 
 ## Board
 
-The board comes in two variants with the same outline, holes, connectors and pin-to-pin wiring:
+The board comes in two variants with the same outline, holes and connectors, and the same pin-to-pin wiring apart
+from the amplifier:
 
 - **Through-hole (DIY)**: `kicad/intake-panel.kicad_pcb`, in the same KiCad project as the schematic. Order the bare
   board and solder the parts yourself.
@@ -109,12 +110,16 @@ The board comes in two variants with the same outline, holes, connectors and pin
 
 Without either, the panel is built on the ElectroCookie board as "Board and layout" describes.
 
-Both wire exactly the same pins together; `python tools/netlist_parity.py` with the two schematics checks that. On
-the JLCPCB board the resistors are 0603, Q1 and Q2 are AO3400A in SOT-23 (see "LED MOSFET stages") and C1 is a
-6.3 mm surface-mount electrolytic. The JST-XH headers and the female headers for U1 and U2 stay through-hole on both,
-so the two boards take the same plugs and modules. On either board the end user fits the JST-XH headers (J1-J5, J7)
-and the female headers for U1 and U2 (XU1, XU2): JLCPCB fits surface-mount parts only, and hand-fitting these is
-cheaper than paying JLCPCB to solder them.
+Both wire the same pins together, except the amplifier: the through-hole board plugs in the MAX98357 module (U2),
+and the JLCPCB board carries the MAX98357A chip as U2, with its own parts RSD2, C2 and C3 and a speaker header J6
+(see "MAX98357A chip on the JLCPCB board"). `python tools/netlist_parity.py` with the two schematics and
+`--exceptions devices/intake-panel/kicad-smt/parity-exceptions.txt` checks that: the exceptions file lists every net
+of the amplifier block on each board in full, and every other net must match exactly. On the JLCPCB board the
+resistors are 0603, Q1 and Q2 are AO3400A in SOT-23 (see "LED MOSFET stages") and C1 is a 6.3 mm surface-mount
+electrolytic. The JST-XH headers and the female headers for U1 stay through-hole on both, so the two boards take the
+same plugs and the same C3. The end user fits the JST-XH headers (J1-J5, J7, and J6 on the JLCPCB board) and the
+female headers (XU1, and XU2 on the through-hole board) on either board: JLCPCB fits surface-mount parts only, and
+hand-fitting these is cheaper than paying JLCPCB to solder them.
 
 The board is 89 x 52 mm, the outline and hole pattern of the ElectroCookie full board, so it fits cases made for that
 board: M3 holes at (7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.625, 8.25), (5.375, 43.75) and
@@ -140,15 +145,22 @@ What sits on the board, and why:
 - **U1, the C3**, plugs into two 1x8 female headers (XU1) and is never soldered to the board. Its USB-C end sits at
   the top edge, by the "USB-C" mark, so a cable reaches it in a case. The end away from the USB socket carries its
   antenna; the board keeps tracks, vias and the GND pour out from under that end.
-- **U2, the amplifier**, plugs into a 1x7 female header (XU2) beside U1, with its pin row facing U1 and its screw
+- **U2, the amplifier**, on the through-hole board, plugs into a 1x7 female header (XU2) beside U1, with its pin row facing U1 and its screw
   terminal toward the left short edge. It sits on the board because its I2S lines run straight to U1's pins, it
   draws the panel's largest 5 V current, and the speaker is wired to its own screw terminal, so it needs no harness.
   Its VIN takes 5 V straight from U1's 5V pin over a 22.5 mm, 0.8 mm track along the top edge, on the bottom layer.
-  The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one, before you plug U2 in. The module's outline and the terminal position are UNCONFIRMED; nothing else on the board
-  sits under it.
+  The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one, before you plug U2 in.
+  The module's outline and the terminal position are UNCONFIRMED; nothing else on the board sits under it.
+- **U2 on the JLCPCB board** is the MAX98357A chip (TQFN-16, 3 x 3 mm) in the same corner, left of U1, with its
+  bypass capacitors C2 and C3 and its SD_MODE resistor RSD2 beside it and its exposed pad tied to the bottom GND
+  pour by a via. J6, the speaker header, sits by the left edge below the spare M2 hole, which stays free. The chip
+  block and J6 take about 71 mm² and 58 mm² of courtyard, against the module's 19 x 17.8 mm (338 mm²). Its I2S lines
+  reach U1 over the same bottom-layer tracks as the module's, and its VDD takes 5 V from the same bottom-layer 5 V
+  track through a via.
 - **C1**, the optional 470 µF capacitor, has its pads below U1, by the "C1" mark, on both boards: there is no room
   for the capacitor beside U2's header. Its + pad reaches U2's VIN over about 45 mm of 0.8 mm track (down the left
-  side of U1 and up to VIN), so it steadies the 5 V rail as a whole rather than sitting at the module.
+  side of U1 and up to VIN) on the through-hole board, and U2's VDD over about 35 mm on the JLCPCB board, so it
+  steadies the 5 V rail as a whole rather than sitting at the amplifier.
 - **Off the board**: the OLED, the air sensor, the buzzer, the two buttons and the PN532 reader mount on the case,
   where each one has to be seen, pressed, heard or reach the room air or the tags, so each one plugs into a JST-XH
   header, as the schematic shows.
@@ -170,10 +182,12 @@ each pin, and marks pin 1 with a dot.
 | J3 | JST-XH 4-pin | GND SW 5V LED- | Yellow button SW1 (header YELLOW) |
 | J4 | JST-XH 4-pin | GND SW 5V LED- | Red button SW2 (header RED) |
 | J5 | JST-XH 3-pin | GND 3V3 S | Buzzer BZ1 (header BUZZER) |
-| XU2 | Female header, 7-pin | LRC BCLK DIN GAIN SD GND VIN | Amplifier U2, pin 1 (LRC) nearest the bottom edge |
+| XU2 | Female header, 7-pin | LRC BCLK DIN GAIN SD GND VIN | Amplifier module U2, pin 1 (LRC) nearest the bottom edge; through-hole board only |
+| J6 | JST-XH 2-pin | + - | Speaker LS1 (header SPEAKER); JLCPCB board only |
 
-J5 is turned round, so its pin 1 (GND) is its right-hand pin; follow the dot, not the position. The speaker goes
-into U2's own screw terminal, not into the board. Make each harness as "Connectors" describes, with the header's pin
+J5 is turned round, so its pin 1 (GND) is its right-hand pin; follow the dot, not the position. On the through-hole
+board the speaker goes into the module's own screw terminal, not into the board; on the JLCPCB board it plugs into
+J6, pin 1 (+) by the dot. Make each harness as "Connectors" describes, with the header's pin
 order at the plug.
 
 ### Parts fitted only when needed
@@ -182,7 +196,7 @@ The board has pads for four parts that are left out at first. Each is marked DNP
 
 | Ref | Value | Fit it when |
 |---|---|---|
-| RSD1 (RSD in the parts list) | 10 kΩ | The amplifier's SD reads near 0 V in the SD pull-up check (see "Amplifier") |
+| RSD1 (RSD in the parts list) | 10 kΩ | The amplifier's SD reads near 0 V in the SD pull-up check (see "Amplifier"). On the JLCPCB board RSD2 sets SD, so leave RSD1 off |
 | RI1, RI2 | 4.7 kΩ | Neither the OLED nor the air sensor board has I2C pull-ups |
 | C1 | 470 µF, 10 V or more | 5 V sags on speech peaks in the bench check. + to the pad by the + mark |
 
@@ -198,6 +212,9 @@ solder by hand later.
 4. Check each part in the placement preview against the silkscreen:
    - Q1 and Q2: the single drain pin points down, toward J3 and J4, and the gate and source pins point up. Correct the
      rotation in the preview if a part shows otherwise.
+   - U2, the MAX98357A: its pin 1 corner sits at the silkscreen's pin 1 mark, at the chip's lower right, toward U1.
+     The rotation in the CPL file is KiCad's, and JLCPCB's convention for this package is UNCONFIRMED: correct it in
+     the preview if the chip's pin 1 dot shows elsewhere. A chip turned the wrong way has every pin on the wrong net.
 
 The positions are each part's centre. The BOM lists only the surface-mount parts JLCPCB solders: RSD1, RI1, RI2 and
 C1 stay off (see "Parts fitted only when needed"), and the through-hole JST-XH headers and the female headers for U1
@@ -213,17 +230,19 @@ For the JLCPCB board, the resistors, Q1 and Q2 come fitted: start at step 3.
 2. Solder Q1 and Q2 (BS170), each with its flat face matching its outline on the silkscreen. A 2N7000 has its pins
    mirrored: turn it round against the outline (see "LED MOSFET stages").
 3. Solder the two 1x8 female headers for U1. Plug U1 into them while soldering so the rows stay square and 15.24 mm
-   apart, then take U1 out. Solder the 1x7 female header for U2 the same way, with U2 plugged in.
-4. Solder J1-J5, and J7 if the PN532 reader is fitted, each with its body over its outline on the silkscreen and its
+   apart, then take U1 out. On the through-hole board, solder the 1x7 female header for U2 the same way, with U2
+   plugged in.
+4. Solder J1-J5, J6 on the JLCPCB board, and J7 if the PN532 reader is fitted, each with its body over its outline on the silkscreen and its
    pin 1 over the silkscreen dot. J7, J1, J2, J3 and J4 have pin 1 on the left; J5 has its pin 1 on the right (it is
-   turned round). A header turned the wrong way reverses the plug's pin order: on J3 and J4 it puts 5 V on the
+   turned round); J6 has its pin 1 (+) on the left. A header turned the wrong way reverses the plug's pin order: on J3 and J4 it puts 5 V on the
    button's switch wire and GND on the LED's - wire, and pressing a lit button then shorts 5 V to GND through the
    MOSFET.
 5. Before fitting anything else, check with a meter that 3V3, 5V and GND are not shorted to each other (on J5: pin 1
    GND, pin 2 3V3; on J3: pin 3 5V).
-6. Plug in U1 with its USB-C socket at the board edge, and U2 with its terminal toward the left edge. Run "First
-   flash" and the bench checklist, then fit RSD1, RI1, RI2 or C1 only if a check calls for it.
-7. Crimp the harnesses (see "Connectors") and wire the speaker into U2's screw terminal (see "Speaker").
+6. Plug in U1 with its USB-C socket at the board edge, and on the through-hole board U2 with its terminal toward the
+   left edge. Run "First flash" and the bench checklist, then fit RSD1, RI1, RI2 or C1 only if a check calls for it.
+7. Crimp the harnesses (see "Connectors") and connect the speaker (see "Speaker"): into U2's screw terminal on the
+   through-hole board, or on a JST-XH 2-pin plug into J6 on the JLCPCB board.
 
 ## Board and layout
 
@@ -385,10 +404,37 @@ results.
 another maker's board. If there is no sound and SD is not in shutdown, swap the two wires on GPIO 10 and GPIO 20 at
 the module and try again. If the swap fixes it, note it in the bench results.
 
+### MAX98357A chip on the JLCPCB board
+
+The JLCPCB board carries the MAX98357A chip in place of the module: MAX98357AETE+T, TQFN-16 3 x 3 mm, LCSC C910544
+(a JLCPCB extended part). It costs less per board than the module and its socket, and with its parts and J6 it takes
+well under half the module's area. The through-hole board keeps the module. The schematic for the JLCPCB board names
+the chip U2 with the circuit from the chip's datasheet (Maxim 19-6779 Rev 7, the [catalogue's](catalogue.xml) U2
+datasheet), set as the module is set:
+
+- **VDD** (pins 7 and 8) from 5 V, bypassed to GND by C2, 100 nF X7R 0603, and C3, 10 µF X5R 0805, the datasheet's
+  0.1 µF and 10 µF.
+- **SD_MODE** (pin 4) pulled up to 5 V through RSD2, 1 MΩ, for left and right mixed. The datasheet sizes this
+  resistor as 222.2 x VDDIO - 100 kΩ, 1011 kΩ for 5 V; with the chip's 100 kΩ pull-down, 1 MΩ puts SD at about
+  0.45 V, inside the mixed band of the trip-point table above. Measure it in the SD check; it should not need RSD1.
+- **GAIN_SLOT** (pin 2) unconnected: 9 dB, as on the module.
+- **DIN, BCLK, LRCLK** (pins 1, 16, 14) to GPIO 21, 10 and 20, the module's I2S wiring.
+- **OUTP and OUTN** (pins 9 and 10) to J6 pins 1 (+) and 2 (-), with no output filter: the outputs are filterless,
+  and the datasheet's EMI figure is taken with 12 in (30 cm) of speaker cable and no output filtering, longer than
+  the speaker's lead, so the board has no ferrite beads.
+- **GND** (pins 3, 11 and 15) and the exposed pad to GND; the datasheet says the exposed pad is not connected inside
+  the chip and goes to a ground plane for heat.
+
+The chip's datasheet limits: VDD, LRCLK, BCLK and DIN -0.3 to +6 V absolute maximum, every other pin -0.3 V to
+VDD + 0.3 V; ±1.6 A continuous into or out of VDD, GND and the outputs, ±20 mA on the other pins; VDD 2.5 to 5.5 V
+operating; output current limit 2.8 A typical; 1666 mW package dissipation at 70 °C; -40 to +85 °C operating. The
+panel's 5 V supply and 8 Ω speaker stay inside all of them.
+
 ## Speaker
 
-The speaker goes only into the module's screw terminal. Neither output is a ground, so never connect either speaker
-wire to G or to anything else.
+On the through-hole board the speaker goes only into the module's screw terminal, as below; on the JLCPCB board it
+plugs into J6: cut off the speaker's 2-pin plug and crimp a JST-XH 2-pin housing on instead, red to pin 1 (+) and
+black to pin 2 (-). Neither output is a ground, so never connect either speaker wire to G or to anything else.
 
 1. Cut off the speaker's 2-pin plug.
 2. Crimp a ferrule onto each bare wire, or leave the wires twisted and untinned. Don't tin them: solder creeps under
@@ -474,6 +520,7 @@ that, the station keeps the panel's firmware current by itself.
 Build checks, before the panel goes into service:
 
 - [ ] SD on the amplifier measured with nothing connected, and tied to 3V3 through 10 kΩ (RSD) if it sat near 0 V.
+      On the JLCPCB board, SD reads about 0.45 V, set by RSD2.
 - [ ] Each LED measured alone, before wiring it to its MOSFET, from 5 V to G with the meter in series: 50 mA or
   less (10 to 20 mA expected). If more, use a logic-level MOSFET for it (see "LED MOSFET stages").
 - [ ] With both LEDs lit by the station (the flow's ready step), drain to source on Q1 and on Q2 is under 0.3 V, and

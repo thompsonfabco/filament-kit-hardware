@@ -27,7 +27,8 @@ Pin rules:
 
 ### Audio
 
-A kit-built device with a speaker uses a MAX98357 I2S amplifier breakout board, powered from 5 V, and one sealed 8 Ω
+A kit-built device with a speaker uses a MAX98357 I2S amplifier, a breakout board or the MAX98357A chip on a custom
+board, powered from 5 V, and one sealed 8 Ω
 speaker rated at 3 W or more. Speaker wires go only to the board's two outputs, because neither output is a ground. The
 bench reader's speech through its buzzer is exempt.
 
@@ -39,7 +40,8 @@ Each connector is listed in the device's catalogue file.
 - Every header carries a label on the board naming its function (for example I2C, YELLOW, RED, BUZZER), and the guide
   shows how to find pin 1 on a header and on a plug. The builder plugs each harness into its labelled header.
 
-The one exception to the JST-XH rule is the speaker, which goes into the amplifier board's screw terminal. This rule
+The one exception to the JST-XH rule is the speaker, which goes into the amplifier breakout board's screw terminal;
+on a custom board that carries the amplifier chip, the speaker plugs into a 2-pin JST-XH header like any other part. This rule
 applies when a device is next built or rebuilt. Nothing is rewired for it alone.
 
 ### Assembly and enclosures

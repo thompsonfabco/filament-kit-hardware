@@ -101,11 +101,11 @@
           use="amplifier SD pull-up to 3V3, only if the module has none"/>
     <part ref="C1" name="470 uF electrolytic, 10 V or more" kind="passive" qty="0-1"
           use="across the 5 V rail (+) and GND (-), only if 5 V sags on speech peaks: at U2's VIN on the prototype board;
-          below U1 on the through-hole and JLCPCB boards, about 45 mm of track from U2's VIN"/>
+          below U1 on the through-hole and JLCPCB boards, about 45 mm of track from U2's VIN on the through-hole board"/>
     <part ref="XU1" name="female pin header, 2.54 mm, 8-pin" kind="passive" qty="2"
           use="socket for U1, so its USB-C plug clears the M3 screw head"/>
     <part ref="XU2" name="female pin header, 2.54 mm, 7-pin" kind="passive" qty="0-1"
-          use="socket for U2 on the through-hole board (kicad/intake-panel.kicad_pcb) and the JLCPCB board (kicad-smt/intake-panel-smt.kicad_pcb)"/>
+          use="socket for U2 on the through-hole board (kicad/intake-panel.kicad_pcb); the JLCPCB board (kicad-smt/intake-panel-smt.kicad_pcb) carries the MAX98357A chip instead of the module"/>
     <part ref="J1-J5" name="JST-XH 2.50 mm pitch header and plug, 4-pin x4 and 3-pin x1" kind="passive" qty="5"
           use="off-board connectors"/>
     <part ref="J7" name="JST-XH 2.50 mm pitch header and plug, 4-pin" kind="passive" qty="0-1"
