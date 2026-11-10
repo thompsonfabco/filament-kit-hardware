@@ -32,7 +32,7 @@ jobs:
           else
             group=""
             version="$GITHUB_REF_NAME"
-            title="$version"
+            title="Enclosure models $version"
           fi
           {
             echo "GROUP=$group"
@@ -47,6 +47,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release create "$GITHUB_REF_NAME" --title "$TITLE" --notes "Enclosure models for $TITLE. The models (STEP zips and 3MF print files) are licensed CC BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/ (each zip also carries the LICENSE)."
+            gh release create "$GITHUB_REF_NAME" --title "$TITLE" --notes "$TITLE. The models (STEP zips and 3MF print files) are licensed CC BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/ (each zip also carries the LICENSE)."
           fi
           gh release upload "$GITHUB_REF_NAME" dist/* --clobber
