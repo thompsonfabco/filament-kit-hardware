@@ -118,19 +118,36 @@ rows run top to bottom with the USB connector at the top.
 
 ## Board
 
-The through-hole board is `kicad/bench-reader.kicad_pcb`, in the same KiCad project as the schematic. It is 89 x 52 mm,
-the outline and hole pattern of the ElectroCookie full board, so it fits cases made for that board: M3 holes at
-(7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.625, 8.25), (5.375, 43.75) and (83.625, 43.75), in mm from
-one corner. It has two layers with a GND pour on both sides, 0.25 mm signal tracks and 0.5 mm 3V3 tracks, and every
-part is through-hole. Both copper layers stay clear of each mounting hole out to 3.5 mm (M3) and 2.5 mm (M2) from its
+The board comes in two variants with the same outline, holes, copper and connectors:
+
+- **Through-hole (DIY)**: `kicad/bench-reader.kicad_pcb`, in the same KiCad project as the schematic. Order the bare
+  board and solder the parts yourself.
+- **JLCPCB assembly**: `kicad-smt/bench-reader-smt.kicad_pcb`, a second KiCad project whose schematic is a copy of the
+  first with an LCSC part number on each board part. JLCPCB makes the board and fits the parts (see "Ordering the
+  JLCPCB board").
+
+Both wire exactly the same pins together; `python tools/netlist_parity.py` with the two schematics checks that. Every
+board part (the four JST-XH headers and the two female headers for U1) is a through-hole part on both variants: JLCPCB
+stocks no surface-mount JST-XH header from JST in 3, 4 and 5 pins, so the JLCPCB variant has JLCPCB solder the
+through-hole headers by hand.
+
+The board is 89 x 52 mm, the outline and hole pattern of the ElectroCookie full board, so it fits cases made for that
+board: M3 holes at (7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.625, 8.25), (5.375, 43.75) and
+(83.625, 43.75), in mm from one corner. It has two layers with a GND pour on both sides, 0.25 mm signal tracks and
+0.5 mm 3V3 tracks. Both copper layers stay clear of each mounting hole out to 3.5 mm (M3) and 2.5 mm (M2) from its
 centre, so a screw head or a metal standoff can't touch the pour.
 
-- Top: [board/board-tht-top.svg](board/board-tht-top.svg). Bottom (mirrored):
-  [board/board-tht-bottom.svg](board/board-tht-bottom.svg). Both, with the title block:
-  [board/board-tht.pdf](board/board-tht.pdf).
-- 3D model: [board/board-tht.step](board/board-tht.step).
-- Fabrication: [board/gerbers-tht.zip](board/gerbers-tht.zip) holds the Gerbers and the drill files (plated and
-  unplated holes in separate files). Any board maker that takes Gerbers can make it: 2 layers, 1.6 mm.
+| | Through-hole (DIY) | JLCPCB assembly |
+|---|---|---|
+| Top | [board-tht-top.svg](board/board-tht-top.svg) | [board-smt-top.svg](board/board-smt-top.svg) |
+| Bottom (mirrored) | [board-tht-bottom.svg](board/board-tht-bottom.svg) | [board-smt-bottom.svg](board/board-smt-bottom.svg) |
+| Both, with the title block | [board-tht.pdf](board/board-tht.pdf) | [board-smt.pdf](board/board-smt.pdf) |
+| 3D model | [board-tht.step](board/board-tht.step) | [board-smt.step](board/board-smt.step) |
+| Gerbers and drill files | [gerbers-tht.zip](board/gerbers-tht.zip) | [gerbers-smt.zip](board/gerbers-smt.zip) |
+| Assembly files | - | [jlcpcb-bom-smt.csv](board/jlcpcb-bom-smt.csv), [jlcpcb-cpl-smt.csv](board/jlcpcb-cpl-smt.csv) |
+
+Each zip holds the Gerbers and the drill files (plated and unplated holes in separate files). Any board maker that
+takes Gerbers can make either board: 2 layers, 1.6 mm.
 
 U1 plugs into two 1x8 female headers and is never soldered to the board. Its USB-C end sits at the top edge, so a
 cable reaches it in a case. The end of U1 away from the USB socket carries its antenna; the board keeps tracks, vias
@@ -156,7 +173,24 @@ Make each harness with the header's pin order at the plug, and wire the other en
 position: the OLED's own order is GND VCC SCL SDA and the buzzer's is VCC S GND (see "Module pin orders"). On the
 encoder, A and B go to its A and B pins, C to its common, SW to switch leg S1 and 3V3 to switch leg S2.
 
+### Ordering the JLCPCB board
+
+1. On jlcpcb.com, upload `board/gerbers-smt.zip` as the board, 2 layers, 1.6 mm; JLCPCB reads the size from the Gerbers.
+2. Turn on assembly, top side, and pick the assembly service that fits through-hole parts.
+3. Upload `board/jlcpcb-bom-smt.csv` as the BOM and `board/jlcpcb-cpl-smt.csv` as the pick-and-place (CPL) file.
+4. Check each part in the placement preview against the silkscreen: J1 has its pin 1 on the right (it is turned
+   round), and the rows marked U1A and U1B are the two female headers for U1. The positions are the centre of each
+   part's pins.
+
+The BOM lists only parts soldered to the board. U1 (the C3) is never soldered: it plugs into the two headers, U1A and
+U1B, which share one footprint on the board. The modules (U2, U3, SW1, BZ1) are off the board, and the harnesses are
+not part of the order; buy them from the main parts list. Every part number and its stock are in the
+[bill of materials](bom.md).
+
 ### Assembly order
+
+For the JLCPCB board, the headers come fitted: start at step 3.
+
 
 1. Solder the two 1x8 female headers. Plug U1 into them while soldering so the rows stay square and 15.24 mm apart,
    then take U1 out.

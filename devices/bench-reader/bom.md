@@ -15,3 +15,19 @@ reference build; "suggested" marks a listing chosen to match the part. Most list
 | J1-J4 | JST-XH headers and plugs: 4-pin x2, 5-pin x1, 3-pin x1 | 4 | GeeBat 460-piece JST-XH kit, 2- to 6-pin | [B01MCZE2HM](https://www.amazon.com/dp/B01MCZE2HM) | suggested | Board build only. The kit must include 5-pin parts for J3. Crimping needs a crimp tool, not listed here |
 | U1 socket | Female pin header, 2.54 mm, cut to 8 pins | 2 | Haobase 40-pin female headers, 10 pieces | [B01DLX6RSQ](https://www.amazon.com/dp/B01DLX6RSQ) | suggested | Board build only. Cut two 8-pin lengths; a cut loses one pin. U1 plugs in and is never soldered |
 | PCB | Bench reader through-hole board, 89 x 52 mm, 2 layers, 1.6 mm | 1 | Any board maker that takes Gerbers | [gerbers-tht.zip](board/gerbers-tht.zip) | suggested | Board build only. Gerbers and drill files are in the repo |
+
+## JLCPCB assembly board
+
+The parts JLCPCB fits to the JLCPCB assembly board (see "Board" in the [build guide](guide.md)), with their LCSC
+part numbers; search a number in JLCPCB's parts library to see the part. The same rows are in
+[board/jlcpcb-bom-smt.csv](board/jlcpcb-bom-smt.csv). All four parts are JLCPCB extended parts (none is a basic or
+preferred part) and through-hole: JLCPCB solders them by hand. Stock is JLCPCB's figure from its October 2026 parts
+list and changes daily; check it when ordering. The modules, U1 and the harness parts still come from the list above.
+
+| Ref | Part | Qty | Maker part number | LCSC | Type | Stock (Oct 2026) |
+|---|---|---|---|---|---|---|
+| J1, J2 | JST-XH header, 4-pin, vertical, through-hole | 2 | JST B4B-XH-A(LF)(SN) | C144395 | Extended | 478,892 |
+| J3 | JST-XH header, 5-pin, vertical, through-hole | 1 | JST B5B-XH-A(LF)(SN) | C157991 | Extended | 42,371 |
+| J4 | JST-XH header, 3-pin, vertical, through-hole | 1 | JST B3B-XH-A(LF)(SN) | C144394 | Extended | 152,263 |
+| U1A, U1B | Female header, 1x8, 2.54 mm, socket for U1 | 2 | BOOMELE 2.54-1*8P | C27438 | Extended | 104,134 |
+| PCB | Bench reader JLCPCB assembly board, 89 x 52 mm, 2 layers, 1.6 mm, from [gerbers-smt.zip](board/gerbers-smt.zip) | 1 | - | - | - | - |
