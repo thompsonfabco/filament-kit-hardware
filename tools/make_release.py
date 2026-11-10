@@ -6,7 +6,8 @@ own asset.
 
 Zip layout: one top-level folder named after the device slug, holding the STEP
 files, plus LICENSE (a copy of enclosures/LICENSE). Entries are sorted and
-carry a fixed timestamp, so two builds of the same commit are byte-identical.
+carry a fixed timestamp and Unix attributes, and are stored uncompressed (deflate
+output differs between zlib builds), so two builds of the same commit are byte-identical on every platform.
 
 Asset names are lowercase slugs with the version at the end:
   <device-slug>-step-<version>.zip
@@ -43,10 +44,11 @@ def find_devices(enclosures):
 def write_zip(path, folder, step_files, license_file):
     entries = {f"{folder}/{f.name}": f for f in step_files}
     entries[f"{folder}/LICENSE"] = license_file
-    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_STORED) as z:
         for name in sorted(entries):
             info = zipfile.ZipInfo(name, FIXED_TIME)
-            info.compress_type = zipfile.ZIP_DEFLATED
+            info.compress_type = zipfile.ZIP_STORED
+            info.create_system = 3
             info.external_attr = 0o644 << 16
             z.writestr(info, entries[name].read_bytes())
 

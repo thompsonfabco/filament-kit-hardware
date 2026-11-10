@@ -91,3 +91,15 @@ def test_only_single(groups, tmp_path):
 def test_only_no_match_fails(groups, tmp_path):
     with pytest.raises(SystemExit, match="no enclosure folders match"):
         mr.build(groups, "v1.0", tmp_path / "out", only="nope")
+
+
+def test_zip_metadata_fixed(enc, tmp_path):
+    for p in mr.build(enc, "v1", tmp_path):
+        if p.suffix != ".zip":
+            continue
+        with zipfile.ZipFile(p) as z:
+            for i in z.infolist():
+                assert i.create_system == 3
+                assert i.external_attr == 0o644 << 16
+                assert i.date_time == mr.FIXED_TIME
+                assert i.compress_type == zipfile.ZIP_STORED
