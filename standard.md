@@ -49,6 +49,15 @@ applies when a device is next built or rebuilt. Nothing is rewired for it alone.
 - A kit-built device is assembled on an ElectroCookie solderable breadboard prototype board (Amazon ASIN B07ZYNWJ1S,
   sold in packs with a mini board). Its strips follow a standard breadboard, so a layout proven on a breadboard moves
   across hole for hole.
+- Its power rails: the two + rails (top and bottom edges) are joined by a separate, unmarked trace along the short
+  edge at the column 1 end, and the two ground (−) rails by another along the short edge at the column 30 end. These
+  edge traces are not the column 1 or column 30 strips. Each edge trace is broken in the middle, at a pair of small
+  pads beside the M3 hole, so the top and bottom halves of a rail pair are only joined once a wire link bridges that
+  pair.
+  Fit both links when one supply should reach both halves.
+
+  ![Protoboard rails: + rails (red) joined by an edge trace at the column 1 end, ground rails (green) by one at the column 30 end, and the
+  two wire links (orange) beside the M3 holes that join the top and bottom halves](images/protoboard-rails.webp)
 - The full board measures 89 x 52 mm, with 1.2 mm through holes. Its mounting holes, measured from one corner
   and centred on the board:
 
