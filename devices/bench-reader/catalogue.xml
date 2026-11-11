@@ -1,8 +1,9 @@
 <!-- Printer station on the ESP32-C3 Super Mini. Build guide: guide.md. Circuit: kicad/bench-reader.kicad_sch,
      exported as images/schematic.svg and images/schematic.pdf.
      Firmware paths are inside filament-kit. vmax is in volts and imax in amperes. imax_basis says what the imax
-     figure is. imax is only ever a datasheet limit: where the datasheet gives none, imax is UNCONFIRMED and i_typ
-     holds a typical or operating current, with i_typ_basis saying what it is. -->
+     figure is. imax is a datasheet limit: where the datasheet gives none, imax is UNCONFIRMED and i_typ
+     holds a typical or operating current, with i_typ_basis saying what it is. The one exception is BZ1, whose imax
+     is its coil current at 5 V, computed from the listing's 42 ohm, as its imax_basis says. -->
 <device id="bench-reader" schema="1">
   <board model="ESP32-C3 Super Mini" family="esp32-c3"/>
   <link type="wifi-https"/>
@@ -40,10 +41,19 @@
           datasheet="https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf"/>
     <part ref="SW1" name="EC11 rotary encoder with push switch, 5 pins, switch legs separate from the common" kind="passive" qty="1"
           use="slot and printer knob: A and B to GPIO 3 and 4, common to G, switch between GPIO 1 and 3V3"/>
-    <part ref="BZ1" name="3-pin buzzer module, low-level trigger (active-low), VCC S GND" kind="active" qty="1"
-          use="beeps and speech, VCC to 3V3, S low = on"
-          vmax="UNCONFIRMED" imax="UNCONFIRMED" datasheet="UNCONFIRMED"
-          imax_basis="no datasheet for the 3-pin buzzer module"/>
+    <part ref="BZ1" name="12085 magnetic passive buzzer, 12 x 8.5 mm, 42 ohm coil" kind="active" qty="1"
+          use="beeps, off the board on J4: + to 5V, - to Q1's drain; high-triggered (GPIO 0 high = on)"
+          vmax="12" imax="0.12" datasheet="UNCONFIRMED"
+          imax_basis="listing; coil 42 ohm. vmax is the listing's top voltage (3-12 V); imax is 5 V / 42 ohm, computed, not a datasheet limit"/>
+    <part ref="Q1" name="BS170" kind="active" qty="1" use="buzzer low-side switch" vmax="60" imax="0.5"
+          imax_basis="continuous drain current with full gate drive. At the C3's 3.3 V gate the curves show roughly 0.1 A or less (read from the curves, an estimate) and no RDS(on) is given below VGS 10 V, so the buzzer's 0.12 A peak may not be reached: the guide's bench check applies. URL provenance UNCONFIRMED: the server refused downloads; the copy read is onsemi MMBF170/D Rev 7"
+          datasheet="https://www.onsemi.com/download/data-sheet/pdf/bs170-d.pdf"/>
+    <part ref="D1" name="1N4001" kind="active" qty="1" use="flyback diode across BZ1: cathode to 5V, anode to Q1's drain"
+          vmax="50" imax="1.0"
+          imax_basis="Vishay 1N4001 datasheet (document 88503, rev. 29-Apr-2020): VRRM 50 V, IF(AV) 1.0 A. Flyback diode across BZ1: carries at most the coil's 0.12 A"
+          datasheet="https://www.vishay.com/docs/88503/1n4001.pdf"/>
+    <part ref="RG1" name="220 ohm" kind="passive" qty="1" use="Q1 gate resistor"/>
+    <part ref="RP1" name="100 kohm" kind="passive" qty="1" use="Q1 gate pull-down, buzzer silent during reset"/>
   </parts>
   <!-- Headers on the through-hole board (kicad/bench-reader.kicad_pcb). Without the board the reader is wired module
        to module, as the guide shows. U1 sits on two 1x8 female headers and is never soldered. -->
@@ -51,7 +61,7 @@
     <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="PN532 reader (U2)"/>
     <connector ref="J2" type="JST-XH-4" order="GND 3V3 SDA SCL" to="OLED (U3)"/>
     <connector ref="J3" type="JST-XH-5" order="A B C SW 3V3" to="encoder SW1: A to GPIO 3, B to GPIO 4, C to GND, SW (switch S1) to GPIO 1, 3V3 to switch S2"/>
-    <connector ref="J4" type="JST-XH-3" order="GND 3V3 S" to="buzzer BZ1: S to GPIO 0"/>
+    <connector ref="J4" type="JST-XH-2" order="5V BZ-" to="buzzer BZ1: 5V to +, BZ- (Q1's drain) to -"/>
   </connectors>
   <power measured_ma=""/>
   <validated firmware="" date=""/>
