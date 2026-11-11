@@ -9,8 +9,8 @@ The panel's behaviour, its serial protocol, the speech format and the firmware u
 for this device is in [catalogue.xml](catalogue.xml), and the parts to buy, with Amazon listing links, are in
 [bom.md](bom.md). The full circuit is the KiCad schematic in [kicad/](kicad/),
 exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.pdf](images/schematic.pdf).
-[images/wiring.svg](images/wiring.svg) is an overview drawing, not the full circuit: it leaves out the PN532 reader
-(U7) and its header (J7).
+[images/wiring.svg](images/wiring.svg) is an overview drawing, not the full circuit; it includes the optional PN532
+reader (U7) and its header (J7).
 
 ![Intake panel wiring overview](images/wiring.svg)
 

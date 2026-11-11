@@ -27,9 +27,9 @@
   </defs>
 
   <text x="30" y="34" font-size="18" font-weight="600" fill="#111">Intake panel (ESP32-C3): overview</text>
-  <text x="30" y="54" fill="#555">ESP32-C3 Super Mini on the station PC's USB; BS170s switch the button LEDs; MAX98357 module drives the speaker; OLED and room-air sensor on I2C.</text>
+  <text x="30" y="54" fill="#555">ESP32-C3 Super Mini on the station PC's USB; BS170s switch the button LEDs; MAX98357 module drives the speaker; OLED, room-air sensor and optional PN532 reader on I2C.</text>
   <text x="30" y="72" fill="#555">Every ground symbol joins the C3's G pin and every 5V flag its 5V pin; same-named labels (SDA, SCL, BCLK, LRC, DIN, 3V3, LAMP_HOLD, LAMP_DISCARD) are joined.</text>
-  <text x="30" y="90" fill="#555">Assembled on an ElectroCookie full-size prototype board; parts off the board plug into labelled JST-XH headers J1-J5, the speaker into J6.</text>
+  <text x="30" y="90" fill="#555">Assembled on an ElectroCookie full-size prototype board; parts off the board plug into labelled JST-XH headers J1-J5 and J7, the speaker into J6.</text>
 
   <!-- ===== C3 Super Mini ===== -->
   <rect x="400" y="200" width="180" height="340" rx="8" fill="#e8eef5" stroke="#4a6680" stroke-width="2"/>
@@ -221,7 +221,7 @@
     <text x="170" y="776" text-anchor="middle">SCL</text><text x="215" y="776" text-anchor="middle">SDA</text></g>
   <text x="150" y="798" text-anchor="middle" font-weight="600" fill="#4a3a6a">Room air (J2)</text>
   <text x="150" y="812" text-anchor="middle" font-size="10" fill="#555">BME280, or BMP280 + AHT20 (0x38)</text>
-  <text x="270" y="790" font-size="11" fill="#555">J1, J2 (4-pin) order:</text>
+  <text x="270" y="790" font-size="11" fill="#555">J1, J2, J7 (4-pin) order:</text>
   <text x="270" y="804" font-size="11" fill="#555">GND 3V3 SDA SCL</text>
 
   <!-- ===== OLED (same I2C bus, joined by label), via J1 ===== -->
@@ -241,6 +241,27 @@
     <text x="170" y="916" text-anchor="middle">SCL</text><text x="215" y="916" text-anchor="middle">SDA</text></g>
   <text x="150" y="952" text-anchor="middle" font-size="11" fill="#9fd3ff">Ready</text>
   <text x="150" y="1008" text-anchor="middle" font-weight="600" fill="#2a3a4a">OLED SSD1306 128x64 (0x3C), J1</text>
+
+  <!-- ===== PN532 reader (same I2C bus, joined by label), via J7 ===== -->
+  <g stroke-width="2" fill="none">
+    <line x1="680" y1="146" x2="680" y2="160" stroke="#e08a00"/>
+    <line x1="725" y1="160" x2="725" y2="150" stroke="#222"/>
+    <line x1="770" y1="146" x2="770" y2="160" stroke="#7a4a9a"/>
+    <line x1="815" y1="146" x2="815" y2="160" stroke="#2c7a9a"/>
+    <rect x="650" y="160" width="200" height="76" rx="6" fill="#f2f6ea" stroke="#6a7a3a" stroke-dasharray="5 3"/>
+  </g>
+  <use href="#gnd" x="0" y="0" transform="translate(725 150) rotate(180)"/>
+  <text x="680" y="140" text-anchor="middle" font-weight="700" fill="#e08a00">3V3</text>
+  <text x="770" y="140" text-anchor="middle" font-weight="700" fill="#7a4a9a">SCL</text>
+  <text x="815" y="140" text-anchor="middle" font-weight="700" fill="#2c7a9a">SDA</text>
+  <g font-size="11" fill="#555"><text x="680" y="176" text-anchor="middle">VCC</text><text x="725" y="176" text-anchor="middle">GND</text>
+    <text x="770" y="176" text-anchor="middle">SCL</text><text x="815" y="176" text-anchor="middle">SDA</text></g>
+  <g font-size="10" fill="#555" text-anchor="middle">
+    <text x="750" y="196">I2C 0x24</text>
+    <text x="750" y="210">mode switches: 1 ON, 2 OFF</text>
+    <text x="750" y="224">IRQ, RSTO: not connected</text>
+  </g>
+  <text x="750" y="112" text-anchor="middle" font-weight="600" fill="#4a5a22">PN532 RFID reader, U7 (J7), optional</text>
 
   <!-- ===== notes ===== -->
   <line x1="30" y1="1030" x2="970" y2="1030" stroke="#ddd"/>
