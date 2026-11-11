@@ -1,6 +1,6 @@
-# Bench reader build guide (ESP32-C3)
+# Printer station build guide (ESP32-C3)
 
-The bench reader is a small box by the printer. Tap a spool's NFC tag, pick the printer and slot with a knob, and
+The printer station is a small box by the printer. Tap a spool's NFC tag, pick the printer and slot with a knob, and
 the filament-kit server links that spool to the slot. It has a PN532 NFC module, a 128x64 OLED, a rotary encoder
 with a push switch and a buzzer, on an ESP32-C3 Super Mini. It reaches the server over Wi-Fi and HTTPS, and takes
 signed firmware updates over the air.
@@ -13,7 +13,7 @@ circuit is the KiCad schematic in [kicad/](kicad/), exported as
 [images/schematic.svg](images/schematic.svg) and [images/schematic.pdf](images/schematic.pdf). The reader can be built
 on its own through-hole board (see "Board") or wired module to module (see "Wiring").
 
-![Bench reader schematic](images/schematic.svg)
+![Printer station schematic](images/schematic.svg)
 
 ## Parts
 
@@ -26,7 +26,7 @@ on its own through-hole board (see "Board") or wired module to module (see "Wiri
 | BZ1 | 3-pin buzzer module, low-level trigger (active-low) | 1 | Beeps and speech |
 | J1-J4 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x2 (J1, J2), 5-pin x1 (J3), 3-pin x1 (J4) | 4 | Off-board connectors, board build only |
 | U1 socket | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1 on the board, board build only |
-| PCB | Bench reader through-hole board, 89 x 52 mm, 2 layers | 1 | Board build only |
+| PCB | Printer station through-hole board, 89 x 52 mm, 2 layers | 1 | Board build only |
 
 The datasheet limits for each active part, with their sources, are in [catalogue.xml](catalogue.xml) and in the
 schematic's symbol properties.
@@ -192,10 +192,19 @@ current and the 3V3 rail during a tag read.
 
 ## Case
 
-The case is four STEP files in `enclosures/bench-reader/`: `reader_tray.step`, `reader_lid.step`,
-`reader_shelf_plate.step` and `reader_assembly.step`. They come from an older project, and their fit against this
-build is unchecked. Check that the C3's USB-C plug, the OLED window, the encoder shaft and the PN532 antenna area
-line up before printing, and record the result in the bench results.
+The case is the printer scan station, in `enclosures/bench-reader/`. The folders and KiCad files for this device
+keep the name `bench-reader`, so existing links still work. The case has three parts:
+
+| Part | File |
+|---|---|
+| Body | `printer scan station-Body.step` |
+| Face | `printer scan station-Face.step` |
+| Retainer | `printer scan station-Retainer.step` |
+| Print file for all three | `printer scan station.3mf` |
+
+The 3MF is the print file; the STEP files are for editing the design. The models are licensed CC BY-NC-SA 4.0 (see
+`enclosures/LICENSE`). Its fit against this build is unchecked. Check that the C3's USB-C plug, the OLED window, the
+encoder shaft and the PN532 antenna area line up before printing, and record the result in the bench results.
 
 ## First build and flash
 

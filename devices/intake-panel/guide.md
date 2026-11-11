@@ -537,7 +537,7 @@ default volume of 50 keeps peak speaker current near 310 mA.
 
 ## PN532 reader (optional)
 
-U7 is the same PN532 module as the bench reader's, an Elechouse NFC Module V3 in I2C mode at address 0x24. It is
+U7 is the same PN532 module as the printer station's, an Elechouse NFC Module V3 in I2C mode at address 0x24. It is
 optional: build the panel without it, and the station's USB reader ([station-nfc](../station-nfc/guide.md)) reads
 tags instead. Both readers may be connected at the same time; the station counts the same tag from either reader
 within 2 s as one tap.
@@ -575,7 +575,7 @@ Wire each harness from the module's silkscreen, not from the header order above.
 
 ## First flash
 
-A new C3 has no firmware, so it can't answer `HELLO`. Unplug any other ESP32-C3 device, such as a bench reader
+A new C3 has no firmware, so it can't answer `HELLO`. Unplug any other ESP32-C3 device, such as a printer station
 plugged in for power, then plug the panel into the station PC and run:
 
 ```

@@ -8,7 +8,7 @@
 	)
 	(paper "A4")
 	(title_block
-		(title "filament-kit bench reader, through-hole board")
+		(title "filament-kit printer station, through-hole board")
 		(rev "A")
 		(company "filament-kit")
 	)
@@ -7873,7 +7873,7 @@
 			)
 		)
 	)
-	(gr_text "bench reader"
+	(gr_text "printer station"
 		(at 175 116.5 0)
 		(layer "F.SilkS")
 		(uuid "36d075b2-211c-4e8f-aa98-7076e40b395f")

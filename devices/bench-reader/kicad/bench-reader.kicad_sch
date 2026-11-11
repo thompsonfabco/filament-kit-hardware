@@ -5,7 +5,7 @@
 	(uuid 19934265-6817-4db8-8da7-5db7cdd5dd1d)
 	(paper "A4")
 	(title_block
-		(title "Bench reader")
+		(title "Printer station")
 	)
 	(lib_symbols
 		(symbol "filament-kit:ESP32-C3_SuperMini"
@@ -3204,7 +3204,7 @@
 		(at 177.79999999999998 83.82000000000001)
 		(uuid "979084d9-5cd6-42e3-bd63-de153a322fcc")
 	)
-	(text "Bench reader. Firmware: reader/src/main.cpp (filament-kit).\nPower: the C3's USB 5 V; every module on the C3's 3V3 pin.\nI2C: Elechouse NFC Module V3 PN532 (0x24, switch 1 ON, switch 2 OFF) and OLED (0x3C) share SDA/SCL.\nPN532 IRQ and RSTO stay unconnected (firmware polls over I2C).\nEncoder: A/B to GPIO 3/4 with internal pull-ups, common C to GND;\npush switch S1-S2 between GPIO 1 and 3V3, internal pull-down.\nBuzzer module is active-low: firmware idles GPIO 0 high.\nUNCONFIRMED: PN532 supply pin.\nBoard: U1 plugs into two 1x8 female headers. Off-board modules plug into JST-XH headers:\nJ1 PN532 and J2 OLED (GND 3V3 SDA SCL), J3 encoder (A B C SW 3V3), J4 buzzer (GND 3V3 S).\nU2, U3, SW1 and BZ1 are off the board (not placed on the PCB)."
+	(text "Printer station. Firmware: reader/src/main.cpp (filament-kit).\nPower: the C3's USB 5 V; every module on the C3's 3V3 pin.\nI2C: Elechouse NFC Module V3 PN532 (0x24, switch 1 ON, switch 2 OFF) and OLED (0x3C) share SDA/SCL.\nPN532 IRQ and RSTO stay unconnected (firmware polls over I2C).\nEncoder: A/B to GPIO 3/4 with internal pull-ups, common C to GND;\npush switch S1-S2 between GPIO 1 and 3V3, internal pull-down.\nBuzzer module is active-low: firmware idles GPIO 0 high.\nUNCONFIRMED: PN532 supply pin.\nBoard: U1 plugs into two 1x8 female headers. Off-board modules plug into JST-XH headers:\nJ1 PN532 and J2 OLED (GND 3V3 SDA SCL), J3 encoder (A B C SW 3V3), J4 buzzer (GND 3V3 S).\nU2, U3, SW1 and BZ1 are off the board (not placed on the PCB)."
 		(exclude_from_sim no)
 		(at 30.48 152.4 0)
 		(effects

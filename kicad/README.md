@@ -40,7 +40,7 @@ buzzer; the J1-J5 headers fix that order, whatever order a module's own pins are
 - `ESP32-C3_SuperMini_Socket`: the same pads and numbering as `ESP32-C3_SuperMini`, drawn as two 1x8 female headers
   (silkscreen outlines, stock 1x8 socket 3D models) so the module plugs in and is never soldered. A rule area between
   the rows at the end away from the USB socket, extending 3.85 mm past the module, keeps tracks, vias and copper pour
-  out from under the antenna; the antenna position is UNCONFIRMED. Used by the bench reader and intake panel boards.
+  out from under the antenna; the antenna position is UNCONFIRMED. Used by the printer station and intake panel boards.
 - `MAX98357_Module`: one row of seven 1.7 mm pads, 1.0 mm drills, 2.54 mm pitch, viewed from the top with the header
   at the bottom: pad 1 (square) LRC, then BCLK, DIN, GAIN, SD, GND, VIN. Pads 8 (-) and 9 (+) are the screw terminal,
   on the opposite edge, - on the left. Their position (12.7 mm from the header, 5.08 mm apart) is a placeholder,

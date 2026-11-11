@@ -1,4 +1,4 @@
-<!-- Bench reader on the ESP32-C3 Super Mini. Build guide: guide.md. Circuit: kicad/bench-reader.kicad_sch,
+<!-- Printer station on the ESP32-C3 Super Mini. Build guide: guide.md. Circuit: kicad/bench-reader.kicad_sch,
      exported as images/schematic.svg and images/schematic.pdf.
      Firmware paths are inside filament-kit. vmax is in volts and imax in amperes. imax_basis says what the imax
      figure is. imax is only ever a datasheet limit: where the datasheet gives none, imax is UNCONFIRMED and i_typ

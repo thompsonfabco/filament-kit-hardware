@@ -46,7 +46,7 @@ covering it.
 | Device | Hardware | Link | Found by |
 |---|---|---|---|
 | Intake panel | ESP32-C3 Super Mini, native USB (vendor 303a) | USB serial | `HELLO` answer on each `ttyACM` port |
-| Bench reader | ESP32-C3 Super Mini, PN532 on I2C, OLED, encoder | Wi-Fi, HTTPS | Compiled-in server URL |
+| Printer station | ESP32-C3 Super Mini, PN532 on I2C, OLED, encoder | Wi-Fi, HTTPS | Compiled-in server URL |
 | Station NFC reader | PN532 on a CH340 adapter, UART | USB serial | The `ttyUSB` port that is not the panel |
 | Scale | DYMO M10 | USB HID | Vendor ID 0922 on `hidraw` |
 | Webcam | Any USB camera | V4L2 | First `/dev/v4l/by-id` entry |
@@ -326,7 +326,7 @@ The hardware designs are kept in KiCad 10.
 1. Library and the `ElectroCookie_Full` footprint.
 2. Intake panel schematic, with ERC clean and its exports.
 3. Paper check reading the netlist, and the KiCad CI job.
-4. Bench reader schematic, folded into its guide task.
+4. Printer station schematic, folded into its guide task.
 
 ## Follow-up: reader setup
 
@@ -337,9 +337,8 @@ reader's first-run flow and how its update images are signed.
 
 ## Follow-up: enclosures
 
-The reader's case is four STEP files, copied into `enclosures/bench-reader/` from an older project. Their headers hold
-no personal data. They predate the custom board; the reader's case is being redesigned to fit the board in
-`devices/bench-reader/kicad/`, and that design adds printable files. Every enclosure is designed around the ElectroCookie prototype board the standard names,
+The printer station's case is the printer scan station: Body, Face and Retainer STEP files and a 3MF print file in
+`enclosures/bench-reader/`. Their headers hold no personal data. Every enclosure is designed around the ElectroCookie prototype board the standard names,
 mounted on its M3 holes, using hole positions measured from a real board. The intake station's case files (Controller, Simple Controller and Camera Stand) are in `enclosures/intake-station/`. The speaker's body is already sealed, so the enclosure needs only a mount using its two holes and an
 opening in front of the speaker, with no baffle.
 
