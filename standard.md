@@ -29,8 +29,7 @@ Pin rules:
 
 A kit-built device with a speaker uses a MAX98357 I2S amplifier, a breakout board or the MAX98357A chip on a custom
 board, powered from 5 V, and one sealed 8 Ω
-speaker rated at 3 W or more. Speaker wires go only to the board's two outputs, because neither output is a ground. The
-printer station's speech through its buzzer is exempt.
+speaker rated at 3 W or more. Speaker wires go only to the board's two outputs, because neither output is a ground.
 
 ### Connectors
 
