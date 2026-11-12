@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Test fixture: three nets on two strips each, one wire. -->
+<protoboard device="fixture" hand="none" title="Fixture">
+  <part ref="J1" kind="jst-xh" value="XH-2" latch="down" label="test">
+    <pin n="1" hole="C5"/>
+    <pin n="2" hole="C6"/>
+  </part>
+  <part ref="R1" kind="resistor" value="1k">
+    <pin n="1" hole="E5"/>
+    <pin n="2" hole="E9"/>
+  </part>
+  <part ref="R2" kind="resistor" value="2k">
+    <pin n="1" hole="A9"/>
+    <pin n="2" hole="A13"/>
+  </part>
+  <wire net="GND" from="D13" to="D6"/>
+</protoboard>

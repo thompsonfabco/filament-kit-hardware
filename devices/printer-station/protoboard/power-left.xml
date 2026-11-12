@@ -46,16 +46,16 @@
     <pin n="4" hole="B8"/>
     <pin n="5" hole="B7"/>
   </part>
-  <part ref="RG1" kind="resistor" value="220 Ω">
+  <part ref="RG1" kind="resistor" value="220 Ω" caption="above">
     <pin n="1" hole="J18"/>
     <pin n="2" hole="J14"/>
   </part>
-  <part ref="Q1" kind="to92" value="BS170" flat="up">
+  <part ref="Q1" kind="to92" value="BS170" flat="up" caption="left">
     <pin n="1" hole="H5"/>
     <pin n="2" hole="H4"/>
     <pin n="3" hole="H3"/>
   </part>
-  <part ref="RP1" kind="resistor" value="100 kΩ">
+  <part ref="RP1" kind="resistor" value="100 kΩ" caption="right">
     <pin n="1" hole="J4"/>
     <pin n="2" hole="T-4"/>
   </part>
@@ -63,7 +63,7 @@
     <pin n="1" hole="C4"/>
     <pin n="2" hole="C5"/>
   </part>
-  <part ref="D1" kind="diode" value="1N4001">
+  <part ref="D1" kind="diode" value="1N4001" caption="left">
     <pin n="1" hole="B+5"/>
     <pin n="2" hole="A5"/>
   </part>

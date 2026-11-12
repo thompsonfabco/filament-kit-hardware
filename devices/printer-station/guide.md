@@ -262,6 +262,117 @@ to switch leg S2.
    USB-C socket at the board edge, by the "USB" arrows, and its 5V pin over the socket's 5V label.
 7. Plug in each harness, pin 1 to pin 1, then work through the bench checklist.
 
+## Protoboard build
+
+This builds the station on the ElectroCookie full board (see the standard's "Assembly and enclosures") instead of the
+ordered board. **This drawing is for a power-left C3 module only**: with USB up, 5V, G and 3V3 are the top three pins
+of the left row (see "Which C3 module do I have?"). A power-right module in this layout puts 5 V on a GPIO pin. The
+power-right drawing is not made yet.
+
+![Protoboard, top view, power-left](protoboard/power-left-top.svg)
+
+![Protoboard, solder side, mirrored, power-left](protoboard/power-left-solder.svg)
+
+Printable sheets, with both views enlarged and at real size, the build order and the hole table:
+[A4](protoboard/power-left-a4.pdf) and [Letter](protoboard/power-left-letter.pdf). Print at 100 % ("actual size"):
+the 20 mm bar on each view checks the scale, and on the real-size pages the board lies on the drawing hole for hole.
+
+How the board is used:
+
+- Rows A to J and columns 1 to 30 are named as printed on the board. In each column, holes F to J are joined by one
+  copper strip and A to E by another; nothing crosses the channel between F and E.
+- The + rails carry 5V and the − rails GND. Both halves of each are used, so fit both rail links first (steps 1 and 2):
+  the + link joins the pad pair beside the left M3 hole, the − link the pair beside the right one.
+- 3V3 doesn't use a rail. It runs by wire from the C3 to the connectors.
+- U1 plugs into two 1x8 female headers in rows I and E, across the channel, with its USB-C end toward column 30. Some
+  wires run under it, so fit every wire before you plug U1 in.
+- J1 (PN532) sits on the same strips as the C3's SDA and SCL pins, so it needs no wire for them.
+- The JST-XH headers have a 2.50 mm pitch and push into the board's 2.54 mm holes. A hole beside a header's body is
+  partly covered; the drawing only uses those where a 0.6 mm lead still fits.
+- Use solid-core insulated wire. Each wire is straight or has one bend, and its number on the top view is its step
+  below. Every wire end is labelled with its net.
+
+1. Rail link (+): wire from the left link pad, upper to the left link pad, lower. It joins the top and bottom + rails.
+2. Rail link (−): wire from the right link pad, upper to the right link pad, lower. It joins the top and bottom − rails.
+3. Wire SW: H19 to E8 (one bend, 41 mm).
+4. Wire DT: G22 to E10 (one bend, 41 mm).
+5. Wire CLK: F21 to E11 (one bend, 33 mm).
+6. Wire 3V3: G23 to G26 (straight, 8 mm).
+7. Wire 3V3: F26 to E26 (straight, 8 mm).
+8. Wire 3V3: B26 to B14 (straight, 30 mm).
+9. Wire GATE: I14 to I4 (straight, 25 mm).
+10. Wire SDA: C25 to C15 (straight, 25 mm).
+11. Wire SCL: D24 to D16 (straight, 20 mm).
+12. Wire 3V3: D14 to D7 (straight, 18 mm).
+13. Wire 5V: A4 to bottom + rail, column 4 (straight, 9 mm).
+14. Wire GND: J24 to top − rail, column 24 (straight, 9 mm).
+15. Wire GND: J27 to top − rail, column 27 (straight, 9 mm).
+16. Wire GND: J3 to top − rail, column 3 (straight, 9 mm).
+17. Wire GND: F27 to E27 (straight, 8 mm).
+18. Wire BZ−: F5 to E5 (straight, 8 mm).
+19. Wire GND: A13 to bottom − rail, column 13 (straight, 7 mm).
+20. Wire GND: A9 to bottom − rail, column 9 (straight, 7 mm).
+21. Wire 5V: J25 to top + rail, column 25 (straight, 6 mm).
+22. RG1 (220 Ω): J18 to J14, lying flat.
+23. RP1 (100 kΩ): J4 to top − rail, column 4, lying flat.
+24. D1 (1N4001): banded end (K) in bottom + rail, column 5, other end (A) in A5.
+25. Q1 (BS170): D in H5, G in H4, S in H3, flat face toward the top edge (row J side).
+26. U1 sockets: two 1x8 female headers in E18-E25, I18-I25. Plug U1 in while soldering to keep them square, then take it out.
+27. J1 (PN532, JST-XH 4-pin): pin 1 in A27, latch side toward the bottom edge (row A side).
+28. J2 (OLED, JST-XH 4-pin): pin 1 in E13, latch side toward the top edge (row J side).
+29. J3 (encoder, JST-XH 5-pin): pin 1 in B11, latch side toward the top edge (row J side).
+30. J4 (buzzer, JST-XH 2-pin): pin 1 in C4, latch side toward the top edge (row J side).
+31. Check with a meter: no short from 5V, 3V3 or SDA/SCL to GND. Then plug U1 in, USB-C toward the board edge as drawn, after checking it is a power-left module.
+
+| Step | Item | Holes |
+|---|---|---|
+| 1 | + rail link | left link pad, upper to left link pad, lower |
+| 2 | − rail link | right link pad, upper to right link pad, lower |
+| 3 | wire SW | H19 to E8 (one bend) |
+| 4 | wire DT | G22 to E10 (one bend) |
+| 5 | wire CLK | F21 to E11 (one bend) |
+| 6 | wire 3V3 | G23 to G26 |
+| 7 | wire 3V3 | F26 to E26 |
+| 8 | wire 3V3 | B26 to B14 |
+| 9 | wire GATE | I14 to I4 |
+| 10 | wire SDA | C25 to C15 |
+| 11 | wire SCL | D24 to D16 |
+| 12 | wire 3V3 | D14 to D7 |
+| 13 | wire 5V | A4 to bottom + rail, column 4 |
+| 14 | wire GND | J24 to top − rail, column 24 |
+| 15 | wire GND | J27 to top − rail, column 27 |
+| 16 | wire GND | J3 to top − rail, column 3 |
+| 17 | wire GND | F27 to E27 |
+| 18 | wire BZ− | F5 to E5 |
+| 19 | wire GND | A13 to bottom − rail, column 13 |
+| 20 | wire GND | A9 to bottom − rail, column 9 |
+| 21 | wire 5V | J25 to top + rail, column 25 |
+| 22 | RG1 220 Ω | J18 to J14 |
+| 23 | RP1 100 kΩ | J4 to top − rail, column 4 |
+| 24 | D1 1N4001 | K bottom + rail, column 5, A A5 |
+| 25 | Q1 BS170 | D H5, G H4, S H3 |
+| 26 | U1 sockets | E18-E25, I18-I25 |
+| 27 | J1 PN532 | pin 1 A27, 2 A26, 3 A25, 4 A24 |
+| 28 | J2 OLED | pin 1 E13, 2 E14, 3 E15, 4 E16 |
+| 29 | J3 encoder | pin 1 B11, 2 B10, 3 B9, 4 B8, 5 B7 |
+| 30 | J4 buzzer | pin 1 C4, 2 C5 |
+
+The check that the drawing matches the schematic runs in CI and by hand (it needs kicad-cli, on PATH or in
+`KICAD_CLI`):
+
+```
+python tools/protoboard.py check devices/printer-station/protoboard/power-left.xml
+```
+
+It reads the placement file, builds the board's connections from its strips, rails, rail links, wires and part pins,
+and compares them with the netlist: every net one connected group, no two nets joined, every pin of an on-board part
+placed, and no hole holding two leads. `python tools/protoboard.py render <placement> --pdf` redraws the views,
+the step list and the PDFs from the placement file.
+
+Board facts the drawing assumes (UNCONFIRMED until checked on a board): the rails have one hole per column, in line
+with the columns; the link pads sit beside the M3 holes as drawn; and a JST-XH header's latch side is drawn from
+KiCad's footprint outline.
+
 ## Power
 
 Power comes from the USB 5 V into the C3. The C3's 3V3 regulator feeds every module except the buzzer, which

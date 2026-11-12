@@ -988,10 +988,14 @@ def draw_wires(svg: Svg, v: View, pl: Placement, steps: dict, placed: list, used
         n = steps.get(id(w))
         if n is None:
             continue
-        for frac in (0.5, 0.35, 0.65, 0.2, 0.8):
-            cx, cy = v.p((a[0] + u[0] * L * frac, a[1] + u[1] * L * frac))
+        nrm = (-u[1], u[0])
+        spots = [(a[0] + u[0] * L * f, a[1] + u[1] * L * f) for f in (0.5, 0.35, 0.65, 0.2, 0.8)]
+        side_spots = [(q[0] + nrm[0] * s_ * 1.9, q[1] + nrm[1] * s_ * 1.9) for q in spots[:3] for s_ in (1, -1)]
+        cands = side_spots + spots if L < 10 else spots + side_spots
+        for i, spot in enumerate(cands):
+            cx, cy = v.p(spot)
             box = (cx - 1.05, cy - 1.05, cx + 1.05, cy + 1.05)
-            if _free(box, placed, used_xy) or frac == 0.8:
+            if _free(box, placed, used_xy) or i == len(cands) - 1:
                 placed.append(box)
                 svg.add(f'<circle cx="{cx:.2f}" cy="{cy:.2f}" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>')
                 svg.text(cx, cy + 0.45, str(n), 1.25, weight="bold", fill="#fff")
@@ -1029,18 +1033,23 @@ def _part_caption(svg, v, p, placed):
     ys = [v.y(b) for poly in polys for _, b in poly]
     cx = (min(xs) + max(xs)) / 2
     side = p.attrs.get("caption", "below")
+    if v.solder and side in ("left", "right"):
+        side = {"left": "right", "right": "left"}[side]
     text1 = p.ref + (f" {p.value}" if p.value and p.kind != "c3-supermini" else "")
     text2 = part_label(p)
-    if p.kind == "c3-supermini":
+    if p.kind in ("c3-supermini", "jst-xh"):
         return
+    lines = [text1] + ([text2] if text2 else [])
+    wmax = max(len(t) for t in lines) * 0.95 + 1
     if side == "above":
         y = min(ys) - 0.9 - (1.7 if text2 else 0)
     elif side == "inside":
         y = (min(ys) + max(ys)) / 2 + 0.5
+    elif side in ("left", "right"):
+        y = (min(ys) + max(ys)) / 2 + 0.5 - (0.85 if text2 else 0)
+        cx = min(xs) - wmax / 2 - 0.6 if side == "left" else max(xs) + wmax / 2 + 0.6
     else:
         y = max(ys) + 2.0
-    lines = [text1] + ([text2] if text2 else [])
-    wmax = max(len(t) for t in lines) * 0.95 + 1
     box = (cx - wmax / 2, y - 1.6, cx + wmax / 2, y + 1.7 * (len(lines) - 1) + 0.5)
     placed.append(box)
     svg.add(f'<rect x="{box[0]:.2f}" y="{box[1]:.2f}" width="{box[2] - box[0]:.2f}" height="{box[3] - box[1]:.2f}" '
@@ -1071,15 +1080,18 @@ def _draw_jst(svg, v, p, names):
         svg.add(f'<rect x="{rx - wdt / 2:.2f}" y="{ry - 0.35:.2f}" width="{wdt}" height="0.7" fill="#222"/>')
     else:
         svg.add(f'<rect x="{rx - 0.35:.2f}" y="{ry - wdt / 2:.2f}" width="0.7" height="{wdt}" fill="#222"/>')
-    # Pin 1 marker on the side away from the latch.
+    # Pin 1 marker: a red dot just past pin 1's end of the body.
     p1 = p.xy("1")
-    tri_c = (p1[0] - lat[0] * 1.75, p1[1] - lat[1] * 1.75)
-    tx, ty = v.p(tri_c)
-    svg.add(f'<circle cx="{tx:.2f}" cy="{ty:.2f}" r="0.42" fill="#c0392b"/>')
+    end1 = (p1[0] - u[0] * 1.75, p1[1] - u[1] * 1.75)
+    tx, ty = v.p(end1)
+    svg.add(f'<circle cx="{tx:.2f}" cy="{ty:.2f}" r="0.45" fill="#c0392b"/>')
     for k, h in p.pins.items():
         hx, hy = HOLES[h].x, HOLES[h].y
-        lx, ly = v.p((hx - lat[0] * 1.55 * 0 + lat[0] * 1.45, hy + lat[1] * 1.45))
-        svg.text(lx, ly + 0.42, names.get(k, k), 1.0, weight="bold", fill="#222")
+        lx, ly = v.p((hx - lat[0] * 1.55, hy - lat[1] * 1.55))
+        svg.text(lx, ly + 0.36, names.get(k, k), 0.95, weight="bold", fill="#222")
+    mid2 = ((a[0] + b[0]) / 2 + lat[0] * 1.75, (a[1] + b[1]) / 2 + lat[1] * 1.75)
+    cx2, cy2 = v.p(mid2)
+    svg.text(cx2, cy2 + 0.5, f"{p.ref} {part_label(p)}", 1.35, weight="bold", fill="#1a1a1a")
 
 
 def _draw_to92(svg, v, p, names):
@@ -1164,18 +1176,27 @@ def _draw_module(svg, v, p, names, ghost):
     svg.add(f'<polygon points="{ud}" fill="#bdc3c7" stroke="#1f4e79" stroke-width="0.3"/>')
     ux, uy = v.p(mu)
     svg.text(ux, uy + 0.5, "USB-C", 1.3, weight="bold", fill="#1f4e79")
-    mx, my = v.p((cx, cy))
-    svg.text(mx, my - 2.2, "U1  ESP32-C3 Super Mini", 1.7, weight="bold", fill="#1f4e79")
-    svg.text(mx, my - 0.1, "POWER-LEFT module, on 2 sockets", 1.35, fill="#1f4e79")
-    svg.text(mx, my + 1.8, "fit the wires under it first", 1.35, fill="#1f4e79")
+    # Title in the channel under the module, where no wire runs.
+    ch = (cx - usb[0] * 2.6, 26.0)
+    mx, my = v.p(ch)
+    svg.add(f'<rect x="{mx - 10.5:.2f}" y="{my - 2.3:.2f}" width="21" height="4.4" rx="0.6" fill="#ffffff" opacity="0.9"/>')
+    arrow = "→" if (usb[0] > 0) != v.solder else "←"
+    lead = "" if arrow == "→" else f"{arrow} "
+    tail = f" {arrow}" if arrow == "→" else ""
+    svg.text(mx, my - 0.5, "U1 ESP32-C3 Super Mini", 1.6, weight="bold", fill="#1f4e79")
+    svg.text(mx, my + 1.4, f"{lead}power-left, USB-C end{tail}", 1.3, fill="#1f4e79")
     if not ghost:
         for n, h in p.pins.items():
             hx, hy = HOLES[h].x, HOLES[h].y
-            side = C3_POWER_LEFT[n][1]
-            # Name inside the module outline, next to the pin.
-            inward = (-left[0], -left[1]) if side == "L" else left
-            x, y = v.p((hx + inward[0] * 2.0, hy + inward[1] * 2.0))
-            svg.text(x, y + 0.45, names[n], 1.15, weight="bold", fill="#1f4e79")
+            # Name toward the channel for the row beside it, otherwise away from the module.
+            toward_channel = 26.0 - hy
+            if abs(toward_channel) < 5:
+                d = 1.0 if toward_channel > 0 else -1.0
+            else:
+                d = -1.0 if toward_channel > 0 else 1.0
+            x, y = v.p((hx, hy + d * 1.75))
+            svg.add(f'<rect x="{x - 1.4:.2f}" y="{y - 0.75:.2f}" width="2.8" height="1.3" rx="0.3" fill="#eaf1f8"/>')
+            svg.text(x, y + 0.4, names[n], 1.1, weight="bold", fill="#1f4e79")
 
 
 def draw_header(svg: Svg, pl: Placement, solder: bool):
@@ -1257,8 +1278,9 @@ def build_steps(pl: Placement):
     wire_steps = {}
     for r in pl.bridges:
         a, b = BRIDGE_PADS[r]
-        steps.append(("link", f"Rail link ({r}): wire from {HOLES[a].text} to {HOLES[b].text}. It joins the top and "
-                              f"bottom {r} rails.", f"{r} rail link", f"{HOLES[a].text} to {HOLES[b].text}"))
+        sym = "+" if r == "+" else "−"
+        steps.append(("link", f"Rail link ({sym}): wire from the {HOLES[a].text} to the {HOLES[b].text}. It joins "
+                              f"the top and bottom {sym} rails.", f"{sym} rail link", f"{HOLES[a].text} to {HOLES[b].text}"))
 
     def wkey(w):
         under = any(seg_hits_poly(a, b, module_outline(p)) for p in pl.parts if p.kind == "c3-supermini"
@@ -1274,7 +1296,8 @@ def build_steps(pl: Placement):
     for p in sorted(pl.parts, key=lambda p: (order[p.kind], p.ref)):
         pins = sorted(p.pins.items(), key=lambda t: int(t[0]) if t[0].isdigit() else 0)
         if p.kind == "resistor":
-            steps.append(("part", f"{p.ref} ({p.value}): {pins[0][1]} to {pins[1][1]}, lying flat.",
+            steps.append(("part", f"{p.ref} ({p.value}): {HOLES[pins[0][1]].text} to {HOLES[pins[1][1]].text}, "
+                                  "lying flat.",
                           f"{p.ref} {p.value}", f"{HOLES[pins[0][1]].text} to {HOLES[pins[1][1]].text}"))
         elif p.kind == "diode":
             steps.append(("part", f"{p.ref} ({p.value}): banded end (K) in {HOLES[p.pins['1']].text}, "
@@ -1393,13 +1416,18 @@ td, th {{ border: 0.2mm solid #999; padding: 0.6mm 1.2mm; }}
 in this layout puts 5 V on a GPIO pin and can destroy it.</p>
 <ol>{''.join(items)}</ol><table>{''.join(rows)}</table></div>
 </body></html>"""
-    with tempfile.TemporaryDirectory() as td:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         hp = Path(td) / "sheet.html"
         hp.write_text(html, encoding="utf-8")
-        r = subprocess.run([browser, "--headless", "--disable-gpu", "--no-pdf-header-footer",
-                            f"--print-to-pdf={out}", hp.as_uri()], capture_output=True, text=True, timeout=120)
+        prof = Path(td) / "profile"
+        try:
+            subprocess.run([browser, "--headless", "--disable-gpu", "--no-first-run", f"--user-data-dir={prof}",
+                            "--no-pdf-header-footer", f"--print-to-pdf={out}", hp.as_uri()],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=120)
+        except subprocess.TimeoutExpired:
+            pass
         if not out.is_file():
-            raise PlacementError(f"PDF not written: {r.stderr.strip()[:300]}")
+            raise PlacementError(f"PDF not written: {out}")
 
 
 def cmd_render(args) -> int:

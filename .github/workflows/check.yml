@@ -69,6 +69,14 @@ jobs:
 
       - run: python3 tools/paper_check.py --kit kit
 
+      # Each protoboard drawing's placement file is checked against its schematic's netlist, exported
+      # with this container's kicad-cli: every net one group, no shorts, every part pin placed.
+      - run: |
+          for f in devices/*/protoboard/*.xml; do
+            [ -e "$f" ] || continue
+            python3 tools/protoboard.py check "$f"
+          done
+
       # A device's surface-mount board (kicad-smt/) must wire exactly what its
       # through-hole board (kicad/) wires, apart from any block listed in
       # kicad-smt/parity-exceptions.txt.
