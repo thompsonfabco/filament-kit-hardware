@@ -60,14 +60,16 @@ onto GPIO pins of a module of the other hand.
   keeps tracks, vias and copper pour out from under the antenna; the antenna position is UNCONFIRMED. Silkscreen and
   F.Fab mark the USB end with "USB" and two arrows, and label the power-row pads 5V, GND and 3V3 from inside the
   socket; the silkscreen also reads "POWER ROW RIGHT" between the rows and has a pin-1 corner mark by pad 1 (top
-  left). Used by the power-right boards: the printer station's `kicad/` board and both intake panel boards.
+  left). Used by the power-right boards: the printer station's `kicad/` board and the intake panel's `kicad/` and
+  `kicad-smt/` boards.
 - `ESP32-C3_SuperMini_Socket_PowerLeft`: for power-left modules. The same pad positions, drill, outline, rule area
   and 3D models as `ESP32-C3_SuperMini_Socket`, with the numbering swapped between the rows: pads 9-16 (5V GND 3V3
   GPIO4 GPIO3 GPIO2 GPIO1 GPIO0) on the left row and pads 1-8 (GPIO5 to GPIO21) on the right row, each top to bottom,
   so the symbol's pin mapping is unchanged. Pad 1 (square) and the pin-1 corner mark are top right. The same USB
   mark and 5V/GND/3V3 labels, beside the left row, and "POWER ROW LEFT". Because the pads sit where they sit on the
   other socket, a board can switch hands by swapping this footprint and rerouting the tracks to U1. Used by the
-  printer station's `kicad-power-left/` board.
+  power-left boards: the printer station's `kicad-power-left/` board and the intake panel's `kicad-power-left/` and
+  `kicad-smt-power-left/` boards.
 - `MAX98357_Module`: one row of seven 1.7 mm pads, 1.0 mm drills, 2.54 mm pitch, viewed from the top with the header
   at the bottom: pad 1 (square) LRC, then BCLK, DIN, GAIN, SD, GND, VIN. Pads 8 (-) and 9 (+) are the screw terminal,
   on the opposite edge, - on the left. Their position (12.7 mm from the header, 5.08 mm apart) is a placeholder,

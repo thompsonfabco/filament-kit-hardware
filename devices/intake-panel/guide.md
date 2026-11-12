@@ -10,7 +10,8 @@ for this device is in [catalogue.xml](catalogue.xml), and the parts to buy, with
 [bom.md](bom.md). The full circuit is the KiCad schematic in [kicad/](kicad/),
 exported as [images/schematic.svg](images/schematic.svg) and [images/schematic.pdf](images/schematic.pdf).
 [images/wiring.svg](images/wiring.svg) is an overview drawing, not the full circuit; it includes the optional PN532
-reader (U7) and its header (J7).
+reader (U7) and its header (J7). Each custom board comes in two layouts, one for each C3 pin order: check which
+module you have before you order one (see "Which C3 module do I have?").
 
 ![Intake panel wiring overview](images/wiring.svg)
 
@@ -102,18 +103,57 @@ J3 and J4 are the same type, which is safe because both carry the same signals. 
 I2C headers. If the buttons end up swapped, set
 `panel_swap` as `PANEL.md` describes instead of rewiring.
 
+## Which C3 module do I have?
+
+ESP32-C3 Super Mini boards are sold with two pin orders. The pins are the same, but the row that carries 5V, GND and
+3V3 (the power row) is on the left on some boards and on the right on others. Each needs its own intake panel board,
+through-hole or JLCPCB.
+
+![The two C3 Super Mini pin orders, seen from above with USB up](images/c3-module-hands.svg)
+
+1. Hold the module with its USB-C socket at the top and its chip facing you, pins pointing away from you.
+2. Read the labels printed on the module itself, next to the pins. The drawing only shows where to look: trust the
+   module's own silkscreen, not a listing photo or this guide.
+3. If 5V, G (GND) and 3V3 are the top three pins of the left row, you have a **power-left** module. If they are the
+   top three of the right row, you have a **power-right** module.
+4. Order and build the board with the same name: its silkscreen reads "C3 POWER-LEFT" or "C3 POWER-RIGHT", and the
+   socket on it reads "POWER ROW LEFT" or "POWER ROW RIGHT", with 5V, GND and 3V3 marked beside the power-row holes.
+
+> **Warning: the wrong board can destroy the module.** A module in the board of the other hand gets the board's 5V
+> and 3V3 on GPIO pins, and one of its GPIO pins on its 5V pin. Powering it can damage the C3 and the modules on the
+> board at once. Before you plug U1 in, check that the 5V label on the module sits over the 5V label on the board's
+> socket, at the USB end.
+
+The reference build's modules (the Hiraethge 6-pack in [bom.md](bom.md)) are power-left. Other listings may sell
+either, so check every module you buy.
+
 ## Board
 
 The board comes in two variants with the same outline, holes and connectors, and the same pin-to-pin wiring apart
 from the amplifier:
 
-- **Through-hole (DIY)**: `kicad/intake-panel.kicad_pcb`, in the same KiCad project as the schematic. Order the bare
-  board and solder the parts yourself.
-- **JLCPCB assembly**: `kicad-smt/intake-panel-smt.kicad_pcb`, a second KiCad project whose schematic is a copy of the
-  first with surface-mount footprints and an LCSC part number on each board part. JLCPCB makes the board and fits the
-  surface-mount parts (see "Ordering the JLCPCB board"); the end user fits the through-hole headers.
+- **Through-hole (DIY)**: order the bare board and solder the parts yourself.
+- **JLCPCB assembly**: a second KiCad project whose schematic is a copy of the through-hole one with surface-mount
+  footprints and an LCSC part number on each board part. JLCPCB makes the board and fits the surface-mount parts (see
+  "Ordering the JLCPCB board"); the end user fits the through-hole headers.
 
-Without either, the panel is built on the ElectroCookie board as "Board and layout" describes.
+Each variant has two layouts, one for each C3 pin order (see "Which C3 module do I have?"), so there are four boards:
+
+| Board | KiCad board | For |
+|---|---|---|
+| Through-hole, power-left | `kicad-power-left/intake-panel-power-left.kicad_pcb` | Modules with 5V, GND and 3V3 on the left row (USB up, from above) |
+| Through-hole, power-right | `kicad/intake-panel.kicad_pcb` | Modules with 5V, GND and 3V3 on the right row (USB up, from above) |
+| JLCPCB, power-left | `kicad-smt-power-left/intake-panel-smt-power-left.kicad_pcb` | Modules with 5V, GND and 3V3 on the left row |
+| JLCPCB, power-right | `kicad-smt/intake-panel-smt.kicad_pcb` | Modules with 5V, GND and 3V3 on the right row |
+
+The power-right boards share their KiCad projects with the schematics: `kicad/intake-panel.kicad_sch` is the source
+of truth, and `kicad-smt/intake-panel-smt.kicad_sch` its JLCPCB copy. Each power-left schematic is a copy of its
+power-right one that differs only in U1's footprint, so both hands wire the same pins to the same nets. The
+repository's CI checks that each power-left netlist matches its power-right one exactly, with no exceptions. The two
+hands have the same outline, holes, part positions and connectors; only U1's pin numbering and the tracks to it
+differ.
+
+Without any of them, the panel is built on the ElectroCookie board as "Board and layout" describes.
 
 Both wire the same pins together, except the amplifier: the through-hole board plugs in the MAX98357 module (U2),
 and the JLCPCB board carries the MAX98357A chip as U2, with its own parts RSD2, C2 and C3 and a speaker header J6
@@ -133,27 +173,47 @@ board: M3 holes at (7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.62
 Both copper layers stay clear of each mounting hole out to 3.5 mm (M3) and 2.5 mm (M2) from its centre, so a screw
 head or a metal standoff can't touch the pour.
 
-| | Through-hole (DIY) | JLCPCB assembly |
-|---|---|---|
-| Top | [board-tht-top.svg](board/board-tht-top.svg) | [board-smt-top.svg](board/board-smt-top.svg) |
-| Bottom (mirrored) | [board-tht-bottom.svg](board/board-tht-bottom.svg) | [board-smt-bottom.svg](board/board-smt-bottom.svg) |
-| Both, with the title block | [board-tht.pdf](board/board-tht.pdf) | [board-smt.pdf](board/board-smt.pdf) |
-| 3D model | [board-tht.step](board/board-tht.step) | [board-smt.step](board/board-smt.step) |
-| Gerbers and drill files | [gerbers-tht.zip](board/gerbers-tht.zip) | [gerbers-smt.zip](board/gerbers-smt.zip) |
-| Assembly files | - | [jlcpcb-bom-smt.csv](board/jlcpcb-bom-smt.csv), [jlcpcb-cpl-smt.csv](board/jlcpcb-cpl-smt.csv) |
+Through-hole (DIY) boards:
 
-Each zip holds the Gerbers and the drill files (plated and unplated holes in separate files); the JLCPCB zip also
-holds the top paste layer for the stencil. Any board maker that takes Gerbers can make either board: 2 layers, 1.6 mm.
+| View | Power-left board | Power-right board |
+|---|---|---|
+| Top | [board-tht-power-left-top.svg](board/board-tht-power-left-top.svg) | [board-tht-power-right-top.svg](board/board-tht-power-right-top.svg) |
+| Bottom (mirrored) | [board-tht-power-left-bottom.svg](board/board-tht-power-left-bottom.svg) | [board-tht-power-right-bottom.svg](board/board-tht-power-right-bottom.svg) |
+| Both, with the title block | [board-tht-power-left.pdf](board/board-tht-power-left.pdf) | [board-tht-power-right.pdf](board/board-tht-power-right.pdf) |
+| 3D model | [board-tht-power-left.step](board/board-tht-power-left.step) | [board-tht-power-right.step](board/board-tht-power-right.step) |
+| Gerbers and drill files | [gerbers-tht-power-left.zip](board/gerbers-tht-power-left.zip) | [gerbers-tht-power-right.zip](board/gerbers-tht-power-right.zip) |
+
+JLCPCB assembly boards:
+
+| View | Power-left board | Power-right board |
+|---|---|---|
+| Top | [board-smt-power-left-top.svg](board/board-smt-power-left-top.svg) | [board-smt-power-right-top.svg](board/board-smt-power-right-top.svg) |
+| Bottom (mirrored) | [board-smt-power-left-bottom.svg](board/board-smt-power-left-bottom.svg) | [board-smt-power-right-bottom.svg](board/board-smt-power-right-bottom.svg) |
+| Both, with the title block | [board-smt-power-left.pdf](board/board-smt-power-left.pdf) | [board-smt-power-right.pdf](board/board-smt-power-right.pdf) |
+| 3D model | [board-smt-power-left.step](board/board-smt-power-left.step) | [board-smt-power-right.step](board/board-smt-power-right.step) |
+| Gerbers and drill files | [gerbers-smt-power-left.zip](board/gerbers-smt-power-left.zip) | [gerbers-smt-power-right.zip](board/gerbers-smt-power-right.zip) |
+| Assembly files | [jlcpcb-bom-smt-power-left.csv](board/jlcpcb-bom-smt-power-left.csv), [jlcpcb-cpl-smt-power-left.csv](board/jlcpcb-cpl-smt-power-left.csv) | [jlcpcb-bom-smt-power-right.csv](board/jlcpcb-bom-smt-power-right.csv), [jlcpcb-cpl-smt-power-right.csv](board/jlcpcb-cpl-smt-power-right.csv) |
+
+Each zip holds the Gerbers and the drill files (plated and unplated holes in separate files); the JLCPCB zips also
+hold the top paste layer for the stencil. The files in a power-left zip are named `intake-panel-power-left-*` or
+`intake-panel-smt-power-left-*`, those in a power-right zip `intake-panel-*` or `intake-panel-smt-*`. The title block
+names the hand, and so does the silkscreen under the board's name. Any board maker that takes Gerbers can make any of
+the four: 2 layers, 1.6 mm. The two hands' JLCPCB assembly files list the same parts at the same positions, since U1
+is not among them; each set is named for its board so the order keeps one hand's files together.
 
 What sits on the board, and why:
 
 - **U1, the C3**, plugs into two 1x8 female headers (XU1) and is never soldered to the board. Its USB-C end sits at
-  the top edge, by the "USB-C" mark, so a cable reaches it in a case. The end away from the USB socket carries its
-  antenna; the board keeps tracks, vias and the GND pour out from under that end.
+  the top edge, by the "USB" arrows inside the socket, so a cable reaches it in a case. The silkscreen labels the
+  power-row holes 5V, GND and 3V3 and reads "POWER ROW LEFT" or "POWER ROW RIGHT" between the rows. The end away
+  from the USB socket carries its antenna; the board keeps tracks, vias and the GND pour out from under that end.
 - **U2, the amplifier**, on the through-hole board, plugs into a 1x7 female header (XU2) beside U1, with its pin row facing U1 and its screw
-  terminal toward the left short edge. It sits on the board because its I2S lines run straight to U1's pins, it
+  terminal toward the left short edge. It sits on the board because its I2S lines run a short way to U1's pins, it
   draws the panel's largest 5 V current, and the speaker is wired to its own screw terminal, so it needs no harness.
-  Its VIN takes 5 V straight from U1's 5V pin over a 22.5 mm, 0.8 mm track along the top edge, on the bottom layer.
+  Its VIN takes 5 V straight from U1's 5V pin over a 0.8 mm track on the bottom layer: 22.5 mm along the top edge on
+  the power-right board, 6 mm straight across on the power-left board, where U1's 5V pin faces VIN. On the
+  power-right board the I2S lines run straight across to U1's left row; on the power-left board they run round the
+  antenna end of U1 to its right row, BCLK partly on the top layer.
   The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one, before you plug U2 in.
   The module's outline and the terminal position are UNCONFIRMED; nothing else on the board sits under it.
 - **U2 on the JLCPCB board** is the MAX98357A chip (TQFN-16, 3 x 3 mm) in the same corner, left of U1. C2 (100 nF)
@@ -162,19 +222,19 @@ What sits on the board, and why:
   pour through four 0.3 mm thermal vias, and each GND pin (3, 11 and 15) also runs out into the top GND pour and down
   a via of its own. J6, the speaker header, sits by the left edge below the spare M2 hole, which stays free. The chip
   block and J6 take about 56 mm² and 58 mm² of courtyard, against the module's 19 x 17.8 mm (338 mm²). Its I2S lines
-  reach U1 on the bottom layer, as the module's do, and its VDD takes 5 V from the same bottom-layer 5 V track
-  through a via.
-- **C1**, the optional 470 µF capacitor, has its pads below U1, by the "C1" mark, on both boards: there is no room
+  reach U1 as the module's do on the same hand's through-hole board, and its VDD takes 5 V from the same bottom-layer
+  5 V track through a via. The chip block, its tracks and vias are the same on both hands.
+- **C1**, the optional 470 µF capacitor, has its pads below U1, by the "C1" mark, on every board: there is no room
   for the capacitor beside U2's header. Its + pad reaches U2's VIN over about 45 mm of 0.8 mm track (down the left
-  side of U1 and up to VIN) on the through-hole board, and U2's VDD over about 35 mm on the JLCPCB board, so it
+  side of U1 and up to VIN) on the through-hole boards, and U2's VDD over about 35 mm on the JLCPCB boards, so it
   steadies the 5 V rail as a whole rather than sitting at the amplifier.
 - **Off the board**: the OLED, the air sensor, the buzzer, the two buttons and the PN532 reader mount on the case,
   where each one has to be seen, pressed, heard or reach the room air or the tags, so each one plugs into a JST-XH
   header, as the schematic shows.
 - **The LED stages** (Q1, RG1, RP1 and Q2, RG2, RP2) sit above J3 and J4, each drain straight above its header's
   LED- pin.
-- **Silkscreen**: the through-hole board reads "filament-kit intake panel THT rev A", the JLCPCB board "filament-kit
-  intake panel JLCPCB rev A".
+- **Silkscreen**: the through-hole boards read "filament-kit intake panel THT rev A", the JLCPCB boards "filament-kit
+  intake panel JLCPCB rev A", each followed by its hand, "C3 POWER-LEFT" or "C3 POWER-RIGHT".
 
 ### Connectors
 
@@ -213,9 +273,14 @@ solder by hand later.
 
 ### Ordering the JLCPCB board
 
-1. On jlcpcb.com, upload `board/gerbers-smt.zip` as the board, 2 layers, 1.6 mm; JLCPCB reads the size from the Gerbers.
+1. Check which C3 module you have (see "Which C3 module do I have?"). On jlcpcb.com, upload the board for that hand,
+   2 layers, 1.6 mm; JLCPCB reads the size from the Gerbers:
+   - power-left module: `board/gerbers-smt-power-left.zip`;
+   - power-right module: `board/gerbers-smt-power-right.zip`.
 2. Turn on assembly, top side. Every part in the BOM is surface-mount, so the economic assembly service is enough.
-3. Upload `board/jlcpcb-bom-smt.csv` as the BOM and `board/jlcpcb-cpl-smt.csv` as the pick-and-place (CPL) file.
+3. Upload the BOM and the pick-and-place (CPL) file named for the same hand:
+   - power-left: `board/jlcpcb-bom-smt-power-left.csv` and `board/jlcpcb-cpl-smt-power-left.csv`;
+   - power-right: `board/jlcpcb-bom-smt-power-right.csv` and `board/jlcpcb-cpl-smt-power-right.csv`.
 4. Check each part in the placement preview against the silkscreen:
    - Q1 and Q2: the single drain pin points down, toward J3 and J4, and the gate and source pins point up. Correct the
      rotation in the preview if a part shows otherwise.
@@ -249,8 +314,9 @@ For the JLCPCB board, U2 (the MAX98357A chip), C2, C3, RSD2, the resistors, Q1 a
    MOSFET.
 5. Before fitting anything else, check with a meter that 3V3, 5V and GND are not shorted to each other (on J5: pin 1
    GND, pin 2 3V3; on J3: pin 3 5V).
-6. Plug in U1 with its USB-C socket at the board edge, and on the through-hole board U2 with its terminal toward the
-   left edge. Run "First flash" and the bench checklist, then fit RSD1, RI1, RI2 or C1 only if a check calls for it.
+6. Check that the board's hand ("C3 POWER-LEFT" or "C3 POWER-RIGHT") matches the module, then plug in U1 with its
+   USB-C socket at the board edge, by the "USB" arrows, and its 5V pin over the socket's 5V label; on the
+   through-hole board plug in U2 with its terminal toward the left edge. Run "First flash" and the bench checklist, then fit RSD1, RI1, RI2 or C1 only if a check calls for it.
 7. Crimp the harnesses (see "Connectors") and connect the speaker (see "Speaker"): into U2's screw terminal on the
    through-hole board, or on a JST-XH 2-pin plug into J6 on the JLCPCB board.
 
@@ -566,7 +632,7 @@ Wire each harness from the module's silkscreen, not from the header order above.
 
 | Module | Pin order | Notes |
 |---|---|---|
-| U1 ESP32-C3 Super Mini | Both rows run top to bottom, USB at the top. Right row: 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0. Left row: GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 | Top view |
+| U1 ESP32-C3 Super Mini | Both rows run top to bottom, USB at the top. Power row: 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0. Other row: GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 | Top view. The power row is on the left on a power-left module and on the right on a power-right module (see "Which C3 module do I have?") |
 | U2 MAX98357A module | LRC BCLK DIN GAIN SD GND VIN | Screw terminal on the opposite edge: - on the left, + on the right. The board's own SD pull-up gives (L+R)/2 output |
 | U3 OLED | GND VCC SCL SDA | |
 | U4 GY-BME/P280 (BMP280) | VCC GND SCL SDA CSB SDO | CSB and SDO use the module's pull-ups |
@@ -590,6 +656,8 @@ that, the station keeps the panel's firmware current by itself.
 
 Build checks, before the panel goes into service:
 
+- [ ] Custom board: U1's hand matches the board. The module's own silkscreen has 5V on the same side (USB up, from
+  above) as the board's "C3 POWER-LEFT" or "C3 POWER-RIGHT", checked before U1 is first powered on the board.
 - [ ] SD on the amplifier measured with nothing connected, and tied to 3V3 through 10 kΩ (RSD) if it sat near 0 V.
       On the JLCPCB board, SD reads about 0.45 V, set by RSD2.
 - [ ] Each LED measured alone, before wiring it to its MOSFET, from 5 V to G with the meter in series: 50 mA or

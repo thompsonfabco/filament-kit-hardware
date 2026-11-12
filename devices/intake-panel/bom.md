@@ -8,7 +8,7 @@ covers the quantity shown.
 | Ref | Part | Qty | Brand / listing | Link | Reference build | Notes |
 |---|---|---|---|---|---|---|
 | BRD1 | Solderable breadboard prototype board, full size (89 x 52 mm) | 1 | ElectroCookie solderable breadboard, 5 full boards + 1 mini board | [B07ZYNWJ1S](https://www.amazon.com/dp/B07ZYNWJ1S) | suggested | The board the layout and hole positions in the guide are measured from |
-| U1 | ESP32-C3 Super Mini | 1 | Hiraethge ESP32-C3 Super Mini, 6-pack | [B0HJHW5FDL](https://www.amazon.com/dp/B0HJHW5FDL) | yes | |
+| U1 | ESP32-C3 Super Mini | 1 | Hiraethge ESP32-C3 Super Mini, 6-pack | [B0HJHW5FDL](https://www.amazon.com/dp/B0HJHW5FDL) | yes | Power-left: 5V, GND and 3V3 on the left row, seen from above with USB up, so it takes a power-left board. Any other C3 listing: check the module, which may be either hand (see "Which C3 module do I have?" in the guide) |
 | Q1, Q2 | BS170 N-MOSFET, TO-92 | 2 | Fairchild BS170, 10 pieces | [B00MMY1WTK](https://www.amazon.com/dp/B00MMY1WTK) | yes | Legs D G S, flat face toward you |
 | Q1, Q2 (alternative) | 2N7000 N-MOSFET, TO-92, 60 V, 200 mA | 2 | BOJACK 2N7000, pack of 100 | [B0831RFJ1B](https://www.amazon.com/dp/B0831RFJ1B) | suggested | Instead of the BS170. Pins mirrored: S G D against the BS170's D G S, so fit it turned round or swap the drain and source wires (see "LED MOSFET stages" in the guide) |
 | RG1, RG2, RP1, RP2, RI1, RI2 | 220 Ω, 100 kΩ and 4.7 kΩ resistors, 1/4 W | 2 + 2 + 0 or 2 | Joe Knows Electronics 1/4 W 1% metal film kit, 86 E12 values, 10 of each | [B003UC4FSS](https://www.amazon.com/dp/B003UC4FSS) | yes | 220 Ω gate resistors, 100 kΩ gate pull-downs, 4.7 kΩ I2C pull-ups only if no I2C board has them |
@@ -25,14 +25,17 @@ covers the quantity shown.
 | J1-J7 | JST-XH headers and plugs: 4-pin x5 (J7 only if U7 is fitted), 3-pin x1, 2-pin x1 (J6, JLCPCB board only) | 5 to 7 | CQRobot JST-XH kit, 2-, 3- and 4-pin headers, housings and crimp terminals | [B0731NHS9R](https://www.amazon.com/dp/B0731NHS9R) | yes | The listing says 2.54 mm; JST-XH is 2.50 mm pitch and fits a 0.1" board. Crimping needs a crimp tool, not listed here |
 | J1-J7 (alternative) | JST-XH headers and plugs | 5 to 7 | GeeBat 460-piece JST-XH kit, 2- to 6-pin | [B01MCZE2HM](https://www.amazon.com/dp/B01MCZE2HM) | yes | Same use as the row above |
 | F1, F2 | Wire ferrules for the speaker leads | 0 or 2 | cnaodun 800-piece insulated ferrule kit, AWG 22-7 | [B09WMNTVSH](https://www.amazon.com/dp/B09WMNTVSH) | suggested | Through-hole board only. Use the smallest size that grips the speaker wire; needs a ferrule crimper |
-| PCB | Intake panel through-hole board, 89 x 52 mm, 2 layers, 1.6 mm | 0 or 1 | Any board maker that takes Gerbers | [gerbers-tht.zip](board/gerbers-tht.zip) | suggested | Instead of BRD1, the ElectroCookie board. Gerbers and drill files are in the repo; see "Board" in the guide. For the JLCPCB assembly board instead, see below |
+| PCB, power-left | Intake panel through-hole board, C3 POWER-LEFT, 89 x 52 mm, 2 layers, 1.6 mm | 0 or 1 | Any board maker that takes Gerbers | [gerbers-tht-power-left.zip](board/gerbers-tht-power-left.zip) | suggested | Instead of BRD1, the ElectroCookie board, with a power-left C3 (the Hiraethge modules above). Gerbers and drill files are in the repo; see "Board" in the guide. For the JLCPCB assembly board instead, see below |
+| PCB, power-right | Intake panel through-hole board, C3 POWER-RIGHT, 89 x 52 mm, 2 layers, 1.6 mm | 0 or 1 | Any board maker that takes Gerbers | [gerbers-tht-power-right.zip](board/gerbers-tht-power-right.zip) | suggested | Instead of BRD1, with a power-right C3 only: 5V, GND and 3V3 on the right row, seen from above with USB up. Order one PCB row, not both |
 | C1 | 470 µF electrolytic, 16 V | 0 or 1 | E-Projects 470 µF 16 V 105 °C radial, 5-pack | [B07YN5MZBY](https://www.amazon.com/dp/B07YN5MZBY) | suggested | Only if 5 V sags on speech peaks: + to the amplifier's VIN, - to GND |
 
 ## JLCPCB assembly board
 
 The parts JLCPCB fits to the JLCPCB assembly board (see "Board" in the [build guide](guide.md)), with their LCSC
 part numbers; search a number in JLCPCB's parts library to see the part. The same rows are in
-[board/jlcpcb-bom-smt.csv](board/jlcpcb-bom-smt.csv). JLCPCB fits surface-mount parts only. The board replaces the
+[board/jlcpcb-bom-smt-power-left.csv](board/jlcpcb-bom-smt-power-left.csv) and
+[board/jlcpcb-bom-smt-power-right.csv](board/jlcpcb-bom-smt-power-right.csv), one for each C3 hand; their parts are
+the same. JLCPCB fits surface-mount parts only. The board replaces the
 PCB, Q1, Q2, the resistors and the amplifier module U2 in the list above; the end user fits the through-hole headers
 (XU1, J1-J7) from that list, and the other modules, U1, the buttons, the speaker and the harness parts still come from
 it too. U2 is the only extended part, so the order pays one extended-part fee. Stock is
@@ -47,7 +50,8 @@ JLCPCB's figure from its October 2026 parts list and changes daily; check it whe
 | RSD2 | 1 MΩ resistor, 1%, 0603, SD_MODE pull-up | 1 | UNI-ROYAL 0603WAF1004T5E | C22935 | Basic | 5,647,551 |
 | C2 | 100 nF capacitor, 50 V X7R, 0603, VDD bypass | 1 | YAGEO CC0603KRX7R9BB104 | C14663 | Basic | 50,349,394 |
 | C3 | 10 µF capacitor, 25 V X5R, 0805, VDD bypass | 1 | Samsung Electro-Mechanics, 0805 X5R | C15850 | Basic | 3,710,191 |
-| PCB | Intake panel JLCPCB assembly board, 89 x 52 mm, 2 layers, 1.6 mm, from [gerbers-smt.zip](board/gerbers-smt.zip) | 1 | - | - | - | - |
+| PCB, power-left | Intake panel JLCPCB assembly board, C3 POWER-LEFT, 89 x 52 mm, 2 layers, 1.6 mm, from [gerbers-smt-power-left.zip](board/gerbers-smt-power-left.zip), for a power-left C3 (the Hiraethge modules in the main list) | 0 or 1 | - | - | - | - |
+| PCB, power-right | Intake panel JLCPCB assembly board, C3 POWER-RIGHT, 89 x 52 mm, 2 layers, 1.6 mm, from [gerbers-smt-power-right.zip](board/gerbers-smt-power-right.zip), for a power-right C3 only. Order one PCB row, not both | 0 or 1 | - | - | - | - |
 
 JLCPCB leaves the parts below off the board, as the through-hole board does (see "Parts fitted only when needed" in
 the guide). Each fits the board's surface-mount pads; order it with the board as a loose part, or buy it later, only
