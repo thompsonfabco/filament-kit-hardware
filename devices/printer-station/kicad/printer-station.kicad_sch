@@ -111,7 +111,7 @@
 					)
 				)
 			)
-			(property "Pin_layout" "top view, USB at the top: pads 1-8 left row top to bottom GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21; pads 9-16 right row top to bottom 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0; rows 15.24 mm apart, 2.54 mm pitch (owner-confirmed from the board)"
+			(property "Pin_layout" "top view, USB at the top, pins down; the module comes in two hands. Power-left (the reference build): pads 9-16 left row top to bottom 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0, pads 1-8 right row top to bottom GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21, footprint filament-kit:ESP32-C3_SuperMini_Socket_PowerLeft (confirmed from the board). Power-right: the rows swapped, pads 1-8 left and 9-16 right, footprint filament-kit:ESP32-C3_SuperMini_Socket. Rows 15.24 mm apart, 2.54 mm pitch"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -758,7 +758,7 @@
 					)
 				)
 			)
-			(property "Pin_order" "pins 1-4 left to right: GND VCC SCL SDA (owner-confirmed from the board); the panel harness order is GND 3V3 SDA SCL"
+			(property "Pin_order" "pins 1-4 left to right: GND VCC SCL SDA (confirmed from the board); the panel harness order is GND 3V3 SDA SCL"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -3199,7 +3199,7 @@
 				(hide yes)
 			)
 		)
-		(property "Pin_order" "pins 1-4 left to right: GND VCC SCL SDA, as the panel's OLED (owner-confirmed on the panel's module); the reader's own module UNCONFIRMED"
+		(property "Pin_order" "pins 1-4 left to right: GND VCC SCL SDA, as the panel's OLED (confirmed on the panel's module); the reader's own module UNCONFIRMED"
 			(at 167.64 106.68 0)
 			(effects
 				(font

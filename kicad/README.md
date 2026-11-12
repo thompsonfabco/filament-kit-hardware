@@ -15,7 +15,7 @@ Every module symbol carries `Vmax` (volts), `Imax` (amperes), `Imax_basis` and `
 
 | Symbol | What it is | Pins | Footprint | Source |
 |---|---|---|---|---|
-| `ESP32-C3_SuperMini` | ESP32-C3 Super Mini board (U1) | 1-8 GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 (left row), 9-16 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0 (right row). GPIO11-19 aren't on the header | `filament-kit:ESP32-C3_SuperMini` | Limits: catalogue U1, ESP32-C3 datasheet. Pin order, row spacing and pitch: photo and measurement of the board in hand |
+| `ESP32-C3_SuperMini` | ESP32-C3 Super Mini board (U1) | 1-8 GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 (the GPIO row), 9-16 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0 (the power row), each top to bottom with USB at the top. Which side each row is on depends on the module's hand (see "Module hands"); the numbering doesn't. GPIO11-19 aren't on the header | `filament-kit:ESP32-C3_SuperMini` | Limits: catalogue U1, ESP32-C3 datasheet. Pin order, row spacing and pitch: photo and measurement of the board in hand |
 | `MAX98357_Module` | AITRIP MAX98357 I2S amplifier module (U2) | 1 LRC, 2 BCLK, 3 DIN, 4 GAIN, 5 SD, 6 GND, 7 VIN (header), 8 OUT- and 9 OUT+ (screw terminal - and +) | `filament-kit:MAX98357_Module` | Limits: catalogue U2, MAX98357A datasheet. Pin order: photo of the board in hand (silk V914) |
 | `MAX98357A_TQFN` | MAX98357A I2S class-D amplifier chip (U2 on the intake panel's JLCPCB board) | 1 DIN, 2 GAIN_SLOT, 3/11/15 GND, 4 SD_MODE, 5/6/12/13 NC, 7/8 VDD, 9 OUTP, 10 OUTN, 14 LRCLK, 16 BCLK, 17 exposed pad | stock `Package_DFN_QFN:TQFN-16-1EP_3x3mm_P0.5mm_EP1.23x1.23mm` | The stock `Audio:MAX98357A` symbol with the exposed pad (17) made passive, so it can join GND without an ERC warning. Limits: MAX98357A datasheet |
 | `SSD1306_I2C_Module` | SSD1306 128x64 OLED module, I2C 0x3C (U3) | 1 GND, 2 VCC, 3 SCL, 4 SDA | stock `PinHeader_1x04_P2.54mm_Vertical` | Limits: catalogue U3, SSD1306 datasheet. Pin order: photo of the board in hand |
@@ -30,17 +30,42 @@ S and the amplifier's I2S, SD and GAIN pins are inputs. The amplifier's OUT+ and
 Module pin order varies by maker. The panel's harness order is GND 3V3 SDA SCL for the I2C boards and GND 3V3 S for the
 buzzer; the J1-J5 headers fix that order, whatever order a module's own pins are in.
 
+## Module hands
+
+ESP32-C3 Super Mini boards come in two pin orders. Seen from above (component side, pins pointing away) with the USB
+socket at the top:
+
+- **Power-left:** the power row (5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0, top to bottom) is on the left and the GPIO
+  row (GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21) on the right. The reference build's modules are
+  power-left (confirmed from the board).
+- **Power-right:** the rows swapped: the power row on the right, the GPIO row on the left.
+
+The module plugs in pins down with its components up, so the board's top view is the module's top view. The symbol's
+pin numbers stay the same for both hands; only the footprint changes, `ESP32-C3_SuperMini_Socket_PowerLeft` for
+power-left modules and `ESP32-C3_SuperMini_Socket` for power-right ones. A board made for one hand puts 5V and 3V3
+onto GPIO pins of a module of the other hand.
+
 ## Footprints
 
 - `ESP32-C3_SuperMini`: two 1x8 rows of 1.7 mm pads with 1.0 mm drills, 2.54 mm pitch, 15.24 mm between rows.
   Numbering, viewed from the top (component side) with the USB socket at the top: pads 1-8 are the left row, top to
   bottom (GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO20, GPIO21); pads 9-16 are the right row, top to bottom (5V,
-  GND, 3V3, GPIO4, GPIO3, GPIO2, GPIO1, GPIO0). Pad 1 is square. F.Fab marks the USB end. The F.Fab outline is the
-  board's 18 x 22.52 mm, centred on the pins.
-- `ESP32-C3_SuperMini_Socket`: the same pads and numbering as `ESP32-C3_SuperMini`, drawn as two 1x8 female headers
-  (silkscreen outlines, stock 1x8 socket 3D models) so the module plugs in and is never soldered. A rule area between
-  the rows at the end away from the USB socket, extending 3.85 mm past the module, keeps tracks, vias and copper pour
-  out from under the antenna; the antenna position is UNCONFIRMED. Used by the printer station and intake panel boards.
+  GND, 3V3, GPIO4, GPIO3, GPIO2, GPIO1, GPIO0). That is a power-right module. Pad 1 is square. F.Fab marks the USB
+  end. The F.Fab outline is the board's 18 x 22.52 mm, centred on the pins.
+- `ESP32-C3_SuperMini_Socket`: for power-right modules. The same pads and numbering as `ESP32-C3_SuperMini`, drawn as
+  two 1x8 female headers (silkscreen outlines, stock 1x8 socket 3D models) so the module plugs in and is never
+  soldered. A rule area between the rows at the end away from the USB socket, extending 3.85 mm past the module,
+  keeps tracks, vias and copper pour out from under the antenna; the antenna position is UNCONFIRMED. Silkscreen and
+  F.Fab mark the USB end with "USB" and two arrows, and label the power-row pads 5V, GND and 3V3 from inside the
+  socket; the silkscreen also reads "POWER ROW RIGHT" between the rows and has a pin-1 corner mark by pad 1 (top
+  left). Used by the power-right boards: the printer station's `kicad/` board and both intake panel boards.
+- `ESP32-C3_SuperMini_Socket_PowerLeft`: for power-left modules. The same pad positions, drill, outline, rule area
+  and 3D models as `ESP32-C3_SuperMini_Socket`, with the numbering swapped between the rows: pads 9-16 (5V GND 3V3
+  GPIO4 GPIO3 GPIO2 GPIO1 GPIO0) on the left row and pads 1-8 (GPIO5 to GPIO21) on the right row, each top to bottom,
+  so the symbol's pin mapping is unchanged. Pad 1 (square) and the pin-1 corner mark are top right. The same USB
+  mark and 5V/GND/3V3 labels, beside the left row, and "POWER ROW LEFT". Because the pads sit where they sit on the
+  other socket, a board can switch hands by swapping this footprint and rerouting the tracks to U1. Used by the
+  printer station's `kicad-power-left/` board.
 - `MAX98357_Module`: one row of seven 1.7 mm pads, 1.0 mm drills, 2.54 mm pitch, viewed from the top with the header
   at the bottom: pad 1 (square) LRC, then BCLK, DIN, GAIN, SD, GND, VIN. Pads 8 (-) and 9 (+) are the screw terminal,
   on the opposite edge, - on the left. Their position (12.7 mm from the header, 5.08 mm apart) is a placeholder,
@@ -70,7 +95,8 @@ buzzer; the J1-J5 headers fix that order, whatever order a module's own pins are
 Check each of these against the part in hand before relying on it.
 
 1. `ESP32-C3_SuperMini` row spacing, 15.24 mm: confirmed (measured, 0.6 in).
-2. `ESP32-C3_SuperMini` pad-to-pin mapping: confirmed from a photo of the board (see Footprints).
+2. `ESP32-C3_SuperMini` pad-to-pin mapping: confirmed from the board for power-left modules (see "Module hands").
+   The power-right order is the same rows swapped, as some modules are sold.
 3. `ESP32-C3_SuperMini` USB socket at the top end of the rows: confirmed. How far the outline overhangs the
    pins at each end is still UNCONFIRMED.
 4. `ESP32-C3_SuperMini`: `Imax_pin`, the per-pin current limit; the board's 3V3 regulator rating and 5 V pin path
