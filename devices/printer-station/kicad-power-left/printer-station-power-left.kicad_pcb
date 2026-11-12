@@ -938,7 +938,7 @@
 		(layer "F.Cu")
 		(uuid "5fc572d7-4078-43bc-828a-d1a88fffc507")
 		(at 100 100)
-		(descr "ElectroCookie solderable breadboard, full size, 89 x 52 mm, 30 columns, each with a 5-hole strip F-J (upper half) and a 5-hole strip A-E (lower half), four full-length power rails, two 2-hole pads beside the M3 holes, two M3 and four M2 mounting holes. Holes and strips are on F.Fab only, so parts can sit on them; hole positions come from owner photos and are approximate, mounting holes are measured")
+		(descr "ElectroCookie solderable breadboard, full size, 89 x 52 mm, 30 columns, each with a 5-hole strip F-J (upper half) and a 5-hole strip A-E (lower half), four full-length power rails, two 2-hole pads beside the M3 holes, two M3 and four M2 mounting holes. Holes and strips are on F.Fab only, so parts can sit on them; hole positions come from photos of the board and are approximate, mounting holes are measured")
 		(tags "ElectroCookie prototype board strips rails")
 		(property "Reference" "PCB1"
 			(at 44.5 -2 0)

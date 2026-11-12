@@ -119,8 +119,8 @@ through-hole or JLCPCB.
 4. Order and build the board with the same name: its silkscreen reads "C3 POWER-LEFT" or "C3 POWER-RIGHT", and the
    socket on it reads "POWER ROW LEFT" or "POWER ROW RIGHT", with 5V, GND and 3V3 marked beside the power-row holes.
 
-> **Warning: the wrong board can destroy the module.** A module in the board of the other hand gets the board's 5V
-> and 3V3 on GPIO pins, and one of its GPIO pins on its 5V pin. Powering it can damage the C3 and the modules on the
+> **Warning: the wrong board can destroy the module.** In a board of the other hand, the board feeds 5V into one of
+> the module's GPIO pins and 3.3 V or GND into others. Powering it can destroy the C3 and damage the modules on the
 > board at once. Before you plug U1 in, check that the 5V label on the module sits over the 5V label on the board's
 > socket, at the USB end.
 
@@ -150,8 +150,8 @@ The power-right boards share their KiCad projects with the schematics: `kicad/in
 of truth, and `kicad-smt/intake-panel-smt.kicad_sch` its JLCPCB copy. Each power-left schematic is a copy of its
 power-right one that differs only in U1's footprint, so both hands wire the same pins to the same nets. The
 repository's CI checks that each power-left netlist matches its power-right one exactly, with no exceptions. The two
-hands have the same outline, holes, part positions and connectors; only U1's pin numbering and the tracks to it
-differ.
+hands have the same outline, holes, part positions and connectors. U1's pin numbering differs, and so does the
+copper routed around it: the tracks to U1, the vias and the ground pours.
 
 Without any of them, the panel is built on the ElectroCookie board as "Board and layout" describes.
 
@@ -284,6 +284,8 @@ solder by hand later.
 4. Check each part in the placement preview against the silkscreen:
    - Q1 and Q2: the single drain pin points down, toward J3 and J4, and the gate and source pins point up. Correct the
      rotation in the preview if a part shows otherwise.
+     The CPL gives Q1 and Q2 a rotation of 90 where the KiCad board has -90. The 180° offset is intended: it is the
+     usual correction for JLCPCB's SOT-23 orientation, and the preview check above settles it.
    - U2, the MAX98357A: its pin 1 corner sits at the silkscreen's pin 1 mark, at the chip's lower right, toward U1.
      The rotation in the CPL file is KiCad's, and JLCPCB's convention for this package is UNCONFIRMED: correct it in
      the preview if the chip's pin 1 dot shows elsewhere. A chip turned the wrong way has every pin on the wrong net.

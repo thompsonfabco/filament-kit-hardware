@@ -166,8 +166,8 @@ board.
 4. Order and build the board with the same name: its silkscreen reads "C3 POWER-LEFT" or "C3 POWER-RIGHT", and the
    socket on it reads "POWER ROW LEFT" or "POWER ROW RIGHT", with 5V, GND and 3V3 marked beside the power-row holes.
 
-> **Warning: the wrong board can destroy the module.** A module in the board of the other hand gets the board's 5V
-> and 3V3 on GPIO pins, and one of its GPIO pins on its 5V pin. Powering it can damage the C3 and the modules on the
+> **Warning: the wrong board can destroy the module.** In a board of the other hand, the board feeds 5V into one of
+> the module's GPIO pins and 3.3 V or GND into others. Powering it can destroy the C3 and damage the modules on the
 > board at once. Before you plug U1 in, check that the 5V label on the module sits over the 5V label on the board's
 > socket, at the USB end.
 
@@ -186,8 +186,8 @@ netlists match.
 | Power-left | `kicad-power-left/printer-station-power-left.kicad_pcb` | Modules with 5V, GND and 3V3 on the left row (USB up, from above) |
 | Power-right | `kicad/printer-station.kicad_pcb` | Modules with 5V, GND and 3V3 on the right row (USB up, from above) |
 
-The two layouts have the same outline, holes, part positions and connectors; only U1's pin numbering and the tracks to
-it differ. Every part on each is through-hole: the four JST-XH headers, the two female headers for U1, and the buzzer driver (Q1, RG1, RP1 and
+The two layouts have the same outline, holes, part positions and connectors. U1's pin numbering differs, and so does
+the copper routed around it: the tracks to U1, the vias and the ground pours. Every part on each is through-hole: the four JST-XH headers, the two female headers for U1, and the buzzer driver (Q1, RG1, RP1 and
 D1). With no surface-mount part to fit,
 an assembly order would add nothing, so there is no separate JLCPCB variant: order the board bare, from JLCPCB or any
 board maker that takes Gerbers (see "Ordering the board"). The end user fits the buzzer driver, the JST-XH
