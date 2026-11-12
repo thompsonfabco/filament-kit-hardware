@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440" viewBox="0 0 760 440" font-family="Arial, Helvetica, sans-serif">
+  <title>ESP32-C3 Super Mini: power-left and power-right modules, seen from above with USB at the top</title>
+  <rect x="0" y="0" width="760" height="440" fill="#ffffff"/>
+  <text x="380" y="22" font-size="17" font-weight="bold" text-anchor="middle" fill="#000000">Which C3 module do I have?</text>
+  <text x="380" y="40" font-size="13" text-anchor="middle" fill="#000000">Seen from above: USB socket at the top, chip facing you, pins pointing away from you</text>
+
+  <!-- left drawing: power-left module, centre x = 190 -->
+  <g transform="translate(190,0)">
+    <text x="0" y="62" font-size="18" font-weight="bold" text-anchor="middle" fill="#b00000">POWER-LEFT</text>
+    <text x="0" y="82" font-size="13" text-anchor="middle" fill="#000000">5V at the top LEFT pin</text>
+    <!-- module board, 18 x 22.5 mm at 10 px/mm -->
+    <rect x="-90" y="110" width="180" height="225" rx="6" fill="#1d4f91" stroke="#000000" stroke-width="2"/>
+    <!-- USB-C socket -->
+    <rect x="-45" y="98" width="90" height="34" rx="8" fill="#c8c8c8" stroke="#000000" stroke-width="2"/>
+    <text x="0" y="121" font-size="13" font-weight="bold" text-anchor="middle" fill="#000000">USB-C</text>
+    <!-- chip -->
+    <rect x="-28" y="175" width="56" height="56" fill="#222222" stroke="#000000"/>
+    <text x="0" y="207" font-size="11" text-anchor="middle" fill="#ffffff">C3</text>
+    <!-- power row highlight (left) -->
+    <rect x="-86" y="124" width="22" height="72" rx="5" fill="#ff5a36" fill-opacity="0.85"/>
+    <!-- left row pins: power row -->
+    <g fill="#e8c34a" stroke="#000000">
+      <circle cx="-76" cy="134" r="7"/><circle cx="-76" cy="160" r="7"/><circle cx="-76" cy="185" r="7"/><circle cx="-76" cy="210" r="7"/>
+      <circle cx="-76" cy="236" r="7"/><circle cx="-76" cy="261" r="7"/><circle cx="-76" cy="287" r="7"/><circle cx="-76" cy="312" r="7"/>
+      <circle cx="76" cy="134" r="7"/><circle cx="76" cy="160" r="7"/><circle cx="76" cy="185" r="7"/><circle cx="76" cy="210" r="7"/>
+      <circle cx="76" cy="236" r="7"/><circle cx="76" cy="261" r="7"/><circle cx="76" cy="287" r="7"/><circle cx="76" cy="312" r="7"/>
+    </g>
+    <g font-size="13" text-anchor="end" fill="#000000">
+      <text x="-96" y="139" font-weight="bold" fill="#b00000">5V</text>
+      <text x="-96" y="165" font-weight="bold" fill="#b00000">GND</text>
+      <text x="-96" y="190" font-weight="bold" fill="#b00000">3V3</text>
+      <text x="-96" y="215">4</text><text x="-96" y="241">3</text><text x="-96" y="266">2</text>
+      <text x="-96" y="292">1</text><text x="-96" y="317">0</text>
+    </g>
+    <g font-size="13" text-anchor="start" fill="#000000">
+      <text x="96" y="139">5</text><text x="96" y="165">6</text><text x="96" y="190">7</text><text x="96" y="215">8</text>
+      <text x="96" y="241">9</text><text x="96" y="266">10</text><text x="96" y="292">20</text><text x="96" y="317">21</text>
+    </g>
+    <text x="0" y="368" font-size="13" text-anchor="middle" fill="#000000">Order the power-left board:</text>
+    <text x="0" y="386" font-size="13" text-anchor="middle" fill="#000000">silkscreen "C3 POWER-LEFT"</text>
+  </g>
+
+  <!-- right drawing: power-right module, centre x = 570 -->
+  <g transform="translate(570,0)">
+    <text x="0" y="62" font-size="18" font-weight="bold" text-anchor="middle" fill="#b00000">POWER-RIGHT</text>
+    <text x="0" y="82" font-size="13" text-anchor="middle" fill="#000000">5V at the top RIGHT pin</text>
+    <rect x="-90" y="110" width="180" height="225" rx="6" fill="#1d4f91" stroke="#000000" stroke-width="2"/>
+    <rect x="-45" y="98" width="90" height="34" rx="8" fill="#c8c8c8" stroke="#000000" stroke-width="2"/>
+    <text x="0" y="121" font-size="13" font-weight="bold" text-anchor="middle" fill="#000000">USB-C</text>
+    <rect x="-28" y="175" width="56" height="56" fill="#222222" stroke="#000000"/>
+    <text x="0" y="207" font-size="11" text-anchor="middle" fill="#ffffff">C3</text>
+    <!-- power row highlight (right) -->
+    <rect x="64" y="124" width="22" height="72" rx="5" fill="#ff5a36" fill-opacity="0.85"/>
+    <g fill="#e8c34a" stroke="#000000">
+      <circle cx="-76" cy="134" r="7"/><circle cx="-76" cy="160" r="7"/><circle cx="-76" cy="185" r="7"/><circle cx="-76" cy="210" r="7"/>
+      <circle cx="-76" cy="236" r="7"/><circle cx="-76" cy="261" r="7"/><circle cx="-76" cy="287" r="7"/><circle cx="-76" cy="312" r="7"/>
+      <circle cx="76" cy="134" r="7"/><circle cx="76" cy="160" r="7"/><circle cx="76" cy="185" r="7"/><circle cx="76" cy="210" r="7"/>
+      <circle cx="76" cy="236" r="7"/><circle cx="76" cy="261" r="7"/><circle cx="76" cy="287" r="7"/><circle cx="76" cy="312" r="7"/>
+    </g>
+    <g font-size="13" text-anchor="end" fill="#000000">
+      <text x="-96" y="139">5</text><text x="-96" y="165">6</text><text x="-96" y="190">7</text><text x="-96" y="215">8</text>
+      <text x="-96" y="241">9</text><text x="-96" y="266">10</text><text x="-96" y="292">20</text><text x="-96" y="317">21</text>
+    </g>
+    <g font-size="13" text-anchor="start" fill="#000000">
+      <text x="96" y="139" font-weight="bold" fill="#b00000">5V</text>
+      <text x="96" y="165" font-weight="bold" fill="#b00000">GND</text>
+      <text x="96" y="190" font-weight="bold" fill="#b00000">3V3</text>
+      <text x="96" y="215">4</text><text x="96" y="241">3</text><text x="96" y="266">2</text>
+      <text x="96" y="292">1</text><text x="96" y="317">0</text>
+    </g>
+    <text x="0" y="368" font-size="13" text-anchor="middle" fill="#000000">Order the power-right board:</text>
+    <text x="0" y="386" font-size="13" text-anchor="middle" fill="#000000">silkscreen "C3 POWER-RIGHT"</text>
+  </g>
+
+  <text x="380" y="422" font-size="13" text-anchor="middle" fill="#000000">Numbers are GPIO numbers. Read the labels printed on your own module; this drawing only shows where to look.</text>
+</svg>

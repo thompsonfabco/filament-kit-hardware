@@ -55,8 +55,10 @@
     <part ref="RG1" name="220 ohm" kind="passive" qty="1" use="Q1 gate resistor"/>
     <part ref="RP1" name="100 kohm" kind="passive" qty="1" use="Q1 gate pull-down, buzzer silent during reset"/>
   </parts>
-  <!-- Headers on the through-hole board (kicad/printer-station.kicad_pcb). Without the board the reader is wired module
-       to module, as the guide shows. U1 sits on two 1x8 female headers and is never soldered. -->
+  <!-- Headers on the through-hole board: kicad/printer-station.kicad_pcb (C3 power-right) or
+       kicad-power-left/printer-station-power-left.kicad_pcb (C3 power-left), same connectors on both. Without the
+       board the reader is wired module to module, as the guide shows. U1 sits on two 1x8 female headers and is never
+       soldered. -->
   <connectors>
     <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="PN532 reader (U2)"/>
     <connector ref="J2" type="JST-XH-4" order="GND 3V3 SDA SCL" to="OLED (U3)"/>

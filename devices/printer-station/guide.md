@@ -11,7 +11,9 @@ parts, wiring, case, first flash and bench checks. The checked data for this dev
 [catalogue.xml](catalogue.xml), the parts to buy, with Amazon listing links, are in [bom.md](bom.md), and the
 circuit is the KiCad schematic in [kicad/](kicad/), exported as
 [images/schematic.svg](images/schematic.svg) and [images/schematic.pdf](images/schematic.pdf). The reader can be built
-on its own through-hole board (see "Board") or wired module to module (see "Wiring").
+on its own through-hole board (see "Board") or wired module to module (see "Wiring"). The board comes in two
+layouts, one for each C3 pin order: check which module you have before you order one (see "Which C3 module do I
+have?").
 
 ![Printer station schematic](images/schematic.svg)
 
@@ -30,7 +32,7 @@ on its own through-hole board (see "Board") or wired module to module (see "Wiri
 | D1 | 1N4001 diode (DO-41) | 1 | Flyback diode across the buzzer coil |
 | J1-J4 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x2 (J1, J2), 5-pin x1 (J3), 2-pin x1 (J4) | 4 | Off-board connectors, board build only |
 | U1 socket | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1 on the board, board build only |
-| PCB | Printer station through-hole board, 89 x 52 mm, 2 layers | 1 | Board build only |
+| PCB | Printer station through-hole board, 89 x 52 mm, 2 layers: the power-left or the power-right layout, to match U1 (see "Which C3 module do I have?") | 1 | Board build only |
 
 The datasheet limits for each active part, with their sources, are in [catalogue.xml](catalogue.xml) and in the
 schematic's symbol properties.
@@ -137,20 +139,55 @@ RDS(on) ratings are about the same as the BS170's.
 ### Module pin orders
 
 Wire each module from its own silkscreen, not from this table. Pins are listed left to right, except U1, whose two
-rows run top to bottom with the USB connector at the top.
+rows run top to bottom with the USB connector at the top. Which side U1's power row is on depends on the module (see
+"Which C3 module do I have?").
 
 | Module | Pin order | Notes |
 |---|---|---|
-| U1 ESP32-C3 Super Mini | Right row: 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0. Left row: GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 | Top view, from the board |
+| U1 ESP32-C3 Super Mini | Power row: 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0. Other row: GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21 | Top view. The power row is on the left on a power-left module and on the right on a power-right module |
 | U2 PN532 | GND VCC SDA SCL on the 4-pin header, component side; the back labels the same holes GND VCC TXD RXD. Side header: SCK MISO MOSI SS VCC GND IRQ RSTO | Confirmed from the board; IRQ and RSTO stay unconnected |
 | U3 OLED | GND VCC SCL SDA | The panel's module order; this module UNCONFIRMED |
 | SW1 encoder | EC11: A C B on the three-pin side, switch S1 S2 on the two-pin side | The usual EC11 layout; check the part. C to G, S1 to GPIO 1, S2 to 3V3; see "Encoder" |
 | BZ1 buzzer | + and -, two leads | Follow the + mark on the buzzer; + goes to 5V |
 
+## Which C3 module do I have?
+
+ESP32-C3 Super Mini boards are sold with two pin orders. The pins are the same, but the row that carries 5V, GND and
+3V3 (the power row) is on the left on some boards and on the right on others. Each needs its own printer station
+board.
+
+![The two C3 Super Mini pin orders, seen from above with USB up](images/c3-module-hands.svg)
+
+1. Hold the module with its USB-C socket at the top and its chip facing you, pins pointing away from you.
+2. Read the labels printed on the module itself, next to the pins. The drawing only shows where to look: trust the
+   module's own silkscreen, not a listing photo or this guide.
+3. If 5V, G (GND) and 3V3 are the top three pins of the left row, you have a **power-left** module. If they are the
+   top three of the right row, you have a **power-right** module.
+4. Order and build the board with the same name: its silkscreen reads "C3 POWER-LEFT" or "C3 POWER-RIGHT", and the
+   socket on it reads "POWER ROW LEFT" or "POWER ROW RIGHT", with 5V, GND and 3V3 marked beside the power-row holes.
+
+> **Warning: the wrong board can destroy the module.** A module in the board of the other hand gets the board's 5V
+> and 3V3 on GPIO pins, and one of its GPIO pins on its 5V pin. Powering it can damage the C3 and the modules on the
+> board at once. Before you plug U1 in, check that the 5V label on the module sits over the 5V label on the board's
+> socket, at the USB end.
+
+The reference build's modules (the Hiraethge 6-pack in [bom.md](bom.md)) are power-left. Other listings may sell
+either, so check every module you buy.
+
 ## Board
 
-The board is one design, `kicad/printer-station.kicad_pcb`, in the same KiCad project as the schematic. Every part on
-it is through-hole: the four JST-XH headers, the two female headers for U1, and the buzzer driver (Q1, RG1, RP1 and
+The board has two layouts, one for each C3 pin order. They share one schematic: `kicad/printer-station.kicad_sch`
+is the source of truth, and `kicad-power-left/printer-station-power-left.kicad_sch` is a copy of it that differs only
+in U1's footprint, so both boards wire the same pins to the same nets. The repository's CI checks that the two
+netlists match.
+
+| Layout | KiCad board | For |
+|---|---|---|
+| Power-left | `kicad-power-left/printer-station-power-left.kicad_pcb` | Modules with 5V, GND and 3V3 on the left row (USB up, from above) |
+| Power-right | `kicad/printer-station.kicad_pcb` | Modules with 5V, GND and 3V3 on the right row (USB up, from above) |
+
+The two layouts have the same outline, holes, part positions and connectors; only U1's pin numbering and the tracks to
+it differ. Every part on each is through-hole: the four JST-XH headers, the two female headers for U1, and the buzzer driver (Q1, RG1, RP1 and
 D1). With no surface-mount part to fit,
 an assembly order would add nothing, so there is no separate JLCPCB variant: order the board bare, from JLCPCB or any
 board maker that takes Gerbers (see "Ordering the board"). The end user fits the buzzer driver, the JST-XH
@@ -163,18 +200,21 @@ board: M3 holes at (7.75, 26) and (81.25, 26), M2 holes at (5.375, 8.25), (83.62
 clear of each mounting hole out to 3.5 mm (M3) and 2.5 mm (M2) from its centre, so a screw head or a metal standoff
 can't touch the pour.
 
-| View | File |
-|---|---|
-| Top | [board-tht-top.svg](board/board-tht-top.svg) |
-| Bottom (mirrored) | [board-tht-bottom.svg](board/board-tht-bottom.svg) |
-| Both, with the title block | [board-tht.pdf](board/board-tht.pdf) |
-| 3D model | [board-tht.step](board/board-tht.step) |
-| Gerbers and drill files | [gerbers-tht.zip](board/gerbers-tht.zip) |
+| View | Power-left board | Power-right board |
+|---|---|---|
+| Top | [board-tht-power-left-top.svg](board/board-tht-power-left-top.svg) | [board-tht-power-right-top.svg](board/board-tht-power-right-top.svg) |
+| Bottom (mirrored) | [board-tht-power-left-bottom.svg](board/board-tht-power-left-bottom.svg) | [board-tht-power-right-bottom.svg](board/board-tht-power-right-bottom.svg) |
+| Both, with the title block | [board-tht-power-left.pdf](board/board-tht-power-left.pdf) | [board-tht-power-right.pdf](board/board-tht-power-right.pdf) |
+| 3D model | [board-tht-power-left.step](board/board-tht-power-left.step) | [board-tht-power-right.step](board/board-tht-power-right.step) |
+| Gerbers and drill files | [gerbers-tht-power-left.zip](board/gerbers-tht-power-left.zip) | [gerbers-tht-power-right.zip](board/gerbers-tht-power-right.zip) |
 
-The zip holds the Gerbers and the drill files (plated and unplated holes in separate files).
+Each zip holds the Gerbers and the drill files (plated and unplated holes in separate files). The files in the
+power-left zip are named `printer-station-power-left-*`, those in the power-right zip `printer-station-*`. The title
+block names the hand, and so does the silkscreen under the board's name.
 
 U1 plugs into two 1x8 female headers and is never soldered to the board. Its USB-C end sits at the top edge, so a
-cable reaches it in a case. The end of U1 away from the USB socket carries its antenna; the board keeps tracks, vias
+cable reaches it in a case. The silkscreen inside the socket marks the USB end with "USB" and arrows, labels the
+power-row holes 5V, GND and 3V3, and reads "POWER ROW LEFT" or "POWER ROW RIGHT". The end of U1 away from the USB socket carries its antenna; the board keeps tracks, vias
 and the GND pour out from under that end.
 
 ### Connectors
@@ -200,8 +240,9 @@ to switch leg S2.
 
 ### Ordering the board
 
-1. On jlcpcb.com, or at any board maker that takes Gerbers, upload `board/gerbers-tht.zip`: 2 layers, 1.6 mm. The
-   maker reads the size from the Gerbers.
+1. Check which C3 module you have (see "Which C3 module do I have?"). On jlcpcb.com, or at any board maker that
+   takes Gerbers, upload the zip for that hand, `board/gerbers-tht-power-left.zip` or
+   `board/gerbers-tht-power-right.zip`: 2 layers, 1.6 mm. The maker reads the size from the Gerbers.
 2. Leave assembly off: the end user fits every part on this board.
 3. Buy the driver parts, the headers and the harness parts from the [bill of materials](bom.md). The same
    headers are in JLCPCB's parts library, with the LCSC part numbers listed there, if you would rather order them with
@@ -217,7 +258,8 @@ to switch leg S2.
 4. Before fitting anything, check with a meter that 3V3 and GND are not shorted (J1 pins 2 and 1), and that 5V and
    GND are not shorted (J4 pin 1 to J1 pin 1).
 5. Crimp the four harnesses (see "Connectors").
-6. Plug U1 in with its USB-C socket at the board edge, by the "USB-C" mark.
+6. Check that the board's hand ("C3 POWER-LEFT" or "C3 POWER-RIGHT") matches the module, then plug U1 in with its
+   USB-C socket at the board edge, by the "USB" arrows, and its 5V pin over the socket's 5V label.
 7. Plug in each harness, pin 1 to pin 1, then work through the bench checklist.
 
 ## Power
@@ -257,6 +299,8 @@ After that, updates go over Wi-Fi: publish a signed build, then hold the knob 4 
 
 ## Bench checklist
 
+- [ ] Board build: U1's hand matches the board. The module's own silkscreen has 5V on the same side (USB up, from
+  above) as the board's "C3 POWER-LEFT" or "C3 POWER-RIGHT", checked before U1 is first powered on the board.
 - [ ] The PN532's mode switches are at the I2C setting on its silkscreen (switch 1 ON, switch 2 OFF). The serial log at boot shows SDA and SCL
   idle at 1 with no pull, and `PN532 found`.
 - [ ] The OLED shows the printer name, the slot label and the slot's contents.
@@ -298,5 +342,6 @@ Values marked UNCONFIRMED in this guide, the catalogue or the schematic, and the
 
 ## ERC notes
 
-`kicad-cli sch erc` reports 0 errors and 0 warnings. `kicad-cli pcb drc --schematic-parity` on the board reports 0
-violations, 0 unconnected items and 0 parity issues.
+`kicad-cli sch erc` reports 0 errors and 0 warnings on both schematics. `kicad-cli pcb drc --schematic-parity` on each
+board reports 0 violations, 0 unconnected items and 0 parity issues. `tools/netlist_parity.py` finds the same 20 nets
+in both schematics.

@@ -61,7 +61,8 @@ jobs:
       # .kicad_pro), then the paper check, which exports each netlist with
       # this container's kicad-cli.
       - run: |
-          for pro in devices/*/kicad/*.kicad_pro devices/*/kicad-smt/*.kicad_pro; do
+          for pro in devices/*/kicad/*.kicad_pro devices/*/kicad-smt/*.kicad_pro \
+                     devices/*/kicad-power-left/*.kicad_pro devices/*/kicad-smt-power-left/*.kicad_pro; do
             [ -e "$pro" ] || continue
             kicad-cli sch erc --exit-code-violations "${pro%.kicad_pro}.kicad_sch"
           done
@@ -79,5 +80,25 @@ jobs:
             [ -e "$dev/kicad-smt/parity-exceptions.txt" ] && exc="--exceptions $dev/kicad-smt/parity-exceptions.txt"
             for tht in "$dev"/kicad/*.kicad_pro; do
               python3 tools/netlist_parity.py "${tht%.kicad_pro}.kicad_sch" "${pro%.kicad_pro}.kicad_sch" $exc
+            done
+          done
+
+      # A power-left board (for C3 modules with 5V, GND and 3V3 on the left row, seen from above with USB
+      # up) copies its power-right base's schematic with only U1's footprint changed, so it must wire
+      # exactly the same pins, with no exceptions: kicad-power-left/ against kicad/, and
+      # kicad-smt-power-left/ against kicad-smt/.
+      - run: |
+          for pair in "kicad-power-left kicad" "kicad-smt-power-left kicad-smt"; do
+            set -- $pair
+            for pro in devices/*/"$1"/*.kicad_pro; do
+              [ -e "$pro" ] || continue
+              dev="${pro%/"$1"/*}"
+              found=0
+              for ref in "$dev/$2"/*.kicad_pro; do
+                [ -e "$ref" ] || continue
+                found=1
+                python3 tools/netlist_parity.py "${ref%.kicad_pro}.kicad_sch" "${pro%.kicad_pro}.kicad_sch"
+              done
+              if [ "$found" != 1 ]; then echo "$pro: no $2/ project to compare with"; exit 1; fi
             done
           done
