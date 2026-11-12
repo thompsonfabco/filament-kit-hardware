@@ -1,3 +1,5 @@
+If you enjoy what I do, consider supporting me! Every little bit means the world! https://ko-fi.com/thompsonfabco
+
 # Shared KiCad library
 
 The parts the stock KiCad 10 libraries don't have, shared by every device project under `devices/<device>/kicad/`.
