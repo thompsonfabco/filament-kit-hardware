@@ -67,7 +67,7 @@ def test_new_folder_picked_up(enc, tmp_path):
 @pytest.fixture
 def groups(tmp_path):
     root = tmp_path / "enclosures"
-    for d in ("intake-station-base", "intake-station-lid", "intake-station", "bench-reader", "intake-stationery"):
+    for d in ("intake-station-base", "intake-station-lid", "intake-station", "printer-station", "intake-stationery"):
         (root / d).mkdir(parents=True)
         (root / d / "a.step").write_text(d)
     (root / "LICENSE").write_text("licence text")
@@ -84,8 +84,8 @@ def test_only_group(groups, tmp_path):
 
 
 def test_only_single(groups, tmp_path):
-    assets = mr.build(groups, "v1.0", tmp_path / "out", only="bench-reader")
-    assert names(assets) == ["bench-reader-step-v1.0.zip"]
+    assets = mr.build(groups, "v1.0", tmp_path / "out", only="printer-station")
+    assert names(assets) == ["printer-station-step-v1.0.zip"]
 
 
 def test_only_no_match_fails(groups, tmp_path):

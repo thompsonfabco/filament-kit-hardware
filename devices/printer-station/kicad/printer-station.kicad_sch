@@ -2964,7 +2964,7 @@
 			(uuid "f3b734fd-4511-4dcd-931f-b838b4b25065")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "U1")
 					(unit 1)
@@ -3100,7 +3100,7 @@
 			(uuid "4136afc3-dcbf-4cec-a3ac-4bffa3d8ec57")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "U2")
 					(unit 1)
@@ -3221,7 +3221,7 @@
 			(uuid "841802a7-1e7d-46b3-acb3-eb2893a03fd5")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "U3")
 					(unit 1)
@@ -3327,7 +3327,7 @@
 			(uuid "2a6dda1d-a68a-4bc5-a53d-54f900bda228")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "SW1")
 					(unit 1)
@@ -3613,7 +3613,7 @@
 			(uuid "3571947c-d277-4882-82f7-c656cff91939")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "#FLG01")
 					(unit 1)
@@ -3755,7 +3755,7 @@
 			(uuid "00fa6f99-b93d-4cc6-be47-3ec051076aa4")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "J1")
 					(unit 1)
@@ -3840,7 +3840,7 @@
 			(uuid "a4483e69-49a6-4e4d-8494-a37bf6beb599")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "J2")
 					(unit 1)
@@ -3928,7 +3928,7 @@
 			(uuid "c9226173-4324-4431-ade1-14e6c8e6beae")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "J3")
 					(unit 1)
@@ -4007,7 +4007,7 @@
 			(uuid "6fbee2d1-cb0c-4c0e-bf66-828be9d35e42")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "J4")
 					(unit 1)
@@ -4269,7 +4269,7 @@
 			(uuid "b97f1d63-2a6b-4682-bb40-9913bf60dfb9")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "BZ1")
 					(unit 1)
@@ -4401,7 +4401,7 @@
 			(uuid "7aaeb33e-dc5d-414f-affd-9ad434f7283e")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "D1")
 					(unit 1)
@@ -4536,7 +4536,7 @@
 			(uuid "008d0a82-4a3d-4b83-9f90-c9f48568039a")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "Q1")
 					(unit 1)
@@ -4645,7 +4645,7 @@
 			(uuid "976a19c0-452b-40a5-90a9-8480bf4775a1")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "RG1")
 					(unit 1)
@@ -4744,7 +4744,7 @@
 			(uuid "896e5728-95b8-4400-a109-0576092a4048")
 		)
 		(instances
-			(project "bench-reader"
+			(project "printer-station"
 				(path "/19934265-6817-4db8-8da7-5db7cdd5dd1d"
 					(reference "RP1")
 					(unit 1)

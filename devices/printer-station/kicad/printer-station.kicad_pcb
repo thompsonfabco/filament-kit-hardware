@@ -156,7 +156,7 @@
 		)
 		(path "/0341126b-95b5-48e2-9fa5-725111394df1")
 		(sheetname "/")
-		(sheetfile "bench-reader.kicad_sch")
+		(sheetfile "printer-station.kicad_sch")
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -432,7 +432,7 @@
 		)
 		(path "/11d300ab-ca3c-4976-a5d2-e200d114ebc5")
 		(sheetname "/")
-		(sheetfile "bench-reader.kicad_sch")
+		(sheetfile "printer-station.kicad_sch")
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -754,7 +754,7 @@
 		)
 		(path "/49890fd1-cccf-4230-a33b-8099c00d0fd3")
 		(sheetname "/")
-		(sheetfile "bench-reader.kicad_sch")
+		(sheetfile "printer-station.kicad_sch")
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -6930,7 +6930,7 @@
 		)
 		(path "/58bbd8c7-20d7-42df-8f35-895435311799")
 		(sheetname "/")
-		(sheetfile "bench-reader.kicad_sch")
+		(sheetfile "printer-station.kicad_sch")
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -7195,7 +7195,7 @@
 		)
 		(path "/7e6e3d09-5310-4b2c-bca9-e97d9b8e6588")
 		(sheetname "/")
-		(sheetfile "bench-reader.kicad_sch")
+		(sheetfile "printer-station.kicad_sch")
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -7489,7 +7489,7 @@
 		)
 		(path "/53b54d8b-26d0-424f-983b-b14e187e9d85")
 		(sheetname "/")
-		(sheetfile "bench-reader.kicad_sch")
+		(sheetfile "printer-station.kicad_sch")
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -7792,7 +7792,7 @@
 		)
 		(path "/f3ae89a0-f76c-4611-9814-33eaf762664d")
 		(sheetname "/")
-		(sheetfile "bench-reader.kicad_sch")
+		(sheetfile "printer-station.kicad_sch")
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -7974,7 +7974,7 @@
 		)
 		(path "/fd09ea8d-8d2a-4ec6-9f75-80b8ffd55952")
 		(sheetname "/")
-		(sheetfile "bench-reader.kicad_sch")
+		(sheetfile "printer-station.kicad_sch")
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -8194,7 +8194,7 @@
 		)
 		(path "/abaaba1f-fe4d-4019-aa4a-0b688b26a0c6")
 		(sheetname "/")
-		(sheetfile "bench-reader.kicad_sch")
+		(sheetfile "printer-station.kicad_sch")
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line

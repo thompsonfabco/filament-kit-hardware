@@ -149,7 +149,7 @@ rows run top to bottom with the USB connector at the top.
 
 ## Board
 
-The board is one design, `kicad/bench-reader.kicad_pcb`, in the same KiCad project as the schematic. Every part on
+The board is one design, `kicad/printer-station.kicad_pcb`, in the same KiCad project as the schematic. Every part on
 it is through-hole: the four JST-XH headers, the two female headers for U1, and the buzzer driver (Q1, RG1, RP1 and
 D1). With no surface-mount part to fit,
 an assembly order would add nothing, so there is no separate JLCPCB variant: order the board bare, from JLCPCB or any
@@ -230,8 +230,7 @@ current and the 3V3 rail during a tag read.
 
 ## Case
 
-The case is the printer scan station, in `enclosures/bench-reader/`. The folders and KiCad files for this device
-keep the name `bench-reader`, so existing links still work. The case has three parts:
+The case is the printer scan station, in `enclosures/printer-station/`. The case has three parts:
 
 | Part | File |
 |---|---|

@@ -1,16 +1,16 @@
-<!-- Printer station on the ESP32-C3 Super Mini. Build guide: guide.md. Circuit: kicad/bench-reader.kicad_sch,
+<!-- Printer station on the ESP32-C3 Super Mini. Build guide: guide.md. Circuit: kicad/printer-station.kicad_sch,
      exported as images/schematic.svg and images/schematic.pdf.
      Firmware paths are inside filament-kit. vmax is in volts and imax in amperes. imax_basis says what the imax
      figure is. imax is a datasheet limit: where the datasheet gives none, imax is UNCONFIRMED and i_typ
      holds a typical or operating current, with i_typ_basis saying what it is. The one exception is BZ1, whose imax
      is its coil current at 5 V, computed from the listing's 42 ohm, as its imax_basis says. -->
-<device id="bench-reader" schema="1">
+<device id="printer-station" schema="1">
   <board model="ESP32-C3 Super Mini" family="esp32-c3"/>
   <link type="wifi-https"/>
   <firmware source="reader/src/main.cpp" update="ota-signed"/>
   <!-- Mounting is not recorded yet: the case's fit against the current build is unchecked. -->
   <mount/>
-  <enclosure path="enclosures/bench-reader/" fit="unchecked"/>
+  <enclosure path="enclosures/printer-station/" fit="unchecked"/>
   <pins>
     <pin gpio="5" constant="PIN_SDA" role="i2c-sda"/>
     <pin gpio="6" constant="PIN_SCL" role="i2c-scl"/>
@@ -55,7 +55,7 @@
     <part ref="RG1" name="220 ohm" kind="passive" qty="1" use="Q1 gate resistor"/>
     <part ref="RP1" name="100 kohm" kind="passive" qty="1" use="Q1 gate pull-down, buzzer silent during reset"/>
   </parts>
-  <!-- Headers on the through-hole board (kicad/bench-reader.kicad_pcb). Without the board the reader is wired module
+  <!-- Headers on the through-hole board (kicad/printer-station.kicad_pcb). Without the board the reader is wired module
        to module, as the guide shows. U1 sits on two 1x8 female headers and is never soldered. -->
   <connectors>
     <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="PN532 reader (U2)"/>

@@ -261,7 +261,7 @@ specs/                               designs such as this one
 tools/                               the data scan and the paper check
 ```
 
-The devices are `intake-panel`, `bench-reader`, `station-nfc`, `scale` and `webcam`.
+The devices are `intake-panel`, `printer-station`, `station-nfc`, `scale` and `webcam`.
 
 Moves out of `filament-kit`, done as kit changes:
 
@@ -270,7 +270,7 @@ Moves out of `filament-kit`, done as kit changes:
 - `station/panel/wiring.svg` and `wiring.png` are redrawn for the C3 and move to `devices/intake-panel/images/`.
 - The kit's user guide keeps its supported-device list, corrects the old Hold and Discard wording to the yellow and
   red flow, and adds the one link line to this repository.
-- `reader/README.md` keeps the API and firmware build. Its hardware table moves to `devices/bench-reader/guide.md`.
+- `reader/README.md` keeps the API and firmware build. Its hardware table moves to `devices/printer-station/guide.md`.
 - `THIRD-PARTY.md` changes the panel firmware's line from the ESP8266 core to the ESP32 core.
 
 `standard.md` replaces the standard's section of this design.
@@ -338,7 +338,7 @@ reader's first-run flow and how its update images are signed.
 ## Follow-up: enclosures
 
 The printer station's case is the printer scan station: Body, Face and Retainer STEP files and a 3MF print file in
-`enclosures/bench-reader/`. Their headers hold no personal data. Every enclosure is designed around the ElectroCookie prototype board the standard names,
+`enclosures/printer-station/`. Their headers hold no personal data. Every enclosure is designed around the ElectroCookie prototype board the standard names,
 mounted on its M3 holes, using hole positions measured from a real board. The intake station's case files (Controller, Simple Controller and Camera Stand) are in `enclosures/intake-station/`. The speaker's body is already sealed, so the enclosure needs only a mount using its two holes and an
 opening in front of the speaker, with no baffle.
 
