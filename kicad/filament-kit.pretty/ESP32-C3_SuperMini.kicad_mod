@@ -1,5 +1,5 @@
 (footprint "ESP32-C3_SuperMini" (version 20260206) (generator "pcbnew") (generator_version "10.0") (layer "F.Cu")
-  (descr "ESP32-C3 Super Mini, two 1x8 rows, 2.54 mm pitch, 15.24 mm between rows. Top view, USB at the top: pads 1-8 left row top to bottom GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21, pads 9-16 right row top to bottom 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0 (owner-confirmed). Board outline 18 x 22.52 mm centred on the pins; the USB overhang length is UNCONFIRMED")
+  (descr "ESP32-C3 Super Mini, two 1x8 rows, 2.54 mm pitch, 15.24 mm between rows. Top view, USB at the top: pads 1-8 left row top to bottom GPIO5 GPIO6 GPIO7 GPIO8 GPIO9 GPIO10 GPIO20 GPIO21, pads 9-16 right row top to bottom 5V GND 3V3 GPIO4 GPIO3 GPIO2 GPIO1 GPIO0: a power-right module (pin order confirmed from the board; power-left modules have the rows swapped). Board outline 18 x 22.52 mm centred on the pins; the USB overhang length is UNCONFIRMED")
   (tags "ESP32-C3 SuperMini module")
   (property "Reference" "REF**" (at 7.62 -4.5 0) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))))
   (property "Value" "ESP32-C3_SuperMini" (at 7.62 22.3 0) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))))
