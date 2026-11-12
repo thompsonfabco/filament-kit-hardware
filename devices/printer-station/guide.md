@@ -279,14 +279,18 @@ the 20 mm bar on each view checks the scale, and on the real-size pages the boar
 
 How the board is used:
 
-- Rows A to J and columns 1 to 30 are named as printed on the board. In each column, holes F to J are joined by one
-  copper strip and A to E by another; nothing crosses the channel between F and E.
-- The + rails carry 5V and the − rails GND. Both halves of each are used, so fit both rail links first (steps 1 and 2):
-  the + link joins the pad pair beside the left M3 hole, the − link the pair beside the right one.
-- 3V3 doesn't use a rail. It runs by wire from the C3 to the connectors.
-- U1 plugs into two 1x8 female headers in rows I and E, across the channel, with its USB-C end toward column 30. Some
-  wires run under it, so fit every wire before you plug U1 in.
-- J1 (PN532) sits on the same strips as the C3's SDA and SCL pins, so it needs no wire for them.
+- Holes are named as printed on the board: a letter A to J and a number 1 to 30, so C12 is letter C at number 12. At
+  each number, holes F to J are joined by one copper strip and A to E by another; nothing crosses the channel
+  between F and E.
+- U1 plugs into two 1x8 female headers in H1-H8 and D1-D8, across the channel, with its USB-C end at number 1 so a
+  cable reaches it past the board's short edge. The headers clear the left M3 hole's screw head by 5 mm; the M3 hole
+  and the left link pads sit under U1's USB end, so fit the M3 screw or standoff and every wire before you plug U1 in.
+  Some wires run under U1.
+- The bottom + rail carries 5V and the − rails GND. Only the bottom half of the + rail is used, so the + link (the
+  pads under U1's USB end) stays empty. Both halves of the − rail are used, so fit the − link beside the right M3 hole
+  (step 1).
+- 3V3 doesn't use a rail. It runs by wire from the C3 to the connectors; it and the buzzer signal cross the channel
+  under U1 to leave the C3's power row.
 - The JST-XH headers have a 2.50 mm pitch and push into the board's 2.54 mm holes. A hole beside a header's body is
   partly covered; the drawing only uses those where a 0.6 mm lead still fits.
 - Use solid-core insulated wire. Each wire is straight or has one bend, and its number on the top view is its step

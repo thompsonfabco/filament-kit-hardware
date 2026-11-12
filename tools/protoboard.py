@@ -18,13 +18,14 @@ and <hand>-steps.md beside the placement file; --pdf also writes <hand>-a4.pdf a
 (needs Microsoft Edge or Chrome). The netlist comes from the schematic named in the placement file,
 exported with kicad-cli (KICAD_CLI or PATH), unless --netlist gives a kicadxml netlist.
 
-Board model (top view, mm from the board's top-left corner, as printed on the board):
-- 30 columns, numbered 1-30 left to right; column k at x = 7.67 + 2.54 (k - 1).
-- Rows J I H G F (top half, J nearest the top edge) and E D C B A (bottom half). In each column F-J is one
-  strip and A-E another. A 7.62 mm channel with no copper separates F and E.
-- Four rails of 30 holes, one per column: top - (outer), top + (inner), bottom - (inner), bottom + (outer).
-- The two + rails are joined by an unmarked edge trace at the column 1 end and the two - rails by one at the
-  column 30 end. Each trace is broken at a pair of pads beside the M3 hole (+ on the left, - on the right),
+Board model (top view, mm from the board's top-left corner). Holes are named as printed on the board: a letter
+A-J and a number 1-30, so C12 is letter C, number 12.
+- The numbers 1-30 run left to right; number k is at x = 7.67 + 2.54 (k - 1).
+- Letters J I H G F are the top half (J nearest the top edge) and E D C B A the bottom half. At each number,
+  holes F-J are joined by one copper strip and A-E by another. A 7.62 mm channel with no copper separates F and E.
+- Four rails of 30 holes, one at each number: top - (outer), top + (inner), bottom - (inner), bottom + (outer).
+- The two + rails are joined by an unmarked edge trace at the number 1 end and the two - rails by one at the
+  number 30 end. Each trace is broken at a pair of pads beside the M3 hole (+ on the left, - on the right),
   so a rail's top and bottom halves are joined only when a wire link bridges that pad pair.
 """
 from __future__ import annotations
@@ -84,9 +85,9 @@ class Hole:
 
     @property
     def text(self) -> str:
-        """The hole as a builder reads it: "C12", "top + rail, column 12", "left link pad, upper"."""
+        """The hole as a builder reads it: "C12", "top + rail at number 12", "left link pad, upper"."""
         if self.name[:2] in RAIL_Y:
-            return f"{RAIL_TEXT[self.name[:2]]}, column {self.name[2:]}"
+            return f"{RAIL_TEXT[self.name[:2]]} at number {self.name[2:]}"
         if self.name in PAD_TEXT:
             return PAD_TEXT[self.name]
         return self.name
@@ -625,7 +626,7 @@ def _check_part_geometry(p: Part) -> None:
         a, b = p.xy("1"), p.xy("2")
         span = math.dist(a, b)
         if abs(a[0] - b[0]) > 0.01 and abs(a[1] - b[1]) > 0.01:
-            raise PlacementError(f"{p.ref}: lay it along a row or a column, not diagonally")
+            raise PlacementError(f"{p.ref}: lay it along a letter or a number, not diagonally")
         if span < 7.6:
             raise PlacementError(f"{p.ref}: its leads are {span:.2f} mm apart; the body needs at least 7.62")
         return
@@ -661,6 +662,14 @@ def _check_drawing(pl: Placement, rep: Report) -> None:
         for j in range(i + 1, len(bodies)):
             if bodies[i][0] != bodies[j][0] and polys_overlap(bodies[i][1][1], bodies[j][1][1]):
                 err(f"{bodies[i][0]} and {bodies[j][0]}: their bodies overlap")
+    # No body may sit on a mounting hole's screw head (U1's sockets included; U1 itself is raised above them).
+    for ref, (_, poly) in bodies:
+        for (mx, my) in M3_HOLES:
+            if dist_point_poly((mx, my), poly) < M3_KEEPOUT:
+                err(f"{ref}: its body covers an M3 mounting hole's screw head")
+        for (mx, my) in M2_HOLES:
+            if dist_point_poly((mx, my), poly) < M2_KEEPOUT:
+                err(f"{ref}: its body covers an M2 mounting hole")
     by_ref = {p.ref: p for p in pl.parts}
     # A hole squeezed between two bodies, each covering part of it, can't take a lead either.
     for h in used:
@@ -675,6 +684,14 @@ def _check_drawing(pl: Placement, rep: Report) -> None:
         for h in used - own:
             if hole_blocked(HOLES[h].x, HOLES[h].y, poly):
                 err(f"hole {HOLES[h].text}: under {ref}'s body, so it can't take a lead")
+    # The leads and body of a resistor or diode run from pin to pin and must not cover another lead's hole.
+    for p in pl.parts:
+        if p.kind in ("resistor", "diode"):
+            a, b = p.xy("1"), p.xy("2")
+            for h in used - set(p.pins.values()):
+                hh = HOLES[h]
+                if dist_point_seg((hh.x, hh.y), a, b) < HOLE_R:
+                    err(f"{p.ref}: its lead or body runs over hole {hh.text}, which is in use")
     segs = []
     for i, w in enumerate(pl.wires, 1):
         for s in w.segments():
@@ -955,9 +972,31 @@ def draw_wires(svg: Svg, v: View, pl: Placement, steps: dict, placed: list, used
             svg.add(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.62" fill="{col}" stroke="#ffffff" stroke-width="0.18"/>')
     if v.solder:
         return
+    for p in pl.parts:
+        polys = [module_outline(p)] if p.kind == "c3-supermini" else [poly for _, poly in body_shapes(p)]
+        if p.kind == "c3-supermini":
+            continue        # raised on its sockets: labels may sit over its outline, not over its pins
+        for poly in polys:
+            xs = [v.x(a) for a, _ in poly]
+            ys = [v.y(b) for _, b in poly]
+            placed.append((min(xs), min(ys), max(xs), max(ys)))
     for w in pl.wires:
         col, label, _ = net_style(w.net)
         segs = w.segments()
+        if w.length < 10:
+            seg = max(segs, key=lambda s_: math.dist(*s_))
+            a, b = seg
+            u = _unit(b[0] - a[0], b[1] - a[1])
+            L = math.dist(a, b)
+            nrm = (-u[1], u[0])
+            for q in [(a[0] + u[0] * L * f, a[1] + u[1] * L * f) for f in (0.5, 0.38, 0.62)] +                      [(a[0] + u[0] * L * 0.5 + nrm[0] * k * 2.6, a[1] + u[1] * L * 0.5 + nrm[1] * k * 2.6) for k in (1, -1)]:
+                cx, cy = v.p(q)
+                wdt = 0.72 * 1.25 * len(label) + 0.9
+                box = (cx - wdt / 2, cy - 0.93, cx + wdt / 2, cy + 0.93)
+                if _free(box, placed, used_xy):
+                    break
+            tag(svg, cx, cy, label, col, placed)
+            continue
         for end in (0, 1):
             seg = segs[0] if end == 0 else segs[-1]
             a, b = (seg[0], seg[1]) if end == 0 else (seg[1], seg[0])
@@ -1176,15 +1215,15 @@ def _draw_module(svg, v, p, names, ghost):
     svg.add(f'<polygon points="{ud}" fill="#bdc3c7" stroke="#1f4e79" stroke-width="0.3"/>')
     ux, uy = v.p(mu)
     svg.text(ux, uy + 0.5, "USB-C", 1.3, weight="bold", fill="#1f4e79")
-    # Title in the channel under the module, where no wire runs.
-    ch = (cx - usb[0] * 2.6, 26.0)
+    # Caption inside the outline, in the channel, shifted toward the far (antenna) end so it stays clear of
+    # the M3 hole beside the USB end and of the outline itself.
+    ch = (cx - usb[0] * 4.2, 26.0)
     mx, my = v.p(ch)
-    svg.add(f'<rect x="{mx - 10.5:.2f}" y="{my - 2.3:.2f}" width="21" height="4.4" rx="0.6" fill="#ffffff" opacity="0.9"/>')
     arrow = "→" if (usb[0] > 0) != v.solder else "←"
-    lead = "" if arrow == "→" else f"{arrow} "
-    tail = f" {arrow}" if arrow == "→" else ""
-    svg.text(mx, my - 0.5, "U1 ESP32-C3 Super Mini", 1.6, weight="bold", fill="#1f4e79")
-    svg.text(mx, my + 1.4, f"{lead}power-left, USB-C end{tail}", 1.3, fill="#1f4e79")
+    svg.add(f'<rect x="{mx - 6.6:.2f}" y="{my - 2.2:.2f}" width="13.2" height="4.3" rx="0.6" fill="#ffffff" opacity="0.92"/>')
+    svg.text(mx, my - 0.45, "U1 ESP32-C3", 1.5, weight="bold", fill="#1f4e79")
+    line2 = f"{arrow} USB-C end" if arrow == "←" else f"USB-C end {arrow}"
+    svg.text(mx, my + 1.45, line2, 1.25, fill="#1f4e79")
     if not ghost:
         for n, h in p.pins.items():
             hx, hy = HOLES[h].x, HOLES[h].y
@@ -1204,7 +1243,7 @@ def draw_header(svg: Svg, pl: Placement, solder: bool):
     svg.text(4, 6, title, 3.0, anchor="start", weight="bold")
     if solder:
         svg.add(f'<rect x="4" y="8.5" width="{SHEET_W - 8}" height="6.2" rx="1" fill="#111"/>')
-        svg.text(SHEET_W / 2, 13.2, "SOLDER SIDE (mirrored): column 1 is on the RIGHT", 3.1, weight="bold", fill="#ffffff")
+        svg.text(SHEET_W / 2, 13.2, "SOLDER SIDE (mirrored): number 1 is on the RIGHT", 3.1, weight="bold", fill="#ffffff")
     else:
         svg.text(4, 12.5, "TOP VIEW (component side), real size", 2.6, anchor="start", weight="bold", fill="#333")
     # Hand warning with the identification picture.
@@ -1325,8 +1364,8 @@ def build_steps(pl: Placement):
 
 
 def _dir_word(d: str) -> str:
-    return {"up": "top edge (row J side)", "down": "bottom edge (row A side)", "left": "column 1 end",
-            "right": "column 30 end"}[d]
+    return {"up": "top edge (the J side)", "down": "bottom edge (the A side)", "left": "number 1 end",
+            "right": "number 30 end"}[d]
 
 
 def render_sheet(pl: Placement, nets: dict, solder: bool) -> str:
