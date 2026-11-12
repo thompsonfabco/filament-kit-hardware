@@ -273,9 +273,11 @@ power-right drawing is not made yet.
 
 ![Protoboard, solder side, mirrored, power-left](protoboard/power-left-solder.svg)
 
-Printable sheets, with both views enlarged and at real size, the build order and the hole table:
-[A4](protoboard/power-left-a4.pdf) and [Letter](protoboard/power-left-letter.pdf). Print at 100 % ("actual size"):
-the 20 mm bar on each view checks the scale, and on the real-size pages the board lies on the drawing hole for hole.
+Printable sheets, with both views enlarged and at real size, the build order and the hole table, in A4 and Letter:
+`python tools/protoboard.py render devices/printer-station/protoboard/power-left.xml --pdf` writes
+`power-left-a4.pdf` and `power-left-letter.pdf` beside the placement file (it needs Microsoft Edge or Chrome). Print
+at 100 % ("actual size"): the 20 mm bar on each view checks the scale, and on the real-size pages the board lies on
+the drawing hole for hole.
 
 How the board is used:
 
@@ -296,70 +298,76 @@ How the board is used:
 - Use solid-core insulated wire. Each wire is straight or has one bend, and its number on the top view is its step
   below. Every wire end is labelled with its net.
 
-1. Rail link (+): wire from the left link pad, upper to the left link pad, lower. It joins the top and bottom + rails.
-2. Rail link (−): wire from the right link pad, upper to the right link pad, lower. It joins the top and bottom − rails.
-3. Wire SW: H19 to E8 (one bend, 41 mm).
-4. Wire DT: G22 to E10 (one bend, 41 mm).
-5. Wire CLK: F21 to E11 (one bend, 33 mm).
-6. Wire 3V3: G23 to G26 (straight, 8 mm).
-7. Wire 3V3: F26 to E26 (straight, 8 mm).
-8. Wire 3V3: B26 to B14 (straight, 30 mm).
-9. Wire GATE: I14 to I4 (straight, 25 mm).
-10. Wire SDA: C25 to C15 (straight, 25 mm).
-11. Wire SCL: D24 to D16 (straight, 20 mm).
-12. Wire 3V3: D14 to D7 (straight, 18 mm).
-13. Wire 5V: A4 to bottom + rail, column 4 (straight, 9 mm).
-14. Wire GND: J24 to top − rail, column 24 (straight, 9 mm).
-15. Wire GND: J27 to top − rail, column 27 (straight, 9 mm).
-16. Wire GND: J3 to top − rail, column 3 (straight, 9 mm).
-17. Wire GND: F27 to E27 (straight, 8 mm).
-18. Wire BZ−: F5 to E5 (straight, 8 mm).
-19. Wire GND: A13 to bottom − rail, column 13 (straight, 7 mm).
-20. Wire GND: A9 to bottom − rail, column 9 (straight, 7 mm).
-21. Wire 5V: J25 to top + rail, column 25 (straight, 6 mm).
-22. RG1 (220 Ω): J18 to J14, lying flat.
-23. RP1 (100 kΩ): J4 to top − rail, column 4, lying flat.
-24. D1 (1N4001): banded end (K) in bottom + rail, column 5, other end (A) in A5.
-25. Q1 (BS170): D in H5, G in H4, S in H3, flat face toward the top edge (row J side).
-26. U1 sockets: two 1x8 female headers in E18-E25, I18-I25. Plug U1 in while soldering to keep them square, then take it out.
-27. J1 (PN532, JST-XH 4-pin): pin 1 in A27, latch side toward the bottom edge (row A side).
-28. J2 (OLED, JST-XH 4-pin): pin 1 in E13, latch side toward the top edge (row J side).
-29. J3 (encoder, JST-XH 5-pin): pin 1 in B11, latch side toward the top edge (row J side).
-30. J4 (buzzer, JST-XH 2-pin): pin 1 in C4, latch side toward the top edge (row J side).
-31. Check with a meter: no short from 5V, 3V3 or SDA/SCL to GND. Then plug U1 in, USB-C toward the board edge as drawn, after checking it is a power-left module.
+1. Rail link (−): wire from the right link pad, upper to the right link pad, lower. It joins the top and bottom − rails.
+2. Wire 3V3: E3 to G16 (one bend, 43 mm).
+3. Wire BUZ: E8 to E9 (straight, 3 mm).
+4. Wire SDA: J1 to J19 (straight, 46 mm).
+5. Wire SCL: I2 to I18 (straight, 41 mm).
+6. Wire DT: B4 to B11 (straight, 18 mm).
+7. Wire 3V3: F16 to C14 (one bend, 18 mm).
+8. Wire BUZ: D9 to D15 (straight, 15 mm).
+9. Wire BZ−: C20 to C26 (straight, 15 mm).
+10. Wire SW: C7 to C13 (straight, 15 mm).
+11. Wire CLK: A5 to A10 (straight, 13 mm).
+12. Wire GND: H21 to H26 (straight, 13 mm).
+13. Wire SCL: G18 to G23 (straight, 13 mm).
+14. Wire SDA: I19 to I24 (straight, 13 mm).
+15. Wire 3V3: J20 to J25 (straight, 13 mm).
+16. Wire 3V3: H16 to H20 (straight, 10 mm).
+17. Wire 5V: A1 to bottom + rail at number 1 (straight, 9 mm).
+18. Wire 5V: bottom + rail at number 27 to A27 (straight, 9 mm).
+19. Wire GND: J26 to top − rail at number 26 (straight, 9 mm).
+20. Wire BZ−: B29 to B26 (straight, 8 mm).
+21. Wire GND: A2 to bottom − rail at number 2 (straight, 7 mm).
+22. Wire GND: A12 to bottom − rail at number 12 (straight, 7 mm).
+23. Wire GND: bottom − rail at number 22 to A22 (straight, 7 mm).
+24. Wire GATE: D21 to D19 (straight, 5 mm).
+25. RG1 (220 Ω): A15 to A19, lying flat.
+26. RP1 (100 kΩ): B21 to bottom − rail at number 21, lying flat.
+27. D1 (1N4001): banded end (K) in bottom + rail at number 29, other end (A) in A29.
+28. Q1 (BS170): D in E20, G in E21, S in E22, flat face toward the bottom edge (the A side).
+29. U1 sockets: two 1x8 female headers in D1-D8, H1-H8. Plug U1 in while soldering to keep them square, then take it out.
+30. J1 (PN532, JST-XH 4-pin): pin 1 in F21, latch side toward the bottom edge (the A side).
+31. J2 (OLED, JST-XH 4-pin): pin 1 in F26, latch side toward the bottom edge (the A side).
+32. J3 (encoder, JST-XH 5-pin): pin 1 in E10, latch side toward the top edge (the J side).
+33. J4 (buzzer, JST-XH 2-pin): pin 1 in E27, latch side toward the bottom edge (the A side).
+34. Check with a meter: no short from 5V, 3V3 or SDA/SCL to GND. Then plug U1 in, USB-C toward the board edge as drawn, after checking it is a power-left module.
 
 | Step | Item | Holes |
 |---|---|---|
-| 1 | + rail link | left link pad, upper to left link pad, lower |
-| 2 | − rail link | right link pad, upper to right link pad, lower |
-| 3 | wire SW | H19 to E8 (one bend) |
-| 4 | wire DT | G22 to E10 (one bend) |
-| 5 | wire CLK | F21 to E11 (one bend) |
-| 6 | wire 3V3 | G23 to G26 |
-| 7 | wire 3V3 | F26 to E26 |
-| 8 | wire 3V3 | B26 to B14 |
-| 9 | wire GATE | I14 to I4 |
-| 10 | wire SDA | C25 to C15 |
-| 11 | wire SCL | D24 to D16 |
-| 12 | wire 3V3 | D14 to D7 |
-| 13 | wire 5V | A4 to bottom + rail, column 4 |
-| 14 | wire GND | J24 to top − rail, column 24 |
-| 15 | wire GND | J27 to top − rail, column 27 |
-| 16 | wire GND | J3 to top − rail, column 3 |
-| 17 | wire GND | F27 to E27 |
-| 18 | wire BZ− | F5 to E5 |
-| 19 | wire GND | A13 to bottom − rail, column 13 |
-| 20 | wire GND | A9 to bottom − rail, column 9 |
-| 21 | wire 5V | J25 to top + rail, column 25 |
-| 22 | RG1 220 Ω | J18 to J14 |
-| 23 | RP1 100 kΩ | J4 to top − rail, column 4 |
-| 24 | D1 1N4001 | K bottom + rail, column 5, A A5 |
-| 25 | Q1 BS170 | D H5, G H4, S H3 |
-| 26 | U1 sockets | E18-E25, I18-I25 |
-| 27 | J1 PN532 | pin 1 A27, 2 A26, 3 A25, 4 A24 |
-| 28 | J2 OLED | pin 1 E13, 2 E14, 3 E15, 4 E16 |
-| 29 | J3 encoder | pin 1 B11, 2 B10, 3 B9, 4 B8, 5 B7 |
-| 30 | J4 buzzer | pin 1 C4, 2 C5 |
+| 1 | − rail link | right link pad, upper to right link pad, lower |
+| 2 | wire 3V3 | E3 to G16 (one bend) |
+| 3 | wire BUZ | E8 to E9 |
+| 4 | wire SDA | J1 to J19 |
+| 5 | wire SCL | I2 to I18 |
+| 6 | wire DT | B4 to B11 |
+| 7 | wire 3V3 | F16 to C14 (one bend) |
+| 8 | wire BUZ | D9 to D15 |
+| 9 | wire BZ− | C20 to C26 |
+| 10 | wire SW | C7 to C13 |
+| 11 | wire CLK | A5 to A10 |
+| 12 | wire GND | H21 to H26 |
+| 13 | wire SCL | G18 to G23 |
+| 14 | wire SDA | I19 to I24 |
+| 15 | wire 3V3 | J20 to J25 |
+| 16 | wire 3V3 | H16 to H20 |
+| 17 | wire 5V | A1 to bottom + rail at number 1 |
+| 18 | wire 5V | bottom + rail at number 27 to A27 |
+| 19 | wire GND | J26 to top − rail at number 26 |
+| 20 | wire BZ− | B29 to B26 |
+| 21 | wire GND | A2 to bottom − rail at number 2 |
+| 22 | wire GND | A12 to bottom − rail at number 12 |
+| 23 | wire GND | bottom − rail at number 22 to A22 |
+| 24 | wire GATE | D21 to D19 |
+| 25 | RG1 220 Ω | A15 to A19 |
+| 26 | RP1 100 kΩ | B21 to bottom − rail at number 21 |
+| 27 | D1 1N4001 | K bottom + rail at number 29, A A29 |
+| 28 | Q1 BS170 | D E20, G E21, S E22 |
+| 29 | U1 sockets | D1-D8, H1-H8 |
+| 30 | J1 PN532 | pin 1 F21, 2 F20, 3 F19, 4 F18 |
+| 31 | J2 OLED | pin 1 F26, 2 F25, 3 F24, 4 F23 |
+| 32 | J3 encoder | pin 1 E10, 2 E11, 3 E12, 4 E13, 5 E14 |
+| 33 | J4 buzzer | pin 1 E27, 2 E26 |
 
 The check that the drawing matches the schematic runs in CI and by hand (it needs kicad-cli, on PATH or in
 `KICAD_CLI`):

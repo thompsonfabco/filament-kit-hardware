@@ -983,7 +983,7 @@ def draw_wires(svg: Svg, v: View, pl: Placement, steps: dict, placed: list, used
     for w in pl.wires:
         col, label, _ = net_style(w.net)
         segs = w.segments()
-        if w.length < 10:
+        if w.length < 15:
             seg = max(segs, key=lambda s_: math.dist(*s_))
             a, b = seg
             u = _unit(b[0] - a[0], b[1] - a[1])
@@ -996,49 +996,61 @@ def draw_wires(svg: Svg, v: View, pl: Placement, steps: dict, placed: list, used
                 if _free(box, placed, used_xy):
                     break
             tag(svg, cx, cy, label, col, placed)
-            continue
-        for end in (0, 1):
-            seg = segs[0] if end == 0 else segs[-1]
-            a, b = (seg[0], seg[1]) if end == 0 else (seg[1], seg[0])
-            L = math.dist(a, b)
-            u = _unit(b[0] - a[0], b[1] - a[1])
-            done = False
-            for d in (2.7, 3.6, 4.6, 1.9, 5.8, 7.0):
-                if d > L - 1.0 and len(segs) == 1 and end == 1:
-                    break
-                if d > L - 0.9:
-                    continue
-                cx, cy = v.p((a[0] + u[0] * d, a[1] + u[1] * d))
-                wdt = 0.72 * 1.25 * len(label) + 0.9
-                box = (cx - wdt / 2, cy - 0.93, cx + wdt / 2, cy + 0.93)
-                if _free(box, placed, used_xy):
-                    tag(svg, cx, cy, label, col, placed)
-                    done = True
-                    break
-            if not done and end == 0:
-                mid = (a[0] + u[0] * L / 2, a[1] + u[1] * L / 2)
-                cx, cy = v.p(mid)
-                tag(svg, cx, cy, label, col, placed)
-        # Step number in a circle near the middle of the longest leg.
-        seg = max(segs, key=lambda s: math.dist(*s))
-        a, b = seg
+        else:
+            _end_tags(svg, v, w, segs, col, label, placed, used_xy)
+        _step_number(svg, v, w, segs, steps, placed, used_xy)
+
+
+def _end_tags(svg, v, w, segs, col, label, placed, used_xy):
+    """A net label near each end of the wire, stepping sideways off the wire when the spot is taken."""
+    for end in (0, 1):
+        seg = segs[0] if end == 0 else segs[-1]
+        a, b = (seg[0], seg[1]) if end == 0 else (seg[1], seg[0])
         L = math.dist(a, b)
         u = _unit(b[0] - a[0], b[1] - a[1])
-        n = steps.get(id(w))
-        if n is None:
-            continue
+        done = False
         nrm = (-u[1], u[0])
-        spots = [(a[0] + u[0] * L * f, a[1] + u[1] * L * f) for f in (0.5, 0.35, 0.65, 0.2, 0.8)]
-        side_spots = [(q[0] + nrm[0] * s_ * 1.9, q[1] + nrm[1] * s_ * 1.9) for q in spots[:3] for s_ in (1, -1)]
-        cands = side_spots + spots if L < 10 else spots + side_spots
-        for i, spot in enumerate(cands):
-            cx, cy = v.p(spot)
-            box = (cx - 1.05, cy - 1.05, cx + 1.05, cy + 1.05)
-            if _free(box, placed, used_xy) or i == len(cands) - 1:
-                placed.append(box)
-                svg.add(f'<circle cx="{cx:.2f}" cy="{cy:.2f}" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>')
-                svg.text(cx, cy + 0.45, str(n), 1.25, weight="bold", fill="#fff")
+        cands = [(d, 0.0) for d in (2.7, 3.6, 4.6, 1.9, 5.8, 7.0)] + \
+            [(d, k) for d in (2.7, 3.6, 4.6) for k in (2.0, -2.0)]
+        for d, k in cands:
+            if d > L / 2 and len(segs) == 1:
+                continue
+            if d > L - 0.9:
+                continue
+            cx, cy = v.p((a[0] + u[0] * d + nrm[0] * k, a[1] + u[1] * d + nrm[1] * k))
+            wdt = 0.72 * 1.25 * len(label) + 0.9
+            box = (cx - wdt / 2, cy - 0.93, cx + wdt / 2, cy + 0.93)
+            if _free(box, placed, used_xy):
+                tag(svg, cx, cy, label, col, placed)
+                done = True
                 break
+        if not done and end == 0:
+            mid = (a[0] + u[0] * L / 2, a[1] + u[1] * L / 2)
+            cx, cy = v.p(mid)
+            tag(svg, cx, cy, label, col, placed)
+
+
+def _step_number(svg, v, w, segs, steps, placed, used_xy):
+    """The build step's number in a circle near the middle of the longest leg."""
+    seg = max(segs, key=lambda s: math.dist(*s))
+    a, b = seg
+    L = math.dist(a, b)
+    u = _unit(b[0] - a[0], b[1] - a[1])
+    n = steps.get(id(w))
+    if n is None:
+        return
+    nrm = (-u[1], u[0])
+    spots = [(a[0] + u[0] * L * f, a[1] + u[1] * L * f) for f in (0.5, 0.35, 0.65, 0.2, 0.8)]
+    side_spots = [(q[0] + nrm[0] * s_ * 1.9, q[1] + nrm[1] * s_ * 1.9) for q in spots[:3] for s_ in (1, -1)]
+    cands = side_spots + spots if L < 10 else spots + side_spots
+    for i, spot in enumerate(cands):
+        cx, cy = v.p(spot)
+        box = (cx - 1.05, cy - 1.05, cx + 1.05, cy + 1.05)
+        if _free(box, placed, used_xy) or i == len(cands) - 1:
+            placed.append(box)
+            svg.add(f'<circle cx="{cx:.2f}" cy="{cy:.2f}" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>')
+            svg.text(cx, cy + 0.45, str(n), 1.25, weight="bold", fill="#fff")
+            break
 
 
 def draw_parts(svg: Svg, v: View, pl: Placement, node_net: dict, placed: list):
@@ -1076,6 +1088,8 @@ def _part_caption(svg, v, p, placed):
         side = {"left": "right", "right": "left"}[side]
     text1 = p.ref + (f" {p.value}" if p.value and p.kind != "c3-supermini" else "")
     text2 = part_label(p)
+    if side in ("left", "right") and p.value and not text2:
+        text1, text2 = p.ref, p.value
     if p.kind in ("c3-supermini", "jst-xh"):
         return
     lines = [text1] + ([text2] if text2 else [])

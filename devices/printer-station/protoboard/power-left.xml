@@ -46,16 +46,16 @@
     <pin n="3" hole="F24"/>
     <pin n="4" hole="F23"/>
   </part>
-  <part ref="Q1" kind="to92" value="BS170" flat="down" caption="below">
+  <part ref="Q1" kind="to92" value="BS170" flat="down" caption="right">
     <pin n="1" hole="E20"/>
     <pin n="2" hole="E21"/>
     <pin n="3" hole="E22"/>
   </part>
-  <part ref="RG1" kind="resistor" value="220 Ω" caption="below">
+  <part ref="RG1" kind="resistor" value="220 Ω" caption="above">
     <pin n="1" hole="A15"/>
     <pin n="2" hole="A19"/>
   </part>
-  <part ref="RP1" kind="resistor" value="100 kΩ" caption="right">
+  <part ref="RP1" kind="resistor" value="100 kΩ" caption="left">
     <pin n="1" hole="B21"/>
     <pin n="2" hole="B-21"/>
   </part>
