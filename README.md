@@ -1,3 +1,5 @@
+If you enjoy what I do, consider supporting me! Every little bit means the world! https://ko-fi.com/thompsonfabco
+
 # filament-kit-hardware
 
 Hardware designs for the peripheral devices of [filament-kit](https://github.com/thompsonfabco/filament-kit): the
