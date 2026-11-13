@@ -1155,6 +1155,10 @@
 <line x1="77.97" y1="73.43" x2="77.97" y2="74.91" stroke="#8a8a8a" stroke-width="0.45"/>
 <line x1="77.97" y1="82.70" x2="77.97" y2="81.22" stroke="#8a8a8a" stroke-width="0.45"/>
 <polygon points="79.17,74.91 79.17,81.22 76.77,81.22 76.77,74.91" fill="#cfe0ef" stroke="#2c3e50" stroke-width="0.3"/>
+<polygon points="79.17,75.62 79.17,76.22 76.77,76.22 76.77,75.62" fill="#7f4f24"/>
+<polygon points="79.17,76.87 79.17,77.47 76.77,77.47 76.77,76.87" fill="#111111"/>
+<polygon points="79.17,78.12 79.17,78.72 76.77,78.72 76.77,78.12" fill="#f2d000"/>
+<polygon points="79.17,79.91 79.17,80.51 76.77,80.51 76.77,79.91" fill="#c9a227"/>
 <circle cx="77.97" cy="73.43" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
 <circle cx="77.97" cy="82.70" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
 <rect x="69.42" y="76.12" width="6.70" height="3.80" rx="0.4" fill="#ffffff" opacity="0.85"/>
