@@ -203,31 +203,34 @@ is not among them; each set is named for its board so the order keeps one hand's
 
 What sits on the board, and why:
 
-- **U1, the C3**, plugs into two 1x8 female headers (XU1) and is never soldered to the board. Its USB-C end sits at
-  the top edge, by the "USB" arrows inside the socket, so a cable reaches it in a case. The silkscreen labels the
+- **U1, the C3**, plugs into two 1x8 female headers (XU1) and is never soldered to the board. It sits at the board's left end with its USB-C
+  facing off the short edge, by the "USB" arrows inside the socket, so a cable reaches it in a case. The silkscreen labels the
   power-row holes 5V, GND and 3V3 and reads "POWER ROW LEFT" or "POWER ROW RIGHT" between the rows. The end away
   from the USB socket carries its antenna; the board keeps tracks, vias and the GND pour out from under that end.
+  The left M3 hole sits under the module, between its socket rows: fit the M3 screw or standoff before you plug U1
+  in. The head clears both socket strips, with about 6 mm of room under the module.
 - **U2, the amplifier**, on the through-hole board, plugs into a 1x7 female header (XU2) beside U1, with its pin row facing U1 and its screw
   terminal toward the left short edge. It sits on the board because its I2S lines run a short way to U1's pins, it
   draws the panel's largest 5 V current, and the speaker is wired to its own screw terminal, so it needs no harness.
-  Its VIN takes 5 V straight from U1's 5V pin over a 0.8 mm track on the bottom layer: 22.5 mm along the top edge on
-  the power-right board, 6 mm straight across on the power-left board, where U1's 5V pin faces VIN. On the
+  Its VIN takes 5 V straight from U1's 5V pin over a 0.8 mm track on the bottom layer: about 50.6 mm
+  long on the power-right board, all on the top layer. On the power-left board it is about 66.7 mm: 35.2 mm on the top layer
+  to C1's + pad, then 31.4 mm on the bottom layer up to VIN. On the
   power-right board the I2S lines run straight across to U1's left row; on the power-left board they run round the
   antenna end of U1 to its right row, BCLK partly on the top layer.
-  The module covers the spare M2 hole at (5.375, 8.25): fit a screw there, if you use one, before you plug U2 in.
+  The module covers none of the board's mounting holes, so U2 needs no screw fitted first.
   The module's outline and the terminal position are UNCONFIRMED; nothing else on the board sits under it.
-- **U2 on the JLCPCB board** is the MAX98357A chip (TQFN-16, 3 x 3 mm) in the same corner, left of U1. C2 (100 nF)
+- **U2 on the JLCPCB board** is the MAX98357A chip (TQFN-16, 3 x 3 mm) in the same area, right of U1, about 47 mm from the left edge. C2 (100 nF)
   sits directly above its VDD pins, about 0.5 mm from them, with a GND via beside its GND pad; C3 (10 µF) sits next
   to C2 with its own GND via, and RSD2, the SD_MODE resistor, to their right. The exposed pad goes to the bottom GND
   pour through four 0.3 mm thermal vias, and each GND pin (3, 11 and 15) also runs out into the top GND pour and down
-  a via of its own. J6, the speaker header, sits by the left edge below the spare M2 hole, which stays free. The chip
+  a via of its own. J6, the speaker header, sits right of U1, about 36 mm from the left edge, left of the chip block. The chip
   block and J6 take about 56 mm² and 58 mm² of courtyard, against the module's 19 x 17.8 mm (338 mm²). Its I2S lines
   reach U1 as the module's do on the same hand's through-hole board, and its VDD takes 5 V from the same bottom-layer
   5 V track through a via. The chip block, its tracks and vias are the same on both hands.
-- **C1**, the optional 470 µF capacitor, has its pads below U1, by the "C1" mark, on every board: there is no room
-  for the capacitor beside U2's header. Its + pad reaches U2's VIN over about 45 mm of 0.8 mm track (down the left
-  side of U1 and up to VIN) on the through-hole boards, and U2's VDD over about 35 mm on the JLCPCB boards, so it
-  steadies the 5 V rail as a whole rather than sitting at the amplifier.
+- **C1**, the optional 470 µF capacitor, has its pads right of U1's far end, below the amplifier group, by the "C1"
+  mark, on every board. Its + pad reaches U2's VIN over about 38.6 mm of 0.8 mm track on the power-right
+  through-hole board and about 31.4 mm on the power-left one, and C2, beside the chip's VDD pins, over about
+  24.6 mm on both JLCPCB boards, so it steadies the 5 V rail as a whole rather than sitting at the amplifier.
 - **Off the board**: the OLED, the air sensor, the buzzer, the two buttons and the PN532 reader mount on the case,
   where each one has to be seen, pressed, heard or reach the room air or the tags, so each one plugs into a JST-XH
   header, as the schematic shows.

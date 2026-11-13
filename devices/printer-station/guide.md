@@ -212,8 +212,9 @@ Each zip holds the Gerbers and the drill files (plated and unplated holes in sep
 power-left zip are named `printer-station-power-left-*`, those in the power-right zip `printer-station-*`. The title
 block names the hand, and so does the silkscreen under the board's name.
 
-U1 plugs into two 1x8 female headers and is never soldered to the board. Its USB-C end sits at the top edge, so a
-cable reaches it in a case. The silkscreen inside the socket marks the USB end with "USB" and arrows, labels the
+U1 plugs into two 1x8 female headers and is never soldered to the board. It sits at the board's left end with its
+USB-C facing off the short edge, so a cable reaches it in a case. The left M3 hole sits under the module, between its
+socket rows: fit the M3 screw or standoff before you plug U1 in. The silkscreen inside the socket marks the USB end with "USB" and arrows, labels the
 power-row holes 5V, GND and 3V3, and reads "POWER ROW LEFT" or "POWER ROW RIGHT". The end of U1 away from the USB socket carries its antenna; the board keeps tracks, vias
 and the GND pour out from under that end.
 
