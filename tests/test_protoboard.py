@@ -509,7 +509,8 @@ def test_callouts_legend_lists_every_part_and_device_wire(tmp_path, capsys):
         texts = re.findall(r"<text[^>]*>([^<]*)</text>", svg)
         for ref in ("R1", "C9", "U9"):
             assert any(t.startswith(f"{ref} ") for t in texts), ref
-        assert "Parts" in texts and "Device wires" in texts and "OLED (J1)" in texts
+        assert "Parts" in texts and "Device wires" in texts and "OLED" in texts
+        assert not any("J1" in t for t in texts)
         assert any(t.startswith("C9 470 uF") for t in texts) and "fit only if the supply sags" in " ".join(texts)
         assert [t for t in texts if t.startswith(("W1: ", "W2: ", "W3: ", "W4: "))] == \
             ["W1: J25", "W2: J26", "W3: J27", "W4: J28"]
@@ -536,7 +537,7 @@ def test_callouts_steps_are_unnumbered_and_start_with_the_callout_numbers(tmp_pa
     assert bullets[0].startswith("- Wire B: F11 to D14") and bullets[1].startswith("- Wire A: F10 to E10")
     assert "- Part 1, R1 (1k): C10 to C14, lying flat." in bullets
     assert "- Part 3, U9 socket: a 1x3 female header in G10-G12." in " ".join(bullets)
-    assert ("- Device wires 4-7, OLED (J1): 4 W1 in J25, 5 W2 in J26, 6 W3 in J27, 7 W4 in J28. Solder each wire "
+    assert ("- Device wires 4-7, OLED: 4 W1 in J25, 5 W2 in J26, 6 W3 in J27, 7 W4 in J28. Solder each wire "
             "from the top, then tie the bundle to the board edge.") in bullets
     assert next(i for i, ln in enumerate(bullets) if "Part 3" in ln) < next(i for i, ln in enumerate(bullets)
                                                                            if "Device wires" in ln)
@@ -545,4 +546,239 @@ def test_callouts_steps_are_unnumbered_and_start_with_the_callout_numbers(tmp_pa
     assert "|  | wire A | F10 to E10 |" in md
     assert "| 1 | R1 1k | C10 to C14 |" in md
     assert "| 2 | C9 470 uF (fit only if needed) |" in md
-    assert "| 4-7 | J1 OLED wires | 4 W1 J25, 5 W2 J26, 6 W3 J27, 7 W4 J28 |" in md
+    assert "| 4-7 | OLED wires | 4 W1 J25, 5 W2 J26, 6 W3 J27, 7 W4 J28 |" in md
+
+
+def wire_check(tmp_path, lane, capsys):
+    text = ('<protoboard device="t" hand="none" title="T">\n'
+            f'  <wire net="A" from="F2" to="E4" route="channel" y="{lane}"/>\n</protoboard>\n')
+    return check_text(tmp_path, text, {"A": [("X1", "1")]}, capsys)[1]
+
+
+def test_a_wire_keeps_3_5_mm_from_an_m3_hole_centre(tmp_path, capsys):
+    # The run down from F2 to a lane at y=24 passes 3.17 mm from the M3 hole at (7.75, 26): under the screw head.
+    screw = "runs over an M3 mounting hole's screw head"
+    assert screw in wire_check(tmp_path, 24.0, capsys)
+    assert screw not in wire_check(tmp_path, 23.4, capsys)          # 3.58 mm
+
+
+def u1_text(hand: str) -> str:
+    pins = "".join(f'<pin n="{n}" hole="{h}"/>' for n, h in c3(("I", "E"), 25).pins.items())
+    return (f'<protoboard device="t" hand="{hand}" title="T">\n'
+            f'  <part ref="U1" kind="c3-supermini" value="C3" hand="power-left">{pins}</part>\n</protoboard>\n')
+
+
+def test_the_placement_hand_must_match_u1s_hand(tmp_path, capsys):
+    out = check_text(tmp_path, u1_text("power-right"), U1_NETS, capsys)[1]
+    assert "U1: its hand is 'power-left' but the placement's hand is 'power-right'" in out
+    assert "its hand is" not in check_text(tmp_path, u1_text("power-left"), U1_NETS, capsys)[1]
+
+
+U1_NETS = {f"P{i}": [("U1", str(i))] for i in range(1, 17)}
+RING = 'r="1.05" fill="none" stroke="#ffffff"'
+
+
+def late_board(tmp_path, capsys, extra: str, holes: list, nets: dict, style='style="callouts" '):
+    """U1 on rows I and E, `extra` placement text, and a device J1 with its wires in `holes`."""
+    pins = "".join(f'<pin n="{n}" hole="{h}"/>' for n, h in c3(("I", "E"), 25).pins.items())
+    j1 = "".join(f'<pin n="{i}" hole="{h}"/>' for i, h in enumerate(holes, 1))
+    text = (f'<protoboard {style}device="t" hand="power-left" title="T">\n'
+            f'  <part ref="U1" kind="c3-supermini" value="C3" hand="power-left">{pins}</part>\n{extra}'
+            f'  <part ref="J1" kind="leads" label="OLED">{j1}</part>\n</protoboard>\n')
+    code, out = check_text(tmp_path, text, dict(U1_NETS, **nets), capsys)
+    assert code == 0, out
+    return pb.load_placement(tmp_path / "board.xml"), pb.load_netlist(tmp_path / "net.xml")
+
+
+def test_callouts_draw_u1s_pin_names_after_the_lead_rings_and_keep_callouts_off_them(tmp_path, capsys):
+    # The J row lies right beside the names of U1's I-row pins.
+    # Each lead shares its strip with the I-row pin 9-12 below it, so it takes that pin's net.
+    nets = {f"P{8 + i}": [("U1", str(8 + i)), ("J1", str(i))] for i in range(1, 5)}
+    args = (tmp_path, capsys, "", ["J25", "J24", "J23", "J22"], nets)
+    pl, nets_ = late_board(*args)
+    top = pb.render_sheet(pl, nets_, False)
+    assert top.rindex(RING) < top.index('fill="#eaf1f8"')
+    names = pb.Svg()
+    pb.draw_late_names(names, pb.View(False, True), pl, {})
+    assert len(names.keep) == 16
+    for no, (_, c) in callout_centres(top).items():
+        for x0, y0, x1, y1 in names.keep:
+            assert not (x0 - pb.CALLOUT_R < c[0] < x1 + pb.CALLOUT_R and y0 - pb.CALLOUT_R < c[1] < y1 + pb.CALLOUT_R), no
+    # The labels style keeps its order: the names go down with U1, the leads' tags come after.
+    pl, nets_ = late_board(*args, style="")
+    labels = pb.render_sheet(pl, nets_, False)
+    assert labels.index('fill="#eaf1f8"') < labels.index('r="1.3" fill="none" stroke="#ffffff"')
+    assert labels.count('fill="#eaf1f8"') == 16
+
+
+def test_callouts_draw_the_to92_letters_last_on_a_dark_pill(tmp_path, capsys):
+    q1 = ('  <part ref="Q1" kind="to92" value="2N7000" flat="down">'
+          '<pin n="1" hole="F2"/><pin n="2" hole="F3"/><pin n="3" hole="F4"/></part>\n')
+    nets = {"D": [("Q1", "1"), ("J1", "1")], "G": [("Q1", "2"), ("J1", "2")], "S": [("Q1", "3"), ("J1", "3")],
+            "W4": [("J1", "4")]}
+    args = (tmp_path, capsys, q1, ["G2", "G3", "G4", "G5"], nets)
+    pl, nets_ = late_board(*args)         # the lead rings lie on the letters
+    top = pb.render_sheet(pl, nets_, False)
+    pill = 'fill="#3a3a3a" stroke="#ffffff"'
+    assert top.count(pill) == 3
+    assert top.index(pill) > top.rindex(RING)
+    pl, nets_ = late_board(*args, style="")
+    assert pill not in pb.render_sheet(pl, nets_, False)
+
+
+def test_a_callout_with_no_room_is_a_message_not_a_traceback(tmp_path, capsys, monkeypatch):
+    callouts_board(tmp_path, capsys)
+
+    def no_room(*a, **k):
+        raise pb.PlacementError("no room for the callout of R1")
+    monkeypatch.setattr(pb, "draw_callouts", no_room)
+    code = pb.main(["render", str(tmp_path / "board.xml"), "--netlist", str(tmp_path / "net.xml")])
+    assert code == 1 and "no room for the callout of R1" in capsys.readouterr().err
+
+
+def test_callouts_name_a_device_by_its_label_alone(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    assert "J1" not in pb.steps_markdown(pl, nets)
+    labels, _ = callouts_board(tmp_path, capsys, CALLOUTS.replace('style="callouts" ', ""))
+    assert "OLED wires (J1)" in pb.steps_markdown(labels, nets)
+
+
+def test_callouts_draw_a_plug_in_modules_pin_names_after_the_rings_and_keep_callouts_off_them(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    top = pb.render_sheet(pl, nets, False)
+    assert top.index('fill="#f1eaf7"') > top.rindex(RING)
+    assert top.count('fill="#f1eaf7"') == 3
+    names = pb.Svg()
+    pb.draw_late_names(names, pb.View(False, True), pl, {})
+    assert len(names.keep) == 6                  # each name's text and its backing
+    for no, (_, c) in callout_centres(top).items():
+        assert not any(pb._shape_hits_rect(c, _.endswith("lead"), b, 0) for b in names.keep), no
+    pl, nets = callouts_board(tmp_path, capsys, CALLOUTS.replace('style="callouts" ', ""))
+    labels = pb.render_sheet(pl, nets, False)
+    assert labels.index('fill="#f1eaf7"') < labels.index('r="1.3" fill="none" stroke="#ffffff"')
+
+
+def test_callout_shapes_are_tested_by_their_real_outline():
+    box = (10.0, 10.0, 14.0, 11.0)
+    assert pb._shape_hits_rect((15.2, 12.2), True, box, 0.1) and not pb._shape_hits_rect((15.2, 12.2), False, box, 0.1)
+    assert pb._shape_hits_rect((10.5, 12.3), True, box, 0.1) and not pb._shape_hits_rect((10.5, 12.5), True, box, 0.1)
+    assert pb._seg_hits_rect((0, 10.5), (20, 10.5), box, 0) and not pb._seg_hits_rect((0, 9), (20, 9), box, 0.5)
+    assert pb._callouts_touch((0, 0), True, (2.5, 2.5), True, 0.0)          # two squares overlap at a diagonal
+    assert not pb._callouts_touch((0, 0), False, (2.5, 2.5), False, 0.0)    # two circles do not
+    assert pb._callouts_touch((0, 0), True, (2.8, 0), False, 0.3) and not pb._callouts_touch((0, 0), True, (3.0, 0), False, 0.3)
+
+
+def test_a_leader_keeps_off_protected_texts_other_callouts_and_other_leaders(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    space = pb._CalloutSpace(pb.Svg(), pb.View(False, True), pl)
+    a, b = (60.0, 60.0), (70.0, 60.0)
+    assert space.leader_cost(a, b) == 0.0
+    space.keep.append((64.0, 59.0, 65.0, 61.0))
+    assert space.leader_cost(a, b) is None
+    space.keep.clear()
+    space.placed.append(((65.0, 61.0), True))
+    assert space.leader_cost(a, b) is None
+    space.placed.clear()
+    space.leaders.append(((65.0, 55.0), (65.0, 65.0)))
+    assert space.leader_cost(a, b) is None
+
+
+def test_a_callout_nearer_another_ring_is_refused_while_a_better_spot_exists(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    v = pb.View(False, True)
+    space = pb._CalloutSpace(pb.Svg(), v, pl)
+    key = ("J1", "1")
+    ring = space.rings[key]
+    for strict in (True, False):
+        for _, c, end in pb._candidates(space, key, [], False, ring, 9, strict):
+            d = math.dist(c, ring)
+            near = any(math.dist(c, q) < d + 0.1 for k, q in space.rings.items() if k != key)
+            assert strict is False or not near
+
+
+def test_a_callout_with_no_room_names_the_device_and_wire(tmp_path, capsys, monkeypatch):
+    pl, nets = callouts_board(tmp_path, capsys)
+    asked = []
+    real = pb._place_callout
+
+    def spy(space, key, polys, on_body, ring=None, name=None):
+        asked.append(name)
+        return real(space, key, polys, on_body, ring, name)
+    monkeypatch.setattr(pb, "_place_callout", spy)
+    pb.render_sheet(pl, nets, False)
+    assert "OLED W1 at J25" in asked and "R1" in asked
+    space = pb._CalloutSpace(pb.Svg(), pb.View(False, True), pl)
+    space.bounds = (0, 0, 1, 1)
+    with pytest.raises(pb.PlacementError, match=r"no room for the callout of OLED W1 at J25$"):
+        real(space, ("J1", "1"), [], False, space.rings[("J1", "1")], "OLED W1 at J25")
+
+
+RAILS = '''<protoboard style="callouts" device="t" hand="none" title="T">
+  <part ref="J1" kind="leads" label="PWR"><pin n="1" hole="J5"/><pin n="2" hole="J6"/></part>
+  <wire net="A" from="J5" to="T+8"/>
+  <wire net="B" from="J6" to="B+8"/>
+  <wire net="B" from="I6" to="B-8"/>
+</protoboard>
+'''
+RAILS_NETS = {"A": [("J1", "1")], "B": [("J1", "2")]}
+LEAVE = "Leave the + rail link pads beside the left M3 hole open: the top + rail is A and the bottom + rail is B."
+
+
+def rails_render(tmp_path, text):
+    p = tmp_path / "rails.xml"
+    p.write_text(text, encoding="utf-8")
+    pl = pb.load_placement(p)
+    return (pb.steps_markdown(pl, RAILS_NETS), pb.render_sheet(pl, RAILS_NETS, False),
+            pb.render_sheet(pl, RAILS_NETS, True))
+
+
+def test_a_rail_whose_halves_carry_different_nets_gets_leave_open_steps_and_mark(tmp_path):
+    md, top, solder = rails_render(tmp_path, RAILS)
+    assert LEAVE in md and "Joining them would short A to B." in md
+    assert "- Leave the + rail" in md and "Leave the − rail" not in md     # the - rail has only one half in use
+    for svg in (top, solder):
+        assert svg.count("leave open") == 2        # the mark beside the board and the legend key
+    labels = RAILS.replace('style="callouts" ', "")
+    md, top, solder = rails_render(tmp_path, labels)
+    assert f"1. {LEAVE}" not in md and LEAVE in md       # the steps line is part of the check step
+    assert "leave open" not in top and "leave open" not in solder
+
+
+def test_a_bridged_rail_or_one_unused_half_gets_no_leave_open(tmp_path):
+    for text in (RAILS.replace("</protoboard>", '  <bridge rail="+"/>\n</protoboard>'),
+                 RAILS.replace('  <wire net="B" from="J6" to="B+8"/>\n', "")):
+        md, top, solder = rails_render(tmp_path, text)
+        assert "Leave the" not in md
+        assert "leave open" not in top and "leave open" not in solder
+
+
+RAILS_MINUS = RAILS.replace("T+8", "T-8").replace("B+8", "B-8").replace(' <wire net="B" from="I6" to="B-8"/>', ' <wire net="B" from="I6" to="B-9"/>')
+BOTH = RAILS.replace("</protoboard>", '  <wire net="C" from="J7" to="T-8"/>\n  <wire net="D" from="J8" to="B-8"/>\n</protoboard>'
+                     ).replace('<pin n="2" hole="J6"/>', '<pin n="2" hole="J6"/><pin n="3" hole="J7"/><pin n="4" hole="J8"/>'
+                               ).replace('  <wire net="B" from="I6" to="B-8"/>\n', "")
+
+
+def open_marks(svg):
+    """(x of the text, anchor) for each "leave open" text beside the board, not the legend key."""
+    import re
+    return [(float(m.group(1)), m.group(2)) for m in
+            re.finditer(r'<text x="([\d.]+)" y="[\d.]+" font-size="1.20" text-anchor="(\w+)"[^>]*>leave open<', svg)]
+
+
+def test_the_leave_open_mark_sits_at_the_pads_of_its_rail(tmp_path):
+    nets = {"A": [("J1", "1")], "B": [("J1", "2")], "C": [("J1", "3")], "D": [("J1", "4")]}
+    for text, want in ((RAILS, ["end"]), (RAILS_MINUS, ["start"]), (BOTH, ["end", "start"])):
+        p = tmp_path / "r.xml"
+        p.write_text(text, encoding="utf-8")
+        pl = pb.load_placement(p)
+        n = nets if text is BOTH else RAILS_NETS
+        for solder in (False, True):
+            svg = pb.render_sheet(pl, n, solder)
+            marks = open_marks(svg)
+            assert len(marks) == len(want), (text, solder, marks)
+            assert len({m[0] for m in marks}) == len(marks)
+            assert sorted(m[1] for m in marks) == sorted(want if not solder else [{"end": "start", "start": "end"}[a] for a in want])
+            assert "different nets" in svg and "different supplies" not in svg
+        md = pb.steps_markdown(pl, n)
+        assert "no short from A to B" in md
+        assert ("no short from C to D" in md) == (text is BOTH)
