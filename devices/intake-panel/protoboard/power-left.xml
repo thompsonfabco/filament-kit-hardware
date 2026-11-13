@@ -113,7 +113,7 @@
   <wire net="+3V3" from="E3" to="T+18" route="channel" y="26.6" />
   <wire net="SDA" from="G1" to="G9" />
   <wire net="SDA" from="H9" to="H19" />
-  <wire net="SCL" from="F2" to="F20" route="channel" y="23.7" />
+  <wire net="SCL" from="F2" to="F20" route="channel" y="23.4" />
   <wire net="LAMP_DISCARD" from="F3" to="E17" route="channel" y="25.3" />
   <wire net="I2S_LRC" from="F7" to="F10" />
   <wire net="I2S_BCLK" from="J6" to="J11" />

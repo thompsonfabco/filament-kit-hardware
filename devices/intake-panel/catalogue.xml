@@ -27,8 +27,8 @@
     <pin gpio="21" constant="PIN_I2S_DIN" role="i2s-din"/>
   </pins>
   <parts>
-    <part ref="BRD1" name="ElectroCookie solderable breadboard prototype board, full size" kind="passive" qty="1"
-          use="main board" asin="B07ZYNWJ1S"/>
+    <part ref="BRD1" name="ElectroCookie solderable breadboard prototype board, full size" kind="passive" qty="0-1"
+          use="main board of the protoboard build; the PCB builds use their own board instead" asin="B07ZYNWJ1S"/>
     <part ref="U1" name="ESP32-C3 Super Mini" kind="active" qty="1" use="controller"
           vmax="3.6" imax="1.0" imax_pin="UNCONFIRMED" i_typ="0.04"
           imax_basis="ESP32-C3 chip: vmax is the absolute maximum on the input power pins; imax is the absolute
@@ -100,18 +100,18 @@
     <part ref="RSD" name="10 kohm" kind="passive" qty="0-1"
           use="amplifier SD pull-up to 3V3, only if the module has none"/>
     <part ref="C1" name="470 uF electrolytic, 10 V or more" kind="passive" qty="0-1"
-          use="across the 5 V rail (+) and GND (-), only if 5 V sags on speech peaks: at U2's VIN on the prototype board;
+          use="across the 5 V rail (+) and GND (-), only if 5 V sags on speech peaks; PCB builds only (the protoboard build leaves it off):
           below U1 on the through-hole and JLCPCB boards, about 45 mm of track from U2's VIN on the through-hole board"/>
     <part ref="XU1" name="female pin header, 2.54 mm, 8-pin" kind="passive" qty="2"
           use="socket for U1, so its USB-C plug clears the M3 screw head"/>
     <part ref="XU2" name="female pin header, 2.54 mm, 7-pin" kind="passive" qty="0-1"
-          use="socket for U2 on the through-hole boards (kicad/intake-panel.kicad_pcb for a C3 power-right, kicad-power-left/intake-panel-power-left.kicad_pcb for a C3 power-left); the JLCPCB boards (kicad-smt/intake-panel-smt.kicad_pcb and kicad-smt-power-left/intake-panel-smt-power-left.kicad_pcb) carry the MAX98357A chip instead of the module"/>
-    <part ref="J1-J5" name="JST-XH 2.50 mm pitch header and plug, 4-pin x4 and 3-pin x1" kind="passive" qty="5"
-          use="off-board connectors"/>
+          use="socket for U2 on the through-hole boards and the protoboard build (kicad/intake-panel.kicad_pcb for a C3 power-right, kicad-power-left/intake-panel-power-left.kicad_pcb for a C3 power-left); the JLCPCB boards (kicad-smt/intake-panel-smt.kicad_pcb and kicad-smt-power-left/intake-panel-smt-power-left.kicad_pcb) carry the MAX98357A chip instead of the module"/>
+    <part ref="J1-J5" name="JST-XH 2.50 mm pitch header and plug, 4-pin x4 and 3-pin x1" kind="passive" qty="0-5"
+          use="off-board connectors on the PCB builds; the protoboard build solders the device wires straight to the board"/>
     <part ref="J7" name="JST-XH 2.50 mm pitch header and plug, 4-pin" kind="passive" qty="0-1"
-          use="off-board connector for the PN532 reader U7, only if U7 is fitted"/>
-    <part ref="F1-F2" name="wire ferrule to suit the speaker wire" kind="passive" qty="2"
-          use="speaker leads into U2's screw terminal"/>
+          use="off-board connector for the PN532 reader U7, only if U7 is fitted; PCB builds only (the protoboard build solders the wires)"/>
+    <part ref="F1-F2" name="wire ferrule to suit the speaker wire" kind="passive" qty="0-2"
+          use="speaker leads into U2's screw terminal, on the through-hole board and the protoboard build; not the JLCPCB board"/>
   </parts>
   <connectors>
     <connector ref="J1" type="JST-XH-4" order="GND 3V3 SDA SCL" to="OLED (U3)"/>

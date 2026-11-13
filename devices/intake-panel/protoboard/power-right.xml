@@ -105,7 +105,7 @@
   <wire net="GND" from="A15" to="B-15" />
   <wire net="+5V" from="T+16" to="E16" />
   <wire net="SDA" from="C1" to="C18" />
-  <wire net="SCL" from="E2" to="E19" route="channel" y="27.8" />
+  <wire net="SCL" from="E2" to="E19" route="channel" y="28.6" />
   <wire net="LAMP_DISCARD" from="E3" to="F24" route="channel" y="25.2" />
   <wire net="GND" from="J12" to="T-12" />
   <wire net="GND" from="J28" to="T-28" />

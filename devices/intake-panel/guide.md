@@ -31,14 +31,14 @@ module you have before you order one (see "Which C3 module do I have?").
 | U7 | Elechouse NFC Module V3 (PN532), set to I2C mode (address 0x24) | 0 or 1 | Tag reader, optional (see "PN532 reader") |
 | BZ1 | 3-pin buzzer module, low-level trigger (active-low) | 1 | Beeps |
 | SW1, SW2 | Illuminated normally-open push buttons with built-in 5 V LEDs (series resistor built in), yellow and red | 2 | Hold and Discard |
-| RI1, RI2 | 4.7 kΩ | 0 or 2 | I2C pull-ups, only if neither I2C board has them |
+| RI1, RI2 | 4.7 kΩ | 0 or 2 | I2C pull-ups, only if neither I2C board has them; custom boards only, not fitted on the protoboard build |
 | RSD | 10 kΩ | 0 or 1 | Amplifier SD pull-up to 3V3, only if the module has none (see "Amplifier") |
-| C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks |
+| C1 | 470 µF electrolytic, 10 V or more | 0 or 1 | Across the amplifier's VIN and GND, only if 5 V sags on speech peaks; custom boards only, not fitted on the protoboard build |
 | XU1 | Female pin headers, 2.54 mm, 8-pin | 2 | Socket for U1, so its USB-C plug clears the M3 screw head (see "Board and layout") |
-| XU2 | Female pin header, 2.54 mm, 7-pin | 0 or 1 | Socket for U2, through-hole board only (see "Board") |
-| J1-J5 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x4 (J1-J4) and 3-pin x1 (J5) | 5 | Off-board connectors |
-| J7 | JST-XH (2.50 mm pitch) header and plug, 4-pin | 0 or 1 | Off-board connector for U7, only if U7 is fitted |
-| F1, F2 | Wire ferrules to suit the speaker wire | 2 | Speaker leads into the module's screw terminal (the JLCPCB board takes a JST-XH plug on J6 instead) |
+| XU2 | Female pin header, 2.54 mm, 7-pin | 0 or 1 | Socket for U2, on the through-hole board and the protoboard build (see "Board" and "Protoboard build") |
+| J1-J5 | JST-XH (2.50 mm pitch) headers and plugs: 4-pin x4 (J1-J4) and 3-pin x1 (J5) | 0 or 5 | Off-board connectors, custom boards only: the protoboard build solders the device wires straight to the board |
+| J7 | JST-XH (2.50 mm pitch) header and plug, 4-pin | 0 or 1 | Off-board connector for U7, only if U7 is fitted; custom boards only |
+| F1, F2 | Wire ferrules to suit the speaker wire | 0 or 2 | Speaker leads into the module's screw terminal (the JLCPCB board takes a JST-XH plug on J6 instead) |
 
 Room-air option B (U5 + U6, the BMP280 + AHT20 board) is optional and not in the [BOM](bom.md), which lists the
 BMP280 board (U4).
@@ -70,9 +70,11 @@ The buttons use the C3's internal pull-ups, so each switch goes between its pin 
 
 ## Connectors
 
-Every part off the main board plugs in through a JST-XH connector (2.50 mm pitch), so the board can come out of its
-case without desoldering. The speaker is the one exception: on the through-hole board it goes into the amplifier
-module's screw terminal.
+On the custom boards, every part off the main board plugs in through a JST-XH connector (2.50 mm pitch), so the
+board can come out of its case without desoldering. The speaker is the one exception: on the through-hole board it
+goes into the amplifier module's screw terminal. The protoboard build (see "Protoboard build") uses no plugs: each
+device's wires are soldered into the board, in the pin order of the table below, and the speaker goes into the
+amplifier's screw terminal.
 
 | Ref | Type | Pin order | To |
 |---|---|---|---|
@@ -209,14 +211,14 @@ What sits on the board, and why:
   from the USB socket carries its antenna; the board keeps tracks, vias and the GND pour out from under that end.
   The left M3 hole sits under the module, between its socket rows: fit the M3 screw or standoff before you plug U1
   in. The head clears both socket strips, with about 6 mm of room under the module.
-- **U2, the amplifier**, on the through-hole board, plugs into a 1x7 female header (XU2) beside U1, with its pin row facing U1 and its screw
-  terminal toward the left short edge. It sits on the board because its I2S lines run a short way to U1's pins, it
+- **U2, the amplifier**, on the through-hole board, plugs into a 1x7 female header (XU2) beside U1, with its screw terminal facing U1, toward the
+  left short edge, and its pin row toward the far end of the board. It sits on the board because its I2S lines run a short way to U1's pins, it
   draws the panel's largest 5 V current, and the speaker is wired to its own screw terminal, so it needs no harness.
-  Its VIN takes 5 V straight from U1's 5V pin over a 0.8 mm track on the bottom layer: about 50.6 mm
-  long on the power-right board, all on the top layer. On the power-left board it is about 66.7 mm: 35.2 mm on the top layer
-  to C1's + pad, then 31.4 mm on the bottom layer up to VIN. On the
-  power-right board the I2S lines run straight across to U1's left row; on the power-left board they run round the
-  antenna end of U1 to its right row, BCLK partly on the top layer.
+  Its VIN takes 5 V straight from U1's 5V pin over a 0.8 mm track: on the power-right board about 50.6 mm, all on the top layer. On the
+  power-left board it is about 66.7 mm: 35.2 mm on the top layer to C1's + pad, then 31.4 mm on the bottom layer up
+  to VIN. On the power-right board the I2S lines go round the antenna end of U1 to its left row: only BCLK runs on the bottom
+  layer, while LRC and DIN start on the top layer and drop through vias. On the power-left board they run straight
+  across to U1's right row, on the top layer except for a short bottom-layer run at the end of DIN.
   The module covers none of the board's mounting holes, so U2 needs no screw fitted first.
   The module's outline and the terminal position are UNCONFIRMED; nothing else on the board sits under it.
 - **U2 on the JLCPCB board** is the MAX98357A chip (TQFN-16, 3 x 3 mm) in the same area, right of U1, about 47 mm from the left edge. C2 (100 nF)
@@ -225,8 +227,8 @@ What sits on the board, and why:
   pour through four 0.3 mm thermal vias, and each GND pin (3, 11 and 15) also runs out into the top GND pour and down
   a via of its own. J6, the speaker header, sits right of U1, about 36 mm from the left edge, left of the chip block. The chip
   block and J6 take about 56 mm² and 58 mm² of courtyard, against the module's 19 x 17.8 mm (338 mm²). Its I2S lines
-  reach U1 as the module's do on the same hand's through-hole board, and its VDD takes 5 V from the same bottom-layer
-  5 V track through a via. The chip block, its tracks and vias are the same on both hands.
+  reach U1 as the module's do on the same hand's through-hole board, and its VDD takes 5 V from the board's 5 V track
+  through a via. The chip block, its tracks and vias are the same on both hands.
 - **C1**, the optional 470 µF capacitor, has its pads right of U1's far end, below the amplifier group, by the "C1"
   mark, on every board. Its + pad reaches U2's VIN over about 38.6 mm of 0.8 mm track on the power-right
   through-hole board and about 31.4 mm on the power-left one, and C2, beside the chip's VDD pins, over about
@@ -272,7 +274,8 @@ The board has pads for four parts that are left out at first. Each is marked DNP
 
 On the JLCPCB board these are 0603 resistors and a 6.3 mm surface-mount electrolytic. JLCPCB leaves them off, as on
 the through-hole board; the LCSC part for each is in the [bill of materials](bom.md), to order with the board or to
-solder by hand later.
+solder by hand later. The protoboard build has no holes for RI1, RI2 and C1 and leaves them out; only RSD1 keeps
+its place there.
 
 ### Ordering the JLCPCB board
 
@@ -289,7 +292,8 @@ solder by hand later.
      rotation in the preview if a part shows otherwise.
      The CPL gives Q1 and Q2 a rotation of 90 where the KiCad board has -90. The 180° offset is intended: it is the
      usual correction for JLCPCB's SOT-23 orientation, and the preview check above settles it.
-   - U2, the MAX98357A: its pin 1 corner sits at the silkscreen's pin 1 mark, at the chip's lower right, toward U1.
+   - U2, the MAX98357A: its pin 1 corner sits at the silkscreen's pin 1 mark. With the board's USB end at the left and the header edge at the bottom, that is the
+     chip's lower right corner: nearest the bottom edge and farthest from U1.
      The rotation in the CPL file is KiCad's, and JLCPCB's convention for this package is UNCONFIRMED: correct it in
      the preview if the chip's pin 1 dot shows elsewhere. A chip turned the wrong way has every pin on the wrong net.
 5. JLCPCB's design check may flag via-in-pad on U2. The four vias in its exposed pad are thermal vias and belong
@@ -325,10 +329,70 @@ For the JLCPCB board, U2 (the MAX98357A chip), C2, C3, RSD2, the resistors, Q1 a
 7. Crimp the harnesses (see "Connectors") and connect the speaker (see "Speaker"): into U2's screw terminal on the
    through-hole board, or on a JST-XH 2-pin plug into J6 on the JLCPCB board.
 
+## Protoboard build
+
+This builds the panel on one ElectroCookie full board (see "Board and layout" for the board's measurements) instead
+of a custom board. There are no plugs on this build: each off-board device's wires (OLED, air sensor, buttons,
+buzzer and the optional PN532 reader) are soldered straight into numbered holes on the board. The JST-XH headers and
+plugs belong to the custom boards. RI1, RI2 and C1 are not on this build; leave them out. The amplifier plugs into a
+1x7 female header on the board, and the speaker goes to the amplifier's screw terminal.
+
+Pick the drawing that matches your C3 module (see "Which C3 module do I have?"). A module in the wrong drawing puts
+5 V on a GPIO pin.
+
+### Power-left module
+
+![Protoboard, top view, power-left](protoboard/power-left-top.svg)
+
+![Protoboard, solder side, mirrored, power-left](protoboard/power-left-solder.svg)
+
+The build order and the hole list are in [power-left-steps.md](protoboard/power-left-steps.md).
+
+### Power-right module
+
+![Protoboard, top view, power-right](protoboard/power-right-top.svg)
+
+![Protoboard, solder side, mirrored, power-right](protoboard/power-right-solder.svg)
+
+The build order and the hole list are in [power-right-steps.md](protoboard/power-right-steps.md).
+
+### Reading the drawing
+
+- Holes are named as printed on the board: a letter A to J and a number 1 to 30, so C12 is letter C at number 12. At
+  each number, holes F to J are joined by one copper strip and A to E by another; nothing crosses the channel
+  between F and E.
+- Circles are parts, and each carries a number. Rounded squares are the device wires, one per wire, each numbered and
+  named for its signal. The legend under the board lists every number. Wire links between holes carry no number; they
+  are drawn by colour, and the steps file lists them.
+- U1 plugs into two 1x8 female headers across the channel, with its USB-C end at number 1 so a cable reaches it past
+  the board's short edge. Fit the M3 screw or standoff and every wire under U1's USB end before you plug U1 in.
+- U2 plugs into a 1x7 female header; the steps file says which way its screw terminal faces. RSD1 is marked on the
+  drawing as fitted only when needed (see "Parts fitted only when needed"); leave its holes free otherwise.
+- The - rails are ground; fit the - link beside the right M3 hole, as the steps file lists it, to join them. The two + rails
+  carry 5V and 3V3 (the drawing's wire colours and the steps file say which half is which, and it depends on the C3's hand),
+  so leave the + link pads open: linking them would short 5V to 3V3.
+- Use solid-core insulated wire. Solder each device wire from the top, then tie each device's bundle to the board edge.
+
+The check that the drawing matches the schematic runs in CI and by hand (it needs kicad-cli, on PATH or in
+`KICAD_CLI`):
+
+```
+python tools/protoboard.py check devices/intake-panel/protoboard/power-left.xml
+```
+
+It reads the placement file, builds the board's connections from its strips, rails, rail links, wires and part pins,
+and compares them with the netlist: every net one connected group, no two nets joined, every pin of an on-board part
+placed, and no hole holding two leads. `python tools/protoboard.py render <placement>` redraws the views and the step
+list from the placement file.
+
+Board facts the drawing assumes (UNCONFIRMED until checked on a board): the rails have one hole per column, in line
+with the columns, and the link pads sit beside the M3 holes as drawn.
+
 ## Board and layout
 
 This section is the build without the custom board, on the ElectroCookie prototype board (see "Board" for the
-custom board).
+custom board). The checked hole-by-hole drawings are in "Protoboard build"; they replace the suggested layout below,
+and they use no JST-XH headers.
 
 The main board is an ElectroCookie full-size solderable breadboard prototype board. Its strips follow a standard
 breadboard: two halves of five-hole strips either side of a centre channel, with power rails along both long edges.
@@ -366,7 +430,7 @@ the other M3 hole. So mount U1 in two 8-pin female headers soldered to the board
 above the M3 screw head and standoff. The bench checklist checks that the cable plugs in fully with the board
 screwed into the case.
 
-The amplifier module, U2, sits on the main board with its pins soldered into the strips. It isn't an off-board part,
+The amplifier module, U2, sits on the main board in a 1x7 female header (XU2). It isn't an off-board part,
 so it has no JST-XH connector. Only the speaker leaves it, through the screw terminal.
 
 Suggested layout, from the USB end of the board to the far end:
@@ -693,8 +757,8 @@ Panel checklist:
 - [ ] Idle hiss between phrases is not noticeable at working distance.
 - [ ] A full intake runs from scan to save with a real spool.
 - [ ] USB current with both LEDs lit and speech at the chosen volume is at or under 500 mA, and the 5 V and 3V3 rails
-  hold. If 5 V sags on speech peaks, fit C1, a 470 µF electrolytic rated 10 V or more: on the prototype board at the
-  module, + to VIN and - to GND; on a custom board in its C1 pads (see "Board"). Then measure again.
+  hold. If 5 V sags on speech peaks, fit C1, a 470 µF electrolytic rated 10 V or more: on a custom board in its C1 pads
+  (see "Board"; the protoboard build has no place for it). Then measure again.
 
 Record the result below, and the firmware version, date and measured current in `catalogue.xml` (`validated` and
 `power`).

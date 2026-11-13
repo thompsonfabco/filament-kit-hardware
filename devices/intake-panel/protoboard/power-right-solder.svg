@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128.0mm" height="200.5mm" viewBox="0 0 128.0 200.5" font-family="Arial, Helvetica, sans-serif">
-<rect x="0" y="0" width="128.0" height="200.5" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="128.0mm" height="203.7mm" viewBox="0 0 128.0 203.7" font-family="Arial, Helvetica, sans-serif">
+<rect x="0" y="0" width="128.0" height="203.7" fill="#ffffff"/>
 <text x="4.00" y="6.00" font-size="3.00" text-anchor="start" font-weight="bold" fill="#1a1a1a" >Intake panel, C3 POWER-RIGHT — protoboard</text>
 <rect x="4" y="8.5" width="120.0" height="6.2" rx="1" fill="#111"/>
 <text x="64.00" y="13.20" font-size="3.10" text-anchor="middle" font-weight="bold" fill="#ffffff" >SOLDER SIDE (mirrored): number 1 is on the RIGHT</text>
@@ -1055,7 +1055,7 @@
 <polygon points="102.10,67.08 81.78,67.08 81.78,69.62 102.10,69.62" fill="#2b2b2b" opacity="0.25"/>
 <polygon points="81.81,69.73 104.33,69.73 104.33,51.73 81.81,51.73" fill="#1f4e79" fill-opacity="0.08" stroke="#1f4e79" stroke-width="0.4" stroke-dasharray="1.6,0.8"/>
 <polygon points="101.73,65.18 105.03,65.18 105.03,56.28 101.73,56.28" fill="#bdc3c7" stroke="#1f4e79" stroke-width="0.3"/>
-<text x="103.43" y="61.23" font-size="1.30" text-anchor="middle" font-weight="bold" fill="#1f4e79" >USB-C</text>
+<text x="103.43" y="58.83" font-size="1.30" text-anchor="middle" font-weight="bold" fill="#1f4e79" >USB-C</text>
 <polygon points="79.24,67.08 61.46,67.08 61.46,69.62 79.24,69.62" fill="#2b2b2b" opacity="0.25"/>
 <polygon points="79.25,67.08 61.45,67.08 61.45,86.38 79.25,86.38" fill="#6a3d9a" fill-opacity="0.07" stroke="#6a3d9a" stroke-width="0.4" stroke-dasharray="1.6,0.8"/>
 <circle cx="77.97" cy="68.35" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
@@ -1098,7 +1098,7 @@
 <polyline points="65.27,75.97 65.27,82.70" fill="none" stroke="#000000" stroke-width="0.35" stroke-dasharray="1,0.8" opacity="0.55"/>
 <polyline points="62.73,41.90 62.73,65.81" fill="none" stroke="#D55E00" stroke-width="0.35" stroke-dasharray="1,0.8" opacity="0.55"/>
 <polyline points="100.83,70.89 57.65,70.89" fill="none" stroke="#0072B2" stroke-width="0.35" stroke-dasharray="1,0.8" opacity="0.55"/>
-<polyline points="98.29,65.81 98.29,63.80 55.11,63.80 55.11,65.81" fill="none" stroke="#56B4E9" stroke-width="0.35" stroke-dasharray="1,0.8" opacity="0.55"/>
+<polyline points="98.29,65.81 98.29,64.60 55.11,64.60 55.11,65.81" fill="none" stroke="#56B4E9" stroke-width="0.35" stroke-dasharray="1,0.8" opacity="0.55"/>
 <polyline points="95.75,65.81 95.75,61.20 42.41,61.20 42.41,58.19" fill="none" stroke="#F28E2B" stroke-width="0.35" stroke-dasharray="1,0.8" opacity="0.55"/>
 <polyline points="72.89,48.03 72.89,39.40" fill="none" stroke="#000000" stroke-width="0.35" stroke-dasharray="1,0.8" opacity="0.55"/>
 <polyline points="32.25,48.03 32.25,39.40" fill="none" stroke="#000000" stroke-width="0.35" stroke-dasharray="1,0.8" opacity="0.55"/>
@@ -1199,12 +1199,12 @@
 <circle cx="83.05" cy="48.03" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
 <circle cx="83.05" cy="48.03" r="1.05" fill="none" stroke="#8C564B" stroke-width="0.5"/>
 <circle cx="83.05" cy="48.03" r="0.5" fill="#8C564B"/>
+<circle cx="103.40" cy="62.00" r="1.15" fill="#ffffff" opacity="0.85"/>
+<path d="M102.75,61.35 L104.05,62.65 M102.75,62.65 L104.05,61.35" stroke="#c0392b" stroke-width="0.45" stroke-linecap="round" fill="none"/>
+<line x1="103.00" y1="62.00" x2="109.40" y2="62.00" stroke="#c0392b" stroke-width="0.25"/>
+<text x="109.76" y="62.40" font-size="1.20" text-anchor="start" font-weight="bold" fill="#c0392b" >leave open</text>
 <line x1="80.36" y1="54.74" x2="80.36" y2="56.94" stroke="#222222" stroke-width="0.25"/>
-<line x1="59.98" y1="72.24" x2="58.34" y2="69.51" stroke="#222222" stroke-width="0.25"/>
-<line x1="53.81" y1="63.89" x2="56.44" y2="65.21" stroke="#222222" stroke-width="0.25"/>
-<line x1="53.37" y1="68.45" x2="54.33" y2="69.79" stroke="#222222" stroke-width="0.25"/>
-<line x1="51.84" y1="69.44" x2="53.83" y2="68.78" stroke="#222222" stroke-width="0.25"/>
-<line x1="79.97" y1="46.36" x2="79.01" y2="47.17" stroke="#222222" stroke-width="0.25"/>
+<line x1="54.29" y1="63.94" x2="56.47" y2="65.15" stroke="#222222" stroke-width="0.25"/>
 <g class="callout-part" data-no="1"><circle cx="80.36" cy="53.44" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="80.36" y="54.02" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">1</text></g>
 <g class="callout-part" data-no="2"><circle cx="39.95" cy="53.32" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="39.95" y="53.90" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">2</text></g>
 <g class="callout-part" data-no="3"><circle cx="78.18" cy="43.56" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="78.18" y="44.14" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">3</text></g>
@@ -1214,29 +1214,29 @@
 <g class="callout-part" data-no="7"><circle cx="31.00" cy="52.20" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="31.00" y="52.78" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">7</text></g>
 <g class="callout-part" data-no="8"><circle cx="93.31" cy="58.73" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="93.31" y="59.31" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">8</text></g>
 <g class="callout-part" data-no="9"><circle cx="70.45" cy="74.08" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="70.45" y="74.66" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">9</text></g>
-<g class="callout-lead" data-no="12"><rect x="59.35" y="72.05" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="60.65" y="73.93" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">12</text></g>
-<g class="callout-lead" data-no="31"><rect x="51.35" y="62.01" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="52.65" y="63.89" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">31</text></g>
-<g class="callout-lead" data-no="32"><rect x="51.31" y="66.09" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="52.61" y="67.97" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">32</text></g>
-<g class="callout-lead" data-no="13"><rect x="49.31" y="68.55" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="50.61" y="70.43" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">13</text></g>
-<g class="callout-lead" data-no="18"><rect x="76.21" y="37.10" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="77.51" y="38.98" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">18</text></g>
-<g class="callout-lead" data-no="27"><rect x="97.45" y="49.27" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="98.75" y="51.15" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">27</text></g>
-<g class="callout-lead" data-no="21"><rect x="79.67" y="44.23" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="80.97" y="46.11" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">21</text></g>
-<g class="callout-lead" data-no="11"><rect x="43.19" y="83.70" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="44.49" y="85.58" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">11</text></g>
-<g class="callout-lead" data-no="20"><rect x="82.21" y="41.10" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="83.51" y="42.98" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">20</text></g>
-<g class="callout-lead" data-no="17"><rect x="53.81" y="75.13" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="55.11" y="77.01" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">17</text></g>
-<g class="callout-lead" data-no="19"><rect x="86.37" y="49.27" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="87.67" y="51.15" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">19</text></g>
-<g class="callout-lead" data-no="15"><rect x="35.57" y="83.70" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="36.87" y="85.58" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">15</text></g>
-<g class="callout-lead" data-no="30"><rect x="27.95" y="83.70" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="29.25" y="85.58" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">30</text></g>
-<g class="callout-lead" data-no="25"><rect x="36.53" y="43.73" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="37.83" y="45.61" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">25</text></g>
-<g class="callout-lead" data-no="22"><rect x="40.65" y="38.10" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="41.95" y="39.98" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">22</text></g>
-<g class="callout-lead" data-no="10"><rect x="46.19" y="78.40" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="47.49" y="80.28" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">10</text></g>
-<g class="callout-lead" data-no="16"><rect x="57.35" y="75.13" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="58.65" y="77.01" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">16</text></g>
-<g class="callout-lead" data-no="23"><rect x="91.91" y="43.73" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="93.21" y="45.61" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">23</text></g>
-<g class="callout-lead" data-no="26"><rect x="87.29" y="38.10" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="88.59" y="39.98" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">26</text></g>
-<g class="callout-lead" data-no="28"><rect x="84.75" y="46.23" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="86.05" y="48.11" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">28</text></g>
-<g class="callout-lead" data-no="14"><rect x="38.57" y="78.40" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="39.87" y="80.28" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">14</text></g>
-<g class="callout-lead" data-no="24"><rect x="43.65" y="43.60" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="44.95" y="45.48" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">24</text></g>
-<g class="callout-lead" data-no="29"><rect x="30.95" y="78.40" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="32.25" y="80.28" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">29</text></g>
+<g class="callout-lead" data-no="31"><rect x="51.85" y="62.01" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="53.15" y="63.89" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">31</text></g>
+<g class="callout-lead" data-no="12"><rect x="58.85" y="67.05" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="60.15" y="68.93" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">12</text></g>
+<g class="callout-lead" data-no="27"><rect x="96.95" y="49.27" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="98.25" y="51.15" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">27</text></g>
+<g class="callout-lead" data-no="32"><rect x="51.31" y="69.59" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="52.61" y="71.47" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">32</text></g>
+<g class="callout-lead" data-no="18"><rect x="76.71" y="38.10" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="78.01" y="39.98" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">18</text></g>
+<g class="callout-lead" data-no="13"><rect x="51.31" y="66.55" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="52.61" y="68.43" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">13</text></g>
+<g class="callout-lead" data-no="21"><rect x="78.67" y="49.23" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="79.97" y="51.11" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">21</text></g>
+<g class="callout-lead" data-no="11"><rect x="43.69" y="83.70" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="44.99" y="85.58" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">11</text></g>
+<g class="callout-lead" data-no="19"><rect x="86.87" y="49.27" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="88.17" y="51.15" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">19</text></g>
+<g class="callout-lead" data-no="20"><rect x="81.71" y="40.60" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="83.01" y="42.48" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">20</text></g>
+<g class="callout-lead" data-no="25"><rect x="36.53" y="44.23" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="37.83" y="46.11" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">25</text></g>
+<g class="callout-lead" data-no="15"><rect x="36.07" y="83.70" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="37.37" y="85.58" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">15</text></g>
+<g class="callout-lead" data-no="17"><rect x="53.81" y="74.63" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="55.11" y="76.51" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">17</text></g>
+<g class="callout-lead" data-no="30"><rect x="28.45" y="83.70" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="29.75" y="85.58" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">30</text></g>
+<g class="callout-lead" data-no="22"><rect x="41.15" y="38.10" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="42.45" y="39.98" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">22</text></g>
+<g class="callout-lead" data-no="10"><rect x="46.19" y="78.90" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="47.49" y="80.78" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">10</text></g>
+<g class="callout-lead" data-no="16"><rect x="58.85" y="72.13" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="60.15" y="74.01" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">16</text></g>
+<g class="callout-lead" data-no="23"><rect x="91.91" y="44.23" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="93.21" y="46.11" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">23</text></g>
+<g class="callout-lead" data-no="26"><rect x="86.79" y="38.10" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="88.09" y="39.98" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">26</text></g>
+<g class="callout-lead" data-no="28"><rect x="81.75" y="44.23" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="83.05" y="46.11" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">28</text></g>
+<g class="callout-lead" data-no="14"><rect x="38.57" y="78.90" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="39.87" y="80.78" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">14</text></g>
+<g class="callout-lead" data-no="24"><rect x="43.65" y="43.10" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="44.95" y="44.98" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">24</text></g>
+<g class="callout-lead" data-no="29"><rect x="30.95" y="78.90" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="32.25" y="80.78" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">29</text></g>
 <text x="4.00" y="95.50" font-size="1.90" text-anchor="start" font-weight="bold" fill="#1a1a1a" >Parts</text>
 <circle cx="5.20" cy="98.30" r="1.2" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="5.20" y="98.88" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >1</text>
@@ -1271,7 +1271,7 @@
 <text x="5.20" y="132.68" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >9</text>
 <text x="7.40" y="132.30" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >U2 MAX98357 amplifier: D10-D16</text>
 <text x="44.00" y="95.50" font-size="1.90" text-anchor="start" font-weight="bold" fill="#1a1a1a" >Device wires</text>
-<text x="44.00" y="99.30" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >OLED (J1)</text>
+<text x="44.00" y="99.30" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >OLED</text>
 <rect x="44.00" y="100.50" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="45.20" y="102.28" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >10</text>
 <text x="47.40" y="101.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >GND: bottom − rail at number 22</text>
@@ -1284,7 +1284,7 @@
 <rect x="44.00" y="108.30" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="45.20" y="110.08" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >13</text>
 <text x="47.40" y="109.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >SCL: D19</text>
-<text x="44.00" y="113.10" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >AIR (J2)</text>
+<text x="44.00" y="113.10" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >AIR</text>
 <rect x="44.00" y="114.30" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="45.20" y="116.08" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >14</text>
 <text x="47.40" y="115.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >GND: bottom − rail at number 25</text>
@@ -1297,7 +1297,7 @@
 <rect x="44.00" y="122.10" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="45.20" y="123.88" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >17</text>
 <text x="47.40" y="123.50" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >SCL: B19</text>
-<text x="84.00" y="95.50" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >YELLOW (J3)</text>
+<text x="84.00" y="95.50" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >YELLOW</text>
 <rect x="84.00" y="96.70" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="85.20" y="98.48" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >18</text>
 <text x="87.40" y="98.10" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >GND: top − rail at number 9</text>
@@ -1310,7 +1310,7 @@
 <rect x="84.00" y="104.50" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="85.20" y="106.28" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >21</text>
 <text x="87.40" y="105.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >LED− Y: J10</text>
-<text x="84.00" y="109.30" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >RED (J4)</text>
+<text x="84.00" y="109.30" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >RED</text>
 <rect x="84.00" y="110.50" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="85.20" y="112.28" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >22</text>
 <text x="87.40" y="111.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >GND: top − rail at number 23</text>
@@ -1323,7 +1323,7 @@
 <rect x="84.00" y="118.30" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="85.20" y="120.08" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >25</text>
 <text x="87.40" y="119.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >LED− R: J26</text>
-<text x="84.00" y="123.10" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >BUZZER (J5)</text>
+<text x="84.00" y="123.10" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >BUZZER</text>
 <rect x="84.00" y="124.30" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="85.20" y="126.08" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >26</text>
 <text x="87.40" y="125.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >GND: top − rail at number 7</text>
@@ -1333,7 +1333,7 @@
 <rect x="84.00" y="129.50" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="85.20" y="131.28" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >28</text>
 <text x="87.40" y="130.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >BUZ: J8</text>
-<text x="84.00" y="134.30" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >NFC (J7)</text>
+<text x="84.00" y="134.30" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >NFC</text>
 <rect x="84.00" y="135.50" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
 <text x="85.20" y="137.28" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >29</text>
 <text x="87.40" y="136.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >GND: bottom − rail at number 28</text>
@@ -1414,13 +1414,15 @@
 <text x="62.00" y="184.30" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >a wire of an off-board device (see Device wires)</text>
 <line x1="4" y1="187.00" x2="10" y2="187.00" stroke="#c0392b" stroke-width="0.45" stroke-dasharray="1.2,0.7"/>
 <text x="11.00" y="187.50" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >unmarked edge trace, broken at the link pads beside the M3 holes; the links join the halves</text>
-<circle cx="5" cy="190.20" r="0.55" fill="#ffffff" stroke="#c0392b" stroke-width="0.25"/>
-<rect x="7" y="189.20" width="4" height="2" fill="none" stroke="#c0392b" stroke-width="0.3" stroke-dasharray="0.9,0.6"/>
-<text x="12.50" y="190.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >DNP: a part fitted only when needed (see the build list); keep its holes free</text>
-<polyline points="4,192.50 4,193.60 10,193.60 10,192.50" fill="none" stroke="#555" stroke-width="0.6"/>
-<text x="11.00" y="193.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >a wire laid along the centre channel (no copper there), under U1 where drawn</text>
-<line x1="4" y1="197.50" x2="24" y2="197.50" stroke="#111" stroke-width="0.4"/>
-<line x1="4" y1="196.70" x2="4" y2="198.30" stroke="#111" stroke-width="0.4"/>
-<line x1="24" y1="196.70" x2="24" y2="198.30" stroke="#111" stroke-width="0.4"/>
-<text x="26.00" y="198.00" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >20 mm: printed at 100 % (actual size) this bar measures 20 mm and the board is real size</text>
+<path d="M4.2,189.40 L5.8,191.00 M4.2,191.00 L5.8,189.40" stroke="#c0392b" stroke-width="0.45" stroke-linecap="round" fill="none"/>
+<text x="7.50" y="190.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >leave open: fitting a link here would join two rail halves that carry different nets (see the build steps)</text>
+<circle cx="5" cy="193.40" r="0.55" fill="#ffffff" stroke="#c0392b" stroke-width="0.25"/>
+<rect x="7" y="192.40" width="4" height="2" fill="none" stroke="#c0392b" stroke-width="0.3" stroke-dasharray="0.9,0.6"/>
+<text x="12.50" y="193.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >DNP: a part fitted only when needed (see the build list); keep its holes free</text>
+<polyline points="4,195.70 4,196.80 10,196.80 10,195.70" fill="none" stroke="#555" stroke-width="0.6"/>
+<text x="11.00" y="197.10" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >a wire laid along the centre channel (no copper there), under U1 where drawn</text>
+<line x1="4" y1="200.70" x2="24" y2="200.70" stroke="#111" stroke-width="0.4"/>
+<line x1="4" y1="199.90" x2="4" y2="201.50" stroke="#111" stroke-width="0.4"/>
+<line x1="24" y1="199.90" x2="24" y2="201.50" stroke="#111" stroke-width="0.4"/>
+<text x="26.00" y="201.20" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >20 mm: printed at 100 % (actual size) this bar measures 20 mm and the board is real size</text>
 </svg>
