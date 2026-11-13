@@ -70,7 +70,12 @@
         }
       },
       "diff_pair_dimensions": [],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "npth_inside_courtyard|107750000|126000000|643f2fb1-506a-487d-ab46-ab16da1dedcc|896e8455-f1a7-495a-962a-ccf306881525",
+          "The C3 module rides about 8.5 mm up on its sockets, so the left M3 screw head fits under it, between the socket rows. The hole's copper keep-out stays."
+        ]
+      ],
       "meta": {
         "version": 2
       },
