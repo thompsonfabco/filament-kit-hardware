@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='utf-8'?>
+<protoboard style="callouts" device="intake-panel" hand="power-left" title="Intake panel, C3 POWER-LEFT">
+  <netlist schematic="../kicad-power-left/intake-panel-power-left.kicad_sch" />
+  <offboard ref="U3">OLED module, wired to the board at J1</offboard>
+  <offboard ref="U4">air sensor board, wired to the board at J2</offboard>
+  <offboard ref="U5">air sensor board (option B), wired to the board at J2</offboard>
+  <offboard ref="U6">air sensor board (option B), wired to the board at J2</offboard>
+  <offboard ref="U7">PN532 reader, wired to the board at J7</offboard>
+  <offboard ref="SW1">yellow button, wired to the board at J3</offboard>
+  <offboard ref="SW2">red button, wired to the board at J4</offboard>
+  <offboard ref="BZ1">buzzer, wired to the board at J5</offboard>
+  <offboard ref="LS1">speaker, in U2's screw terminal</offboard>
+  <offboard ref="RI1">I2C pull-up, not fitted on the protoboard build</offboard>
+  <offboard ref="RI2">I2C pull-up, not fitted on the protoboard build</offboard>
+  <offboard ref="C1">bulk capacitor, not fitted on the protoboard build</offboard>
+  <bridge rail="-" />
+  <part ref="U1" kind="c3-supermini" value="ESP32-C3 Super Mini" hand="power-left">
+    <pin n="1" hole="H1" />
+    <pin n="2" hole="H2" />
+    <pin n="3" hole="H3" />
+    <pin n="4" hole="H4" />
+    <pin n="5" hole="H5" />
+    <pin n="6" hole="H6" />
+    <pin n="7" hole="H7" />
+    <pin n="8" hole="H8" />
+    <pin n="9" hole="D1" />
+    <pin n="10" hole="D2" />
+    <pin n="11" hole="D3" />
+    <pin n="12" hole="D4" />
+    <pin n="13" hole="D5" />
+    <pin n="14" hole="D6" />
+    <pin n="15" hole="D7" />
+    <pin n="16" hole="D8" />
+  </part>
+  <part ref="U2" kind="module" value="MAX98357" label="amplifier" extends="up" terminal="SPEAKER" fit="with its screw terminal toward the top edge">
+    <pin n="1" hole="G10" name="LRC" />
+    <pin n="2" hole="G11" name="BCLK" />
+    <pin n="3" hole="G12" name="DIN" />
+    <pin n="4" hole="G13" name="GAIN" />
+    <pin n="5" hole="G14" name="SD" />
+    <pin n="6" hole="G15" name="GND" />
+    <pin n="7" hole="G16" name="VIN" />
+    <pin n="8" on="module" at="5.08,12.7" name="−" />
+    <pin n="9" on="module" at="10.16,12.7" name="+" />
+  </part>
+  <part ref="J1" kind="leads" label="OLED">
+    <pin n="1" hole="T-21" />
+    <pin n="2" hole="T+21" />
+    <pin n="3" hole="J19" />
+    <pin n="4" hole="J20" />
+  </part>
+  <part ref="J2" kind="leads" label="AIR">
+    <pin n="1" hole="T-25" />
+    <pin n="2" hole="T+25" />
+    <pin n="3" hole="I19" />
+    <pin n="4" hole="I20" />
+  </part>
+  <part ref="J7" kind="leads" label="NFC">
+    <pin n="1" hole="T-29" />
+    <pin n="2" hole="T+29" />
+    <pin n="3" hole="F19" />
+    <pin n="4" hole="H20" />
+  </part>
+  <part ref="J3" kind="leads" label="YELLOW">
+    <pin n="1" hole="B-7" />
+    <pin n="2" hole="C5" />
+    <pin n="3" hole="B+7" />
+    <pin n="4" hole="D9" />
+  </part>
+  <part ref="J4" kind="leads" label="RED">
+    <pin n="1" hole="B-4" />
+    <pin n="2" hole="A4" />
+    <pin n="3" hole="B+4" />
+    <pin n="4" hole="A12" />
+  </part>
+  <part ref="J5" kind="leads" label="BUZZER">
+    <pin n="1" hole="B-12" />
+    <pin n="2" hole="C3" />
+    <pin n="3" hole="A8" />
+  </part>
+  <part ref="Q1" kind="to92" value="BS170" flat="down">
+    <pin n="1" hole="E9" />
+    <pin n="2" hole="E10" />
+    <pin n="3" hole="E11" />
+  </part>
+  <part ref="Q2" kind="to92" value="BS170" flat="down">
+    <pin n="1" hole="E12" />
+    <pin n="2" hole="E13" />
+    <pin n="3" hole="E14" />
+  </part>
+  <part ref="RG1" kind="resistor" value="220 Ω">
+    <pin n="1" hole="C7" />
+    <pin n="2" hole="C10" />
+  </part>
+  <part ref="RG2" kind="resistor" value="220 Ω">
+    <pin n="1" hole="C17" />
+    <pin n="2" hole="C13" />
+  </part>
+  <part ref="RP1" kind="resistor" value="100 kΩ">
+    <pin n="1" hole="B10" />
+    <pin n="2" hole="B-10" />
+  </part>
+  <part ref="RP2" kind="resistor" value="100 kΩ">
+    <pin n="1" hole="B13" />
+    <pin n="2" hole="B-13" />
+  </part>
+  <part ref="RSD1" kind="resistor" value="10 kΩ" dnp="the amplifier's SD pin reads near 0 V in the SD pull-up check">
+    <pin n="1" hole="T+14" />
+    <pin n="2" hole="I14" />
+  </part>
+  <wire net="+5V" from="A1" to="B+1" />
+  <wire net="GND" from="A2" to="B-2" />
+  <wire net="+3V3" from="E3" to="T+18" route="channel" y="26.6" />
+  <wire net="SDA" from="G1" to="G9" />
+  <wire net="SDA" from="H9" to="H19" />
+  <wire net="SCL" from="F2" to="F20" route="channel" y="23.7" />
+  <wire net="LAMP_DISCARD" from="F3" to="E17" route="channel" y="25.3" />
+  <wire net="I2S_LRC" from="F7" to="F10" />
+  <wire net="I2S_BCLK" from="J6" to="J11" />
+  <wire net="I2S_DIN" from="I8" to="I12" />
+  <wire net="GND" from="J15" to="T-15" />
+  <wire net="+5V" from="E16" to="F16" />
+  <wire net="+5V" from="A16" to="B+16" />
+  <wire net="GND" from="A11" to="B-11" />
+  <wire net="GND" from="A14" to="B-14" />
+</protoboard>
