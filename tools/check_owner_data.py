@@ -35,6 +35,7 @@ never a term). FK_REQUIRE_OWNER_BANS=1 also needs at least one term from FK_OWNE
 from __future__ import annotations
 
 import codecs
+import collections
 import html
 import json
 import os
@@ -68,6 +69,13 @@ GEOMETRY_SUFFIXES = (".map.txt", ".brp", ".brep")  # FreeCAD shape data, not met
 PDF_STREAM = re.compile(rb"(?<!end)stream\r?\n(.*?)\r?\n?endstream", re.S)
 PDF_OBJECT = re.compile(rb"(?<!\d)(\d+)\s+\d+\s+obj\b(.*?)endobj", re.S)
 PDF_REF = rb"(\d+)\s+\d+\s+R"
+PDF_OBJECT_HEAD = re.compile(rb"(?<![0-9])([0-9]+)[\s\x00]+[0-9]+[\s\x00]+obj\b")  # `N G obj` anywhere in the bytes
+PDF_INT_OBJECT = re.compile(rb"(?<![0-9])([0-9]+)\s+[0-9]+\s+obj\s+([0-9]+)\s+endobj")  # an integer (indirect /Length)
+PDF_CONTENTS = re.compile(rb"/Contents\s*(\[[^\]]*\]|[0-9]+\s+[0-9]+\s+R)")  # a page's content stream references
+PDF_STREAM_END = re.compile(rb"(?:\r\n|\n|\r)?endstream")
+PDF_FONT_KEYS = (b"/FontFile2", b"/FontFile3")  # sfnt and CFF font programs; /FontFile (Type 1) is readable text
+CFF_HEADER = re.compile(rb"\x01\x00\x04[\x01-\x04]")
+SFNT_SIGNATURES = (b"\x00\x01\x00\x00", b"OTTO", b"true", b"ttcf")
 DRAWN_PATTERNS = ("email address", "Windows user path")  # generic patterns applied to decoded PDF text
 BAN_KEYS = ("plain", "code_plain", "ota_plain")  # string lists in the JSON form of a bans file
 # The project's public account name, allowed only as the account part of these link forms (host/account, or the bare
@@ -470,10 +478,123 @@ def pdf_text(data: bytes) -> list[tuple[str, list[str]]]:
     return out
 
 
+def pdf_tokens(data: bytes, pos: int):
+    """(token, end) pairs from pos on; a string literal is the one token b"(" and comments are left out."""
+    while m := PDF_TOKEN.search(data, pos):
+        tok, pos = m.group(0), m.end()
+        if tok == b"(":
+            pos = pdf_literal(data, m.start())[1]
+        if tok[:1] != b"%":
+            yield tok, pos
+
+
+def pdf_value(toks: list[bytes], i: int) -> tuple[object, int]:
+    """The PDF value starting at toks[i] and the index after it: a dict (a repeated key makes its value None), a list,
+    an indirect reference as ("R", number, generation), else the token itself. ValueError if the tokens form none."""
+    if i >= len(toks) or toks[i] in (b">>", b"]"):
+        raise ValueError
+    tok = toks[i]
+    if tok == b"<<":
+        found, i = {}, i + 1
+        while i < len(toks) and toks[i] != b">>":
+            if toks[i][:1] != b"/":
+                raise ValueError
+            value, nxt = pdf_value(toks, i + 1)
+            found[toks[i]] = None if toks[i] in found else value
+            i = nxt
+        if i >= len(toks):
+            raise ValueError
+        return found, i + 1
+    if tok == b"[":
+        items, i = [], i + 1
+        while i < len(toks) and toks[i] != b"]":
+            value, i = pdf_value(toks, i)
+            items.append(value)
+        if i >= len(toks):
+            raise ValueError
+        return items, i + 1
+    if tok.isdigit() and toks[i + 1:i + 2] and toks[i + 1].isdigit() and toks[i + 2:i + 3] == [b"R"]:
+        return ("R", int(tok), int(toks[i + 1])), i + 3
+    return tok, i + 1
+
+
+def pdf_top_objects(data: bytes, heads: collections.Counter, lengths: dict[int, int]):
+    """(number, generation, dictionary or None, stream data start or None) of each object that stands in the file
+    itself, in order. The file is read like a parser would: comments, strings and stream data (skipped by /Length, which
+    must be a direct or indirect integer with `endstream` right after) are never searched for objects. It ends where the
+    layout stops making sense, so that nothing after that point is taken for an object."""
+    last: list[bytes] = []
+    pos = 0
+    while True:
+        for tok, pos in pdf_tokens(data, pos):
+            if tok == b"obj" and len(last) == 2 and all(t.isdigit() for t in last):
+                break
+            last = (last + [tok])[-2:]
+        else:
+            return
+        num, gen, toks, stream_at, last = int(last[0]), int(last[1]), [], None, []
+        for tok, end in pdf_tokens(data, pos):
+            if tok == b"obj":
+                return  # the previous object was never closed
+            if tok in (b"endobj", b"stream"):
+                pos, stream_at = end, end if tok == b"stream" else None
+                break
+            toks.append(tok)
+        else:
+            return
+        try:
+            value, used = pdf_value(toks, 0)
+        except (ValueError, RecursionError):
+            value, used = None, 0
+        value = value if isinstance(value, dict) and used == len(toks) else None
+        if stream_at is None:
+            yield num, gen, value, None
+            continue
+        length = value.get(b"/Length") if value else None
+        if isinstance(length, tuple):
+            length = lengths.get(length[1]) if heads[length[1]] == 1 else None
+        elif isinstance(length, bytes) and length.isdigit():
+            length = int(length)
+        else:
+            length = None
+        eol = 2 if data[stream_at:stream_at + 2] == b"\r\n" else 1 if data[stream_at:stream_at + 1] == b"\n" else 0
+        close = PDF_STREAM_END.match(data, stream_at + eol + length) if length is not None and eol else None
+        if not close:
+            return
+        yield num, gen, value, stream_at + eol
+        pos = close.end()
+
+
+def pdf_font_programs(data: bytes) -> set[int]:
+    """Start offsets of the stream data that a /FontFile2 or /FontFile3 key of a font descriptor points at, where all of
+    this holds: the descriptor and the stream are objects of the file itself (not text inside a stream, comment or
+    string), each numbered once in the whole file; the reference has the stream's generation number; and no /Contents
+    key refers to the stream. Whether the stream holds a font program is for is_font_program to say."""
+    heads = collections.Counter(int(m.group(1)) for m in PDF_OBJECT_HEAD.finditer(data))
+    lengths = {int(n): int(v) for n, v in PDF_INT_OBJECT.findall(data)}
+    pages = {int(r) for m in PDF_CONTENTS.finditer(data) for r in re.findall(rb"([0-9]+)\s+[0-9]+\s+R", m.group(1))}
+    wanted, streams = set(), {}  # (number, generation) pointed at; number -> (generation, data start)
+    for num, gen, value, start in pdf_top_objects(data, heads, lengths):
+        if start is not None:
+            streams[num] = gen, start
+        elif value and value.get(b"/Type") == b"/FontDescriptor" and heads[num] == 1:
+            wanted.update(ref[1:] for ref in (value.get(key) for key in PDF_FONT_KEYS) if isinstance(ref, tuple))
+    return {streams[n][1] for n, g in wanted if heads[n] == 1 and n not in pages and streams.get(n, (None,))[0] == g}
+
+
+def is_font_program(program: bytes) -> bool:
+    """Whether the (inflated) stream starts like an sfnt (TrueType, OpenType, collection) or a CFF font."""
+    return program[:4] in SFNT_SIGNATURES or CFF_HEADER.match(program) is not None
+
+
 def scan_pdf(data: bytes, rel: str, words: list[str]) -> list[str]:
     out = scan_text(rel, PDF_STREAM.sub(b"", data).decode("utf-8", errors="replace"), words)
+    font_starts = pdf_font_programs(data)
     for n, m in enumerate(PDF_STREAM.finditer(data), 1):
-        out += scan_text(f"{rel}!stream{n}", pdf_inflate(m.group(1)).decode("utf-8", errors="replace"), words)
+        body = pdf_inflate(m.group(1))
+        # font program bytes can look like an address by chance: only the owner terms are searched in them
+        out += scan_text(f"{rel}!stream{n}", body.decode("utf-8", errors="replace"), words,
+                         patterns=() if m.start(1) in font_starts and is_font_program(body) else None)
     seen = {f.split(":", 1)[1] for f in out if "!stream" in f}  # "line: what" already reported from a raw stream
     for label, runs in pdf_text(data):
         drawn = scan_text(f"{rel}!{label}", "\n".join(runs), words, patterns=DRAWN_PATTERNS)

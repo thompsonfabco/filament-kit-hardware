@@ -1075,3 +1075,228 @@ def test_notice_in_a_pdf_is_judged_per_run_never_by_the_joined_text(tmp_path):
     assert pdf_hits(tmp_path, [f"(c) 2026 {NAME}", NAME[:6], NAME[6:]], [NAME.upper()]) == JOINED
     assert cod.split_mentions_in_links([f"(c) 2026 {NAME[:6]}", NAME[6:]]) is False
     assert cod.split_mentions_in_links([f"(c) 2026 {NAME}"]) is True
+
+
+# Embedded font programs: random font bytes can look like an address, so only the owner terms are searched in a stream
+# that is provably a font program: a /FontFile2 or /FontFile3 key of a /FontDescriptor object, each object numbered once
+# in the file, the reference with the stream's generation, no /Contents key naming the stream, and the stream starting
+# like an sfnt or CFF font. Every doubtful case leaves the stream scanned with all patterns.
+FONT_BYTES = (b"\x00\x01\x00\x00\nK@" + b"aJ.x\nC:/Us" + b"ers/someone/f\nAB12CD34" + b"EF56GH7\n\x00\x7f")  # split: this file is scanned
+FONT_KINDS = {"email address", "Windows user path", "printer-serial-like string"}
+DESCRIPTOR = b"<< /Type /FontDescriptor /FontFile2 6 0 R >>"
+FLATE = b"<< /Filter /FlateDecode >>"
+
+
+def make_objs_pdf(path, objs, raw=()):
+    """objs: (number, dictionary or body bytes, stream bytes or None, generation) in file order. A stream is deflated
+    unless its object number is in raw, and its dictionary gets a /Length unless it has one."""
+    body = b"%PDF-1.5\n"
+    for num, head, stream, gen in objs:
+        data = b"" if stream is None else stream if num in raw else zlib.compress(stream)
+        if stream is not None and b"/Length" not in head:
+            head = head[:head.rindex(b">>")] + b"/Length %d >>" % len(data)
+        body += f"{num} {gen} obj\n".encode() + head
+        if stream is not None:
+            body += b"\nstream\n" + data + b"\nendstream"
+        body += b"\nendobj\n"
+    path.write_bytes(body + b"%%EOF\n")
+    return path
+
+
+def font_pdf(tmp_path, ref=b"/FontFile2 6 0 R", stream=FONT_BYTES, stream_head=FLATE, extra=()):
+    objs = [(5, b"<< /Type /FontDescriptor " + ref + b" >>", None, 0), (6, stream_head, stream, 0), *extra]
+    return make_objs_pdf(tmp_path / "f.pdf", objs)
+
+
+def finding_kinds(path, words=()):
+    found = cod.scan_file(path, "f.pdf", list(words))
+    return {f.split(": ")[1] if ": owner term" not in f else "owner term" for f in found}
+
+
+def leaks(path):
+    """The kinds of generic finding in a PDF whose only suspect bytes are FONT_BYTES (so FONT_KINDS = all reported)."""
+    return {f.split(": ")[1] for f in cod.scan_file(path, "f.pdf", [])}
+
+
+def test_pdf_font_program_gets_no_generic_finding(tmp_path):
+    for ref in (b"/FontFile2 6 0 R", b"/FontFile3 6 0 R"):
+        assert cod.scan_file(font_pdf(tmp_path, ref), "f.pdf", []) == [], ref
+
+
+def test_a_type1_font_file_is_never_exempt(tmp_path):  # (a)
+    assert leaks(font_pdf(tmp_path, b"/FontFile 6 0 R")) == FONT_KINDS
+
+
+def test_pdf_font_program_rule_follows_the_reference_not_the_bytes(tmp_path):  # fails if every stream is exempt
+    out = cod.scan_file(font_pdf(tmp_path, b"/FontFile2 99 0 R"), "f.pdf", [])
+    assert {f.split(": ")[1] for f in out} == FONT_KINDS
+    assert all(f.startswith("f.pdf!stream1:") for f in out)
+    assert {f.split(": ")[1] for f in cod.scan_file(font_pdf(tmp_path, b"/Subtype /Type1"), "f.pdf", [])} == FONT_KINDS
+
+
+def test_pdf_font_program_rule_exempts_the_pointed_at_stream(tmp_path):  # fails if the exemption is removed
+    assert finding_kinds(font_pdf(tmp_path)) == set()
+    two = font_pdf(tmp_path, extra=[(7, b"<< /Filter /FlateDecode >>", FONT_BYTES, 0)])
+    assert {f.split(":")[0] for f in cod.scan_file(two, "f.pdf", [])} == {"f.pdf!stream2"}
+
+
+def test_pdf_stream_with_length1_of_its_own_is_not_a_font_program(tmp_path):
+    p = font_pdf(tmp_path, b"/Subtype /Type1", stream_head=b"<< /Length1 120 /Filter /FlateDecode >>")
+    assert {f.split(": ")[1] for f in cod.scan_file(p, "f.pdf", [])} == FONT_KINDS
+
+
+def test_pdf_stream_cannot_exempt_itself_or_another_by_its_content(tmp_path):
+    own = font_pdf(tmp_path, b"/Subtype /Type1", stream_head=b"<< /FontFile2 6 0 R /Filter /FlateDecode >>")
+    assert {f.split(": ")[1] for f in cod.scan_file(own, "f.pdf", [])} == FONT_KINDS
+    inside = font_pdf(tmp_path, b"/Subtype /Type1", extra=[(7, b"<< /Filter /FlateDecode >>",
+                                                           b"<< /FontFile2 6 0 R >>", 0)])
+    assert {f.split(":")[0] for f in cod.scan_file(inside, "f.pdf", [])} == {"f.pdf!stream1"}
+
+
+def test_owner_term_inside_a_font_program_is_still_found(tmp_path):
+    p = font_pdf(tmp_path, stream=FONT_BYTES + b"ZZQTerm\n")
+    assert cod.scan_file(p, "f.pdf", ["zzqterm"]) == ["f.pdf!stream1:5: owner term #1"]
+
+
+def test_address_outside_a_font_program_is_still_found_next_to_one(tmp_path):
+    info = (8, b"<< /Author (" + EMAIL.encode() + b") >>", None, 0)
+    xmp = (9, b"<< /Type /Metadata /Filter /FlateDecode >>", b"<x:xmpmeta>" + EMAIL.encode() + b"</x:xmpmeta>", 0)
+    page = (10, b"<< /Filter /FlateDecode >>", b"BT (" + EMAIL.encode() + b") Tj ET", 0)
+    out = cod.scan_file(font_pdf(tmp_path, extra=[info, xmp, page]), "f.pdf", [])
+    assert sorted(f.split(":")[0] for f in out) == ["f.pdf", "f.pdf!stream2", "f.pdf!stream3"]
+    assert all("email address" in f for f in out)
+
+
+@pytest.mark.parametrize("ref, gen", [(b"/FontFile2 6 3 R", 3), (b"/FontFile2\n6\r\n0\n R", 0),
+                                      (b"/FontFile2   6   0   R", 0)])
+def test_font_file_reference_with_generation_or_odd_whitespace_still_exempts(tmp_path, ref, gen):
+    objs = [(5, b"<< /Type /FontDescriptor " + ref + b" >>", None, 0), (6, b"<< /Filter /FlateDecode >>", FONT_BYTES, gen)]
+    assert cod.scan_file(make_objs_pdf(tmp_path / "g.pdf", objs), "g.pdf", []) == []
+
+
+def test_font_file_name_must_be_whole(tmp_path):
+    for ref in (b"/FontFile4 6 0 R", b"/FontFileX 6 0 R", b"/FontFile26 0 R"):
+        assert cod.scan_file(font_pdf(tmp_path, ref), "f.pdf", []) != [], ref
+
+
+EMBEDDED = b"<< /Type /EmbeddedFile >>"
+INNER_PDF = b"%PDF-1.4\n5 0 obj\n" + DESCRIPTOR + b"\nendobj\n%%EOF"
+
+
+def objs_pdf(tmp_path, objs, **kw):
+    return make_objs_pdf(tmp_path / "f.pdf", objs, **kw)
+
+
+@pytest.mark.parametrize("text", [INNER_PDF, b"BT (/FontFile2 6 0 R endobj) Tj ET",
+                                  b"5 0 obj\n" + DESCRIPTOR + b"\nendobj"])
+def test_reference_inside_uncompressed_stream_data_exempts_nothing(tmp_path, text):  # M1, (b)
+    objs = [(4, EMBEDDED, text, 0), (6, FLATE, FONT_BYTES, 0)]
+    assert leaks(objs_pdf(tmp_path, objs, raw={4})) == FONT_KINDS
+
+
+def test_object_number_defined_inside_stream_data_counts(tmp_path):  # (c)
+    objs = [(4, EMBEDDED, b"6 0 obj\n<< >>\nendobj", 0), (5, DESCRIPTOR, None, 0), (6, FLATE, FONT_BYTES, 0)]
+    assert leaks(objs_pdf(tmp_path, objs, raw={4})) == FONT_KINDS
+
+
+@pytest.mark.parametrize("gens", [(0, 0), (0, 1)])
+def test_object_number_defined_twice_exempts_nothing(tmp_path, gens):  # M2, (c)
+    objs = [(5, DESCRIPTOR, None, 0), (6, FLATE, FONT_BYTES, gens[0]), (6, FLATE, FONT_BYTES, gens[1])]
+    out = cod.scan_file(objs_pdf(tmp_path, objs), "f.pdf", [])
+    assert {f.split(":")[0] for f in out} == {"f.pdf!stream1", "f.pdf!stream2"}
+
+
+def test_descriptor_number_defined_twice_exempts_nothing(tmp_path):  # (b)
+    objs = [(5, b"<< /Type /Font >>", None, 0), (5, DESCRIPTOR, None, 0), (6, FLATE, FONT_BYTES, 0)]
+    assert leaks(objs_pdf(tmp_path, objs)) == FONT_KINDS
+
+
+@pytest.mark.parametrize("head", [
+    b"<< /Type /FontDescriptor >> % /FontFile2 6 0 R",
+    b"<< /Type /FontDescriptor % /FontFile2 6 0 R\n>>",
+    b"<< /Type /FontDescriptor /Keywords (see /FontFile2 6 0 R) >>",
+    b"<< /Type /FontDescriptor /Keywords (a \\) (b (c)) /FontFile2 6 0 R) >>",
+    b"<< /Type /FontDescriptor /Keywords (/A /B /FontFile2 6 0 R) >>",
+    b"<< /Type /Annot /FontFile2 6 0 R >>",
+    b"<< /Type /Font /FontFile2 6 0 R >>",
+    b"<< /FontFile2 6 0 R >>",
+    b"<< /Type /FontDescriptor /Style << /FontFile2 6 0 R >> >>",
+    b"<< /Type /FontDescriptor /Files [ /FontFile2 6 0 R ] >>",
+    b"<< /Type /FontDescriptor /Type /Font /FontFile2 6 0 R >>",
+    b"<< /Type /FontDescriptor /FontFile2 6 0 R /FontFile2 7 0 R >>",
+    b"<< /Type /FontDescriptor /Note /FontFile2 6 0 R >>",
+    b"<< /Type /FontDescriptor /FontFile2 6 0 R",
+    b"<< /Type /FontDescriptor /FontFile2 6 0 R >> 7",
+    b"[ << /Type /FontDescriptor /FontFile2 6 0 R >> ]",
+])
+def test_only_a_key_of_a_font_descriptor_dictionary_exempts(tmp_path, head):  # L3, (b)
+    assert leaks(objs_pdf(tmp_path, [(5, head, None, 0), (6, FLATE, FONT_BYTES, 0)])) == FONT_KINDS
+
+
+def test_descriptor_with_a_stream_of_its_own_exempts_nothing(tmp_path):  # (b)
+    objs = [(5, DESCRIPTOR, b"x", 0), (6, FLATE, FONT_BYTES, 0)]
+    assert leaks(objs_pdf(tmp_path, objs)) == FONT_KINDS
+
+
+@pytest.mark.parametrize("ref, gen", [(b"6 5 R", 0), (b"6 0 R", 5)])
+def test_reference_with_another_generation_exempts_nothing(tmp_path, ref, gen):  # L4, (a)
+    objs = [(5, b"<< /Type /FontDescriptor /FontFile2 " + ref + b" >>", None, 0), (6, FLATE, FONT_BYTES, gen)]
+    assert leaks(objs_pdf(tmp_path, objs)) == FONT_KINDS
+
+
+@pytest.mark.parametrize("contents", [b"/Contents 6 0 R", b"/Contents [ 3 0 R 6 0 R ]", b"/Contents\n[6 0 R]"])
+def test_page_content_stream_is_never_a_font_program(tmp_path, contents):  # L5, (e)
+    objs = [(4, b"<< /Type /Page " + contents + b" >>", None, 0), (5, DESCRIPTOR, None, 0), (6, FLATE, FONT_BYTES, 0)]
+    out = cod.scan_file(objs_pdf(tmp_path, objs), "f.pdf", [])
+    assert {f.split(": ")[1] for f in out if f.startswith("f.pdf!stream1:")} == FONT_KINDS
+
+
+def test_contents_naming_another_object_changes_nothing(tmp_path):  # (e)
+    objs = [(4, b"<< /Type /Page /Contents [ 7 0 R ] >>", None, 0), (5, DESCRIPTOR, None, 0), (6, FLATE, FONT_BYTES, 0)]
+    assert cod.scan_file(objs_pdf(tmp_path, objs), "f.pdf", []) == []
+
+
+@pytest.mark.parametrize("sig", [b"\x00\x01\x00\x00", b"OTTO", b"true", b"ttcf", b"\x01\x00\x04\x01",
+                                 b"\x01\x00\x04\x02", b"\x01\x00\x04\x04"])
+def test_sfnt_and_cff_signatures_are_font_programs(tmp_path, sig):  # (d)
+    assert cod.scan_file(font_pdf(tmp_path, stream=sig + FONT_BYTES[4:]), "f.pdf", []) == []
+
+
+@pytest.mark.parametrize("sig", [b"", b"\x00\x02\x00\x00", b"OTTP", b"TRUE", b"%!PS", b"\x01\x00\x04\x00",
+                                 b"\x01\x00\x04\x05", b"\x01\x00\x03\x01", b"\x01\x01\x04\x01", b"\x02\x00\x04\x01",
+                                 b"\n\x00\x01\x00\x00", b"ttc"])
+def test_stream_without_a_font_signature_is_reported(tmp_path, sig):  # (d)
+    assert leaks(font_pdf(tmp_path, stream=sig + FONT_BYTES[4:])) == FONT_KINDS
+
+
+def test_font_program_stored_without_a_filter_is_exempt(tmp_path):  # (d)
+    assert cod.scan_file(objs_pdf(tmp_path, [(5, DESCRIPTOR, None, 0), (6, b"<< >>", FONT_BYTES, 0)], raw={6}),
+                         "f.pdf", []) == []
+
+
+def test_font_program_before_its_descriptor_is_exempt(tmp_path):
+    assert cod.scan_file(objs_pdf(tmp_path, [(6, FLATE, FONT_BYTES, 0), (5, DESCRIPTOR, None, 0)]), "f.pdf", []) == []
+
+
+def test_reference_with_line_breaks_between_its_parts_exempts(tmp_path):  # (a)
+    assert cod.scan_file(font_pdf(tmp_path, b"/FontFile3\r\n6\r\n0\r\nR"), "f.pdf", []) == []
+
+
+@pytest.mark.parametrize("length", [b"/Length1 5", b"/Length 3", b"/Length 99999", b"/Length 9 0 R", b"/Length /N",
+                                    b"/Length 1.5", b"/Length 9 0 R /Length 9 0 R"])
+def test_stream_without_a_usable_length_exempts_nothing(tmp_path, length):
+    objs = [(5, DESCRIPTOR, None, 0), (6, b"<< /Filter /FlateDecode " + length + b" >>", FONT_BYTES, 0),
+            (9, b"5", None, 0)]
+    assert leaks(objs_pdf(tmp_path, objs)) == FONT_KINDS
+
+
+def test_indirect_length_is_followed(tmp_path):
+    n = len(zlib.compress(FONT_BYTES))
+    objs = [(5, DESCRIPTOR, None, 0), (6, b"<< /Filter /FlateDecode /Length 9 0 R >>", FONT_BYTES, 0),
+            (9, str(n).encode(), None, 0)]
+    assert cod.scan_file(objs_pdf(tmp_path, objs), "f.pdf", []) == []
+
+
+def test_font_after_an_object_the_layout_does_not_explain_is_not_exempt(tmp_path):
+    objs = [(3, b"<< /Length 3 >>", b"junk", 0), (5, DESCRIPTOR, None, 0), (6, FLATE, FONT_BYTES, 0)]
+    assert leaks(objs_pdf(tmp_path, objs)) == FONT_KINDS
