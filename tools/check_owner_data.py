@@ -10,7 +10,17 @@ topological-naming strings look like IP addresses. Findings inside an archive re
 can't be read (or a file with an archive extension that isn't a readable zip) and a member too large to scan are
 findings. A listed path that is missing or a dangling symlink is a finding; a symlink's target text is
 scanned too. PDFs are scanned as their uncompressed parts (metadata) plus each FlateDecode stream inflated, since random
-bytes in compressed data look like addresses; a stream that won't inflate is scanned raw. Exit status 1 means something was found.
+bytes in compressed data look like addresses; a stream that won't inflate is scanned raw. The text a PDF page draws is
+scanned as well: KiCad writes it as Type3 glyph codes, so the Tj/TJ strings are mapped through each font's ToUnicode
+CMap (a font with no map is read as Latin-1; findings read `path!textN:line`, N being the page content object; only
+owner terms, email addresses and Windows user paths are checked in it, since neighbouring words run together; terms
+are also matched with whitespace removed). Exit status 1 means something was found.
+
+Environment: FK_OWNER_BANS names an extra terms file (one term per line, or a JSON object whose `plain`, `code_plain`
+and `ota_plain` lists hold terms) used in addition to `tools/owner-terms.local`; A terms file that is
+named but missing, unreadable, malformed or empty makes the scan exit 2 (the message names the path and the reason,
+never a term). FK_REQUIRE_OWNER_BANS=1 also needs at least one term from FK_OWNER_BANS (when set) or else from
+`tools/owner-terms.local`. Neither set and no local file: only a note, generic patterns still run.
 
     python -I tools/check_owner_data.py
 """
@@ -18,6 +28,7 @@ from __future__ import annotations
 
 import codecs
 import html
+import json
 import os
 import pathlib
 import re
@@ -44,7 +55,11 @@ MAX_MEMBER = 20 * 1024 * 1024  # archive members larger than this (uncompressed)
 ENTITY_SUFFIXES = {".xml", ".svg", ".model"}
 ARCHIVE_SUFFIXES = {".fcstd", ".3mf", ".zip"}
 GEOMETRY_SUFFIXES = (".map.txt", ".brp", ".brep")  # FreeCAD shape data, not metadata
-PDF_STREAM = re.compile(rb"stream\r?\n(.*?)\r?\nendstream", re.S)
+PDF_STREAM = re.compile(rb"(?<!end)stream\r?\n(.*?)\r?\n?endstream", re.S)
+PDF_OBJECT = re.compile(rb"(?<!\d)(\d+)\s+\d+\s+obj\b(.*?)endobj", re.S)
+PDF_REF = rb"(\d+)\s+\d+\s+R"
+DRAWN_PATTERNS = ("email address", "Windows user path")  # generic patterns applied to decoded PDF text
+BAN_KEYS = ("plain", "code_plain", "ota_plain")  # string lists in the JSON form of a bans file
 
 
 def tracked() -> list[pathlib.Path]:
@@ -54,17 +69,61 @@ def tracked() -> list[pathlib.Path]:
 
 
 def read_terms(path: pathlib.Path = TERMS) -> list[str]:
-    if not path.exists():
-        return []
-    return [w.strip() for w in path.read_text(encoding="utf-8").splitlines() if w.strip() and not w.startswith("#")]
+    """Usable terms in a terms file; a ValueError says why the file can't be used (never quoting its content)."""
+    try:
+        text = path.read_text(encoding="utf-8-sig")
+    except FileNotFoundError:
+        raise ValueError("file does not exist") from None
+    except OSError:
+        raise ValueError("file cannot be read") from None
+    except UnicodeDecodeError:
+        raise ValueError("file is not valid UTF-8") from None
+    if text.lstrip().startswith("{"):  # structured bans file: only its plain-text lists can be matched here
+        try:
+            data = json.loads(text)
+        except ValueError:
+            raise ValueError("file is not valid JSON") from None
+        if not isinstance(data, dict) or any(k in data and not isinstance(data[k], list) for k in BAN_KEYS):
+            raise ValueError("JSON file does not have the expected lists")
+        return [w.strip() for k in BAN_KEYS for w in data.get(k, []) if isinstance(w, str) and w.strip()]
+    return [w.strip() for w in text.splitlines() if w.strip() and not w.startswith("#")]
 
 
-def scan_text(label: str, text: str, words: list[str], unescape: bool = False) -> list[str]:
+def load_terms() -> tuple[list[str], str | None]:
+    """Terms from the local file and from FK_OWNER_BANS, and the first problem with a file that should be used.
+
+    The local file is used when it exists; FK_OWNER_BANS must exist, parse and hold at least one term. With
+    FK_REQUIRE_OWNER_BANS=1 the file that must hold a term is FK_OWNER_BANS when set, else the local file."""
+    words: list[str] = []
+    problem = None
+    bans = os.environ.get("FK_OWNER_BANS")
+    required = os.environ.get("FK_REQUIRE_OWNER_BANS") == "1"
+    paths = [(TERMS, False)] if TERMS.exists() else []
+    if bans:
+        paths.append((pathlib.Path(bans), True))
+    elif required and not paths:
+        problem = "FK_REQUIRE_OWNER_BANS=1 but there is no terms file (tools/owner-terms.local or FK_OWNER_BANS)"
+    for p, must_have_terms in paths:
+        try:
+            got = read_terms(p)
+        except ValueError as e:
+            problem = problem or f"terms file {p} cannot be used: {e}"
+            continue
+        if not got and (must_have_terms or required):
+            problem = problem or f"terms file {p} cannot be used: it holds no terms"
+        words += [w for w in got if w not in words]
+    return words, problem
+
+
+def scan_text(label: str, text: str, words: list[str], unescape: bool = False,
+              patterns: tuple[str, ...] | None = None) -> list[str]:
     out = []
     for n, line in enumerate(text.splitlines(), 1):
         if unescape:
             line = html.unescape(line)
         for why, rx in PATTERNS.items():
+            if patterns is not None and why not in patterns:
+                continue
             for m in rx.finditer(line):
                 if not any(a in m.group(0) for a in ALLOWED):
                     out.append(f"{label}:{n}: {why}: {m.group(0)}")
@@ -111,14 +170,211 @@ def scan_file(path: pathlib.Path, rel: str, words: list[str]) -> list[str]:
     return scan_text(rel, text, words, unescape=path.suffix.lower() in ENTITY_SUFFIXES)
 
 
+def pdf_inflate(raw: bytes) -> bytes:
+    try:
+        return zlib.decompressobj().decompress(raw)
+    except zlib.error:
+        return raw
+
+
+def balanced_dict(data: bytes) -> bytes:
+    """The first `<< ... >>` in data, nested dictionaries included."""
+    i = data.find(b"<<")
+    if i < 0:
+        return b""
+    depth, j = 0, i
+    while j < len(data) - 1:
+        pair = data[j:j + 2]
+        if pair == b"<<":
+            depth, j = depth + 1, j + 2
+        elif pair == b">>":
+            depth, j = depth - 1, j + 2
+            if depth == 0:
+                return data[i:j]
+        else:
+            j += 1
+    return data[i:]
+
+
+def cmap_text(token: bytes) -> str:
+    digits = re.sub(rb"[^0-9A-Fa-f]", b"", token).decode()
+    return bytes.fromhex(digits + "0" * (len(digits) % 2)).decode("utf-16-be", errors="replace")
+
+
+def parse_cmap(cmap: bytes) -> tuple[int, dict[int, str]]:
+    """Code width in bytes and code -> text from a ToUnicode CMap (bfchar and bfrange)."""
+    width, table = 1, {}
+    m = re.search(rb"begincodespacerange\s*<([0-9A-Fa-f]+)>", cmap)
+    if m:
+        width = max(1, len(m.group(1)) // 2)
+    for block in re.findall(rb"beginbfchar(.*?)endbfchar", cmap, re.S):
+        for src, dst in re.findall(rb"<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f\s]*)>", block):
+            table[int(src, 16)] = cmap_text(dst)
+    for block in re.findall(rb"beginbfrange(.*?)endbfrange", cmap, re.S):
+        for lo, hi, dst in re.findall(rb"<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s*(<[0-9A-Fa-f\s]*>|\[[^\]]*\])", block):
+            lo, hi = int(lo, 16), int(hi, 16)
+            if hi < lo or hi - lo > 0xFFFF:
+                continue
+            if dst.startswith(b"["):
+                for code, item in zip(range(lo, hi + 1), re.findall(rb"<[0-9A-Fa-f\s]*>", dst)):
+                    table[code] = cmap_text(item)
+            else:
+                base = cmap_text(dst)
+                for k, code in enumerate(range(lo, hi + 1)):
+                    table[code] = base[:-1] + chr(ord(base[-1]) + k) if base else ""
+    return width, table
+
+
+PDF_ESCAPES = {ord("n"): 10, ord("r"): 13, ord("t"): 9, ord("b"): 8, ord("f"): 12}
+PDF_TOKEN = re.compile(rb"/[^\s/<>\[\]()%]*|\(|<<|>>|<[0-9A-Fa-f\s]*>|\[|\]|%[^\r\n]*|[^\s/<>\[\]()%]+")
+
+
+def pdf_literal(data: bytes, i: int) -> tuple[bytes, int]:
+    """The literal string whose `(` is at data[i], and the index after its `)`."""
+    out, depth = bytearray(), 1
+    i += 1
+    while i < len(data) and depth:
+        c = data[i]
+        if c == 0x5C and i + 1 < len(data):  # backslash
+            i += 1
+            c = data[i]
+            if 0x30 <= c <= 0x37:
+                j = i
+                while j < len(data) and j < i + 3 and 0x30 <= data[j] <= 0x37:
+                    j += 1
+                out.append(int(data[i:j], 8) & 0xFF)
+                i = j
+                continue
+            if c == 13 and data[i + 1:i + 2] == b"\n":  # line continuation
+                i += 1
+            elif c not in (10, 13):
+                out.append(PDF_ESCAPES.get(c, c))
+        elif c == 0x28:
+            depth += 1
+            out.append(c)
+        elif c == 0x29:
+            depth -= 1
+            if depth:
+                out.append(c)
+        else:
+            out.append(c)
+        i += 1
+    return bytes(out), i
+
+
+def content_text(content: bytes, fonts: dict) -> list[str]:
+    """The text a content stream draws, in drawing order, one entry per run in the same font (KiCad draws each
+    word in a font of its own)."""
+    runs, cur, font, name = [], [], None, b""
+    strings: list[bytes] = []  # string operands since the last operator
+
+    def show(raw: bytes):
+        width, table = fonts.get(font) or (1, None)
+        if table is None:  # no ToUnicode map: take the bytes as Latin-1, dropping control codes
+            if text := "".join(c for c in raw.decode("latin-1") if c.isprintable()):
+                cur.append(text)
+            return
+        for k in range(0, len(raw) - width + 1, width):
+            cur.append(table.get(int.from_bytes(raw[k:k + width], "big"), ""))
+
+    pos = 0
+    while True:
+        m = PDF_TOKEN.search(content, pos)
+        if not m:
+            break
+        tok, pos = m.group(0), m.end()
+        if tok == b"(":
+            raw, pos = pdf_literal(content, m.start())
+            strings.append(raw)
+        elif tok[:1] == b"<" and tok != b"<<":
+            hexed = re.sub(rb"\s", b"", tok[1:-1])
+            strings.append(bytes.fromhex((hexed + b"0" * (len(hexed) % 2)).decode()))
+        elif tok[:1] == b"/":
+            name = tok
+        elif tok == b"Tf":
+            if font != name and cur:
+                runs.append("".join(cur))
+                cur.clear()
+            font = name
+            strings.clear()
+        elif tok in (b"Tj", b"'", b'"', b"TJ"):
+            for raw in strings:
+                show(raw)
+            strings.clear()
+        elif tok[:1].isalpha() or tok in (b"'", b'"'):  # any other operator
+            strings.clear()
+    return runs + ["".join(cur)] if cur else runs
+
+
+def pdf_text(data: bytes) -> list[tuple[str, list[str]]]:
+    """(label, drawn text runs) for each page content stream, decoded through the page's fonts."""
+    objs: dict[int, tuple[bytes, bytes | None]] = {}
+    for m in PDF_OBJECT.finditer(data):
+        body = m.group(2)
+        s = PDF_STREAM.search(body)
+        objs[int(m.group(1))] = (body[:s.start()], pdf_inflate(s.group(1))) if s else (body, None)
+
+    cmaps: dict[int, tuple[int, dict[int, str]] | None] = {}
+
+    def font_map(num: int):
+        if num not in cmaps:
+            cmaps[num] = None
+            tu = re.search(rb"/ToUnicode\s+" + PDF_REF, objs.get(num, (b"", None))[0])
+            if tu and objs.get(int(tu.group(1)), (b"", None))[1] is not None:
+                cmaps[num] = parse_cmap(objs[int(tu.group(1))][1])
+        return cmaps[num]
+
+    def font_table(res: bytes) -> dict:
+        fonts = {}
+        m = re.search(rb"/Font(?![A-Za-z])", res)
+        if not m:
+            return fonts
+        rest = res[m.end():]
+        ref = re.match(rb"\s*" + PDF_REF, rest)
+        sub = objs.get(int(ref.group(1)), (b"", None))[0] if ref else balanced_dict(rest)
+        for fname, num in re.findall(rb"(/[^\s/<>\[\]()]+)\s+" + PDF_REF, sub):
+            fm = font_map(int(num))
+            if fm:
+                fonts[fname] = fm
+        return fonts
+
+    every = {}  # every font name seen anywhere, for content streams no page claims
+    for head, _ in objs.values():
+        every.update(font_table(head))
+    out, claimed = [], set()
+    for head, _ in objs.values():
+        if not re.search(rb"/Type\s*/Page\b", head):
+            continue
+        r = re.search(rb"/Resources", head)
+        rref = re.match(rb"\s*" + PDF_REF, head[r.end():]) if r else None
+        fonts = font_table(objs.get(int(rref.group(1)), (b"", None))[0] if rref else head[r.end():] if r else b"")
+        c = re.search(rb"/Contents\s*(\[[^\]]*\]|" + PDF_REF + rb")", head)
+        for ref in re.findall(PDF_REF, c.group(1)) if c else []:
+            num = int(ref)
+            if objs.get(num, (b"", None))[1] is not None:
+                claimed.add(num)
+                out.append((f"text{num}", content_text(objs[num][1], fonts)))
+    for num, (_, body) in objs.items():
+        if num not in claimed and body is not None and re.search(rb"\bT[jJ]\b", body):
+            out.append((f"text{num}", content_text(body, every)))
+    return out
+
+
 def scan_pdf(data: bytes, rel: str, words: list[str]) -> list[str]:
     out = scan_text(rel, PDF_STREAM.sub(b"", data).decode("utf-8", errors="replace"), words)
     for n, m in enumerate(PDF_STREAM.finditer(data), 1):
-        try:
-            body = zlib.decompressobj().decompress(m.group(1))
-        except zlib.error:
-            body = m.group(1)
-        out += scan_text(f"{rel}!stream{n}", body.decode("utf-8", errors="replace"), words)
+        out += scan_text(f"{rel}!stream{n}", pdf_inflate(m.group(1)).decode("utf-8", errors="replace"), words)
+    seen = {f.split(":", 1)[1] for f in out if "!stream" in f}  # "line: what" already reported from a raw stream
+    for label, runs in pdf_text(data):
+        out += [f for f in scan_text(f"{rel}!{label}", "\n".join(runs), words, patterns=DRAWN_PATTERNS)
+                if f.split(":", 1)[1] not in seen]
+        # a term can span two runs ("First" "Last") or be drawn without its space, so the runs joined are checked
+        # for terms alone, whitespace removed on both sides
+        joined = re.sub(r"\s+", "", "".join(runs)).lower()
+        for n, w in enumerate(words, 1):
+            squeezed = re.sub(r"\s+", "", w).lower()
+            if squeezed and squeezed in joined and not any(w.lower() in run.lower() for run in runs):
+                out.append(f"{rel}!{label}:joined: owner term #{n}")
     return out
 
 
@@ -139,7 +395,10 @@ def scan_path(path: pathlib.Path, rel: str, words: list[str]) -> list[str]:
 
 
 def main() -> int:
-    words = read_terms()
+    words, problem = load_terms()
+    if problem:
+        print(f"error: {problem}", file=sys.stderr)
+        return 2
     found = 0
     for path in tracked():
         if path == TERMS:
