@@ -782,3 +782,70 @@ def test_the_leave_open_mark_sits_at_the_pads_of_its_rail(tmp_path):
         md = pb.steps_markdown(pl, n)
         assert "no short from A to B" in md
         assert ("no short from C to D" in md) == (text is BOTH)
+
+
+@pytest.mark.parametrize("style", ["callouts", "labels"])
+def test_the_enlarged_pdf_pages_do_not_claim_real_size_and_the_real_size_pages_do(tmp_path, capsys, style):
+    text = CALLOUTS if style == "callouts" else CALLOUTS.replace('style="callouts" ', "")
+    pl, nets = callouts_board(tmp_path, capsys, text)
+    top, solder = pb.render_sheet(pl, nets, False), pb.render_sheet(pl, nets, True)
+    html = pb.pdf_html(pl, top, solder, pb.steps_markdown(pl, nets), "a4")
+    assert "<title>T, protoboard build</title>" in html
+    blocks = html.split('<div class="page">')[1:]
+    assert len(blocks) == 5
+    for block, heading in zip(blocks[:2], ("Top view, enlarged", "Solder side, enlarged")):
+        assert block.startswith(f"<h2>{heading}")
+        sheet = block[block.index("<svg"):]
+        assert "real size" not in sheet and "actual size" not in sheet and "measures 20 mm" not in sheet
+        assert "NOT 20 mm on this enlarged page" in sheet and "real-size pages" in sheet
+    assert "enlarged, not to scale" in blocks[0]
+    for block, sheet in zip(blocks[2:4], (top, solder)):
+        assert block.rstrip().endswith(sheet + "</div>")
+        assert "this bar measures 20 mm and the board is real size" in sheet
+    assert "enlarged, not to scale" not in blocks[2] and "NOT 20 mm" not in blocks[2] + blocks[3]
+
+
+@pytest.mark.parametrize("style", ["callouts", "labels"])
+def test_the_pdf_build_page_carries_every_line_of_the_steps_file_in_order(tmp_path, capsys, style):
+    import html as h
+    text = CALLOUTS if style == "callouts" else CALLOUTS.replace('style="callouts" ', "")
+    pl, nets = callouts_board(tmp_path, capsys, text)
+    md = pb.steps_markdown(pl, nets)
+    assert "Parts fitted only when needed" in md and "fit it only if the supply sags" in md
+    top, solder = pb.render_sheet(pl, nets, False), pb.render_sheet(pl, nets, True)
+    page = pb.pdf_html(pl, top, solder, md, "a4").split('<div class="page">')[5]
+    pos = 0
+    for line in md.splitlines():
+        if not line.strip() or line.startswith("|---"):
+            continue
+        for cell in ([c.strip() for c in line.strip("|").split("|")] if line.startswith("|") else
+                     [line[2:] if line.startswith("- ") else line.split(". ", 1)[1] if line[:1].isdigit() else line]):
+            at = page.find(h.escape(cell), pos)
+            assert at >= 0, (cell, "missing or out of order")
+            pos = at
+    assert "<p" in page and "Parts fitted only when needed (marked DNP on the drawing): leave their holes free." in page
+    assert page.count("<ul>") == 2 if style == "callouts" else page.count("<ol>") == 1 and page.count("<ul>") == 1
+    assert page.count("<table>") == 1 and page.count("<thead>") == 1
+    head = page[page.index("<thead>"):page.index("</thead>")]
+    assert ("<th>No.</th>" if style == "callouts" else "<th>Step</th>") in head and "<td>" not in head
+    assert "<th>" not in page[page.index("</thead>"):]
+
+
+def test_a_steps_line_that_is_nothing_known_is_refused_not_dropped(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    md = pb.steps_markdown(pl, nets)
+    lines = md.splitlines()
+    at = lines.index("| No. | Item | Holes |")
+    for bad in ("> a quotation", "  an indented line", "-no space bullet", "1.no space number"):
+        with pytest.raises(pb.PlacementError, match="steps line"):
+            pb.steps_html("\n".join(lines[:at - 1] + [bad, ""] + lines[at:]))
+    with pytest.raises(pb.PlacementError, match="steps line"):
+        pb.steps_html("\n".join(lines + ["", "| a row outside the table | x | y |"]))
+
+
+def test_an_enlarged_page_refuses_a_sheet_that_still_claims_real_size():
+    with pytest.raises(pb.PlacementError, match="scale bar's caption was not found"):
+        pb.enlarged_text('<svg width="1mm" height="1mm"><text>TOP VIEW (component side), real size</text></svg>')
+    bar = pb.ENLARGED_WORDING[1][0]
+    with pytest.raises(pb.PlacementError, match="still claim real size"):
+        pb.enlarged_text(f'<svg width="1mm" height="1mm"><text>{bar}</text><text>drawn real size</text></svg>')

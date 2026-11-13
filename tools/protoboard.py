@@ -2465,63 +2465,31 @@ def edge_path() -> str | None:
     return None
 
 
+ENLARGED_WORDING = (
+    ("TOP VIEW (component side), real size", "TOP VIEW (component side), enlarged, not to scale"),
+    ("20 mm: printed at 100 % (actual size) this bar measures 20 mm and the board is real size",
+     "This bar is NOT 20 mm on this enlarged page: measure on the real-size pages"),
+)
+
+
+def enlarged_text(svg: str) -> str:
+    """The sheet's own claims of real size reworded for a copy drawn larger than real size. The scale bar's
+    caption must be there; a claim that is left is refused rather than written into a page."""
+    for old, new in ENLARGED_WORDING:
+        found = esc(old) in svg
+        if not found and old.startswith("20 mm"):
+            raise PlacementError("the scale bar's caption was not found: the enlarged page would claim real size")
+        svg = svg.replace(esc(old), esc(new))
+    if "real size" in svg or "actual size" in svg:
+        raise PlacementError("the enlarged page would still claim real size")
+    return svg
+
+
 def write_pdf(pl: Placement, top: str, solder: str, md: str, out: Path, page: str) -> None:
     browser = edge_path()
     if not browser:
         raise PlacementError("--pdf needs Microsoft Edge or Chrome (set EDGE to its file)")
-    size = {"a4": "210mm 297mm", "letter": "8.5in 11in"}[page]
-
-    def scaled(svg: str, k: float) -> str:
-        w = float(re.search(r'width="([\d.]+)mm"', svg).group(1))
-        h = float(re.search(r'height="([\d.]+)mm"', svg).group(1))
-        return re.sub(r'width="[\d.]+mm" height="[\d.]+mm"', f'width="{w * k:.1f}mm" height="{h * k:.1f}mm"', svg, count=1)
-    import html as _h
-    rows = []
-    for line in md.splitlines():
-        if line.startswith("| ") and not line.startswith("|---"):
-            cells = [c.strip() for c in line.strip("|").split("|")]
-            tagname = "th" if cells[0] in ("Step", "No.") else "td"
-            rows.append("<tr>" + "".join(f"<{tagname}>{_h.escape(c)}</{tagname}>" for c in cells) + "</tr>")
-    if pl.style == "callouts":
-        # The build list is the first run of bullets; it is not numbered by step.
-        first = md.splitlines()
-        start = next(i for i, l in enumerate(first) if l.startswith("- "))
-        run = []
-        for l in first[start:]:
-            if not l.startswith("- "):
-                break
-            run.append(l[2:])
-        items = [f"<li>{_h.escape(l)}</li>" for l in run]
-    else:
-        items = [f"<li>{_h.escape(l.split('. ', 1)[1])}</li>" for l in md.splitlines() if l[:1].isdigit()]
-    list_tag = "ul" if pl.style == "callouts" else "ol"
-    # The enlarged pages scale the sheet to fit the page when a tall sheet (the callouts legend) needs it.
-    page_h = {"a4": 297.0, "letter": 279.4}[page]
-    height = float(re.search(r'height="([\d.]+)mm"', top).group(1))
-    k = min(1.45, (page_h - 16 - 14) / height)
-    warn = top[top.index("<svg"):]
-    hw = hand_words(pl)
-    html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
-@page {{ size: {size}; margin: 8mm; }}
-body {{ margin: 0; font-family: Arial, Helvetica, sans-serif; }}
-.page {{ page-break-after: always; text-align: center; }}
-.page:last-child {{ page-break-after: auto; }}
-h2 {{ font-size: 13pt; margin: 2mm 0; text-align: left; }}
-p.note {{ font-size: 9pt; text-align: left; margin: 1mm 0 3mm; }}
-ol, ul {{ text-align: left; font-size: 8.5pt; margin: 0 0 3mm 5mm; padding-left: 4mm; }}
-table {{ border-collapse: collapse; font-size: 8pt; text-align: left; width: 100%; }}
-td, th {{ border: 0.2mm solid #999; padding: 0.6mm 1.2mm; }}
-</style></head><body>
-<div class="page"><h2>Top view, enlarged for reading</h2>{scaled(top, k)}</div>
-<div class="page"><h2>Solder side, enlarged for reading</h2>{scaled(solder, k)}</div>
-<div class="page"><h2>Real size (print at 100 %, "actual size"): lay the board on the drawing</h2>
-<p class="note">Check the 20 mm bar with a ruler before you rely on the drawing.</p>{top}</div>
-<div class="page"><h2>Real size, solder side</h2>{solder}</div>
-<div class="page"><h2>Build order and hole table</h2>
-<p class="note">For a C3 {hw['HAND']} module only (USB up: 5V, G, 3V3 at the top of the {hw['SIDE']} row). A {hw['other']} module
-in this layout puts 5 V on a GPIO pin and can destroy it.</p>
-<{list_tag}>{''.join(items)}</{list_tag}><table>{''.join(rows)}</table></div>
-</body></html>"""
+    html = pdf_html(pl, top, solder, md, page)
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         hp = Path(td) / "sheet.html"
         hp.write_text(html, encoding="utf-8")
@@ -2534,6 +2502,120 @@ in this layout puts 5 V on a GPIO pin and can destroy it.</p>
             pass
         if not out.is_file():
             raise PlacementError(f"PDF not written: {out}")
+
+
+def steps_html(md: str) -> str:
+    """The steps file as HTML, every line in the file's order: paragraphs, runs of bullets, runs of numbered
+    lines, and the table (its header row in <thead>, so a continuation page repeats it)."""
+    import html as _h
+    out: list[str] = []
+    run: tuple[str, list[str]] | None = None   # (list tag, items) being collected
+    table: list[str] | None = None             # rows of the open table; None until one starts
+    table_done = False
+    table_cols = 0
+
+    def close_run():
+        nonlocal run
+        if run:
+            out.append(f"<{run[0]}>" + "".join(f"<li>{_h.escape(i)}</li>" for i in run[1]) + f"</{run[0]}>")
+        run = None
+
+    def close_table():
+        nonlocal table, table_done
+        if table is not None:
+            if len(table) < 2:
+                raise PlacementError("the steps table has no rows under its header")
+            out.append("<table><thead>" + table[0] + "</thead><tbody>" + "".join(table[1:]) + "</tbody></table>")
+            table, table_done = None, True
+
+    def cells(line: str) -> list[str]:
+        return [c.strip() for c in line.strip("|").split("|")]
+
+    for n, line in enumerate(md.splitlines(), 1):
+        if not line.strip():
+            close_run()
+            close_table()
+            continue
+        if line.startswith("|"):
+            close_run()
+            if table is None:
+                if table_done or not line.startswith("| "):
+                    raise PlacementError(f"steps line {n}: a table row outside the one table: {line[:40]!r}")
+                table = []
+                head = cells(line)
+                table.append("<tr>" + "".join(f"<th>{_h.escape(c)}</th>" for c in head) + "</tr>")
+                table_cols = len(head)
+            elif line.startswith("|---"):
+                if len(table) != 1 or len(cells(line)) != table_cols:
+                    raise PlacementError(f"steps line {n}: the table separator is not under the header")
+            elif line.startswith("| ") and len(cells(line)) == table_cols:
+                table.append("<tr>" + "".join(f"<td>{_h.escape(c)}</td>" for c in cells(line)) + "</tr>")
+            else:
+                raise PlacementError(f"steps line {n}: not a table row of {table_cols} cells: {line[:40]!r}")
+            continue
+        if table is not None:
+            raise PlacementError(f"steps line {n}: text inside the table: {line[:40]!r}")
+        m = re.match(r"(\d+)\. (.+)", line)
+        if line.startswith("- ") and len(line) > 2:
+            tag, text = "ul", line[2:]
+        elif m:
+            tag, text = "ol", m.group(2)
+        elif re.match(r"[A-Za-z]", line):
+            close_run()
+            out.append(f'<p class="steps">{_h.escape(line)}</p>')
+            continue
+        else:
+            raise PlacementError(f"steps line {n}: not a paragraph, bullet, numbered line or table row: {line[:40]!r}")
+        if run and run[0] != tag:
+            close_run()
+        if run is None:
+            run = (tag, [])
+        run[1].append(text)
+    close_run()
+    close_table()
+    return "\n".join(out)
+
+
+def pdf_html(pl: Placement, top: str, solder: str, md: str, page: str) -> str:
+    """The page blocks of the PDF: the top and the solder sheet enlarged, the same two at real size, the build list."""
+    size = {"a4": "210mm 297mm", "letter": "8.5in 11in"}[page]
+
+    def scaled(svg: str, k: float) -> str:
+        w = float(re.search(r'width="([\d.]+)mm"', svg).group(1))
+        h = float(re.search(r'height="([\d.]+)mm"', svg).group(1))
+        return re.sub(r'width="[\d.]+mm" height="[\d.]+mm"', f'width="{w * k:.1f}mm" height="{h * k:.1f}mm"', enlarged_text(svg), count=1)
+    import html as _h
+    build = steps_html(md)
+    # The enlarged pages scale the sheet to fit the page when a tall sheet (the callouts legend) needs it.
+    page_h = {"a4": 297.0, "letter": 279.4}[page]
+    height = float(re.search(r'height="([\d.]+)mm"', top).group(1))
+    k = min(1.45, (page_h - 16 - 14) / height)
+    warn = top[top.index("<svg"):]
+    hw = hand_words(pl)
+    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>{_h.escape(pl.title or pl.device)}, protoboard build</title><style>
+@page {{ size: {size}; margin: 8mm; }}
+body {{ margin: 0; font-family: Arial, Helvetica, sans-serif; }}
+.page {{ page-break-after: always; text-align: center; }}
+.page:last-child {{ page-break-after: auto; }}
+h2 {{ font-size: 13pt; margin: 2mm 0; text-align: left; }}
+p.note {{ font-size: 9pt; text-align: left; margin: 1mm 0 3mm; }}
+ol, ul {{ text-align: left; font-size: 8.5pt; margin: 0 0 3mm 5mm; padding-left: 4mm; }}
+table {{ border-collapse: collapse; font-size: 8pt; text-align: left; width: 100%; }}
+td, th {{ border: 0.2mm solid #999; padding: 0.6mm 1.2mm; }}
+tr {{ page-break-inside: avoid; }}
+p.steps {{ font-size: 8.5pt; text-align: left; margin: 0 0 2mm; }}
+</style></head><body>
+<div class="page"><h2>Top view, enlarged for reading</h2>{scaled(top, k)}</div>
+<div class="page"><h2>Solder side, enlarged for reading</h2>{scaled(solder, k)}</div>
+<div class="page"><h2>Real size (print at 100 %, "actual size"): lay the board on the drawing</h2>
+<p class="note">Check the 20 mm bar with a ruler before you rely on the drawing.</p>{top}</div>
+<div class="page"><h2>Real size, solder side</h2>{solder}</div>
+<div class="page"><h2>Build order and hole table</h2>
+<p class="note">For a C3 {hw['HAND']} module only (USB up: 5V, G, 3V3 at the top of the {hw['SIDE']} row). A {hw['other']} module
+in this layout puts 5 V on a GPIO pin and can destroy it.</p>
+{build}</div>
+</body></html>"""
+    return html
 
 
 def cmd_render(args) -> int:
