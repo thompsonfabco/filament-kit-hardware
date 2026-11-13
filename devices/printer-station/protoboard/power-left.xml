@@ -28,23 +28,23 @@
     <pin n="16" hole="D8"/>
   </part>
   <part ref="J3" kind="jst-xh" value="XH-5" latch="up" label="encoder">
-    <pin n="1" hole="E10"/>
-    <pin n="2" hole="E11"/>
+    <pin n="1" hole="E14"/>
+    <pin n="2" hole="E13"/>
     <pin n="3" hole="E12"/>
-    <pin n="4" hole="E13"/>
-    <pin n="5" hole="E14"/>
+    <pin n="4" hole="E11"/>
+    <pin n="5" hole="E10"/>
   </part>
   <part ref="J1" kind="jst-xh" value="XH-4" latch="down" label="PN532">
-    <pin n="1" hole="F21"/>
-    <pin n="2" hole="F20"/>
-    <pin n="3" hole="F19"/>
-    <pin n="4" hole="F18"/>
+    <pin n="1" hole="F18"/>
+    <pin n="2" hole="F19"/>
+    <pin n="3" hole="F20"/>
+    <pin n="4" hole="F21"/>
   </part>
   <part ref="J2" kind="jst-xh" value="XH-4" latch="down" label="OLED">
-    <pin n="1" hole="F26"/>
-    <pin n="2" hole="F25"/>
-    <pin n="3" hole="F24"/>
-    <pin n="4" hole="F23"/>
+    <pin n="1" hole="F23"/>
+    <pin n="2" hole="F24"/>
+    <pin n="3" hole="F25"/>
+    <pin n="4" hole="F26"/>
   </part>
   <part ref="Q1" kind="to92" value="BS170" flat="down" caption="right">
     <pin n="1" hole="E20"/>
@@ -63,31 +63,33 @@
     <pin n="1" hole="B+29"/>
     <pin n="2" hole="A29"/>
   </part>
-  <part ref="J4" kind="jst-xh" value="XH-2" latch="down" label="buzzer">
+  <part ref="J4" kind="jst-xh" value="XH-2" latch="up" label="buzzer">
     <pin n="1" hole="E27"/>
     <pin n="2" hole="E26"/>
   </part>
   <wire net="5V" from="A1" to="B+1"/>
   <wire net="GND" from="A2" to="B-2"/>
-  <wire net="ENC_CLK" from="A5" to="A10"/>
-  <wire net="ENC_DT" from="B4" to="B11"/>
-  <wire net="ENC_SW" from="C7" to="C13"/>
   <wire net="GND" from="A12" to="B-12"/>
-  <wire net="3V3" from="E3" to="G16" route="vh"/>
-  <wire net="3V3" from="F16" to="C14" route="vh"/>
-  <wire net="BUZZER" from="E8" to="E9"/>
   <wire net="BUZZER" from="D9" to="D15"/>
-  <wire net="SDA" from="J1" to="J19"/>
-  <wire net="SCL" from="I2" to="I18"/>
-  <wire net="3V3" from="H16" to="H20"/>
-  <wire net="GND" from="H21" to="H26"/>
-  <wire net="SCL" from="G18" to="G23"/>
-  <wire net="SDA" from="I19" to="I24"/>
-  <wire net="3V3" from="J20" to="J25"/>
-  <wire net="GND" from="J26" to="T-26"/>
   <wire net="BZ-" from="B29" to="B26"/>
   <wire net="BZ-" from="C20" to="C26"/>
   <wire net="BZ_G" from="D21" to="D19"/>
   <wire net="5V" from="B+27" to="A27"/>
   <wire net="GND" from="B-22" to="A22"/>
+  <wire net="3V3" from="B3" to="B10"/>
+  <wire net="ENC_DT" from="C4" to="C13"/>
+  <wire net="SDA" from="G20" to="G25"/>
+  <wire net="ENC_SW" from="A7" to="A11"/>
+  <wire net="ENC_CLK" from="C14" to="C16"/>
+  <wire net="ENC_CLK" from="H15" to="E16" route="hv"/>
+  <wire net="GND" from="J18" to="T-18"/>
+  <wire net="GND" from="I23" to="T-23"/>
+  <wire net="ENC_CLK" from="E5" to="F15" route="vh"/>
+  <wire net="SCL" from="H21" to="H26"/>
+  <wire net="3V3" from="J19" to="J24"/>
+  <wire net="3V3" from="E3" to="G19" route="vh"/>
+  <wire net="BUZZER" from="E8" to="E9"/>
+  <wire net="SCL" from="I2" to="I21"/>
+  <wire net="SDA" from="H17" to="H20"/>
+  <wire net="SDA" from="J1" to="J17"/>
 </protoboard>
