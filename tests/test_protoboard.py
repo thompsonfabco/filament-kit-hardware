@@ -1,3 +1,4 @@
+import math
 import sys
 from pathlib import Path
 
@@ -250,3 +251,298 @@ def test_radial_capacitor_and_dnp(tmp_path, capsys):
     assert "DNP" in top
     code, out = check_text(tmp_path, CAP.replace('hole="B-15"', 'hole="B-17"'), nets, capsys)
     assert code == 1 and "C9: put its two leads along a letter or a number" in out
+
+
+LEADS_NETS = {"GND": [("J1", "1")], "3V3": [("J1", "2")], "SDA": [("J1", "3")], "SCL": [("J1", "4")],
+              "N": [("R1", "1")], "M": [("R1", "2")]}
+LEADS = '''<protoboard device="t" hand="power-left" title="T">
+  <part ref="R1" kind="resistor" value="1k"><pin n="1" hole="C10"/><pin n="2" hole="C14"/></part>
+  <part ref="J1" kind="leads" label="OLED">
+    <pin n="1" hole="B28"/><pin n="2" hole="T+9"/><pin n="3" hole="J28"/><pin n="4" hole="I3"/>
+  </part>
+</protoboard>
+'''
+
+
+def test_leads_on_scattered_holes_including_a_rail_pass(tmp_path, capsys):
+    code, out = check_text(tmp_path, LEADS, LEADS_NETS, capsys)
+    assert code == 0, out
+    assert "OK board.xml: 2 parts" in out
+
+
+def test_lead_under_the_c3_is_refused(tmp_path, capsys):
+    u1 = c3("IE", 25)
+    pins = "".join(f'<pin n="{n}" hole="{h}"/>' for n, h in u1.pins.items())
+    nets = dict(LEADS_NETS, **{f"P{n}": [("U1", n)] for n in u1.pins})
+    c3_xml = f'  <part ref="U1" kind="c3-supermini" value="C3" hand="power-left">{pins}</part>\n'
+    ok = LEADS.replace("</protoboard>", c3_xml + "</protoboard>")
+    code, out = check_text(tmp_path, ok, nets, capsys)
+    assert code == 0, out
+    code, out = check_text(tmp_path, ok.replace("J28", "G21"), nets, capsys)
+    assert code == 1
+    assert "J1 pin 3: hole G21 is under U1's raised board" in out
+
+
+def test_two_leads_in_one_hole_are_refused(tmp_path, capsys):
+    code, out = check_text(tmp_path, LEADS.replace('hole="I3"', 'hole="B28"'), LEADS_NETS, capsys)
+    assert code == 1
+    assert "hole B28: used twice" in out
+
+
+def test_leads_need_a_label(tmp_path, capsys):
+    code, out = check_text(tmp_path, LEADS.replace(' label="OLED"', ""), LEADS_NETS, capsys)
+    assert code == 1
+    assert "J1: a leads part needs label" in out
+
+
+def test_leads_render_with_label_and_come_last_in_the_steps(tmp_path, capsys):
+    code, out = check_text(tmp_path, LEADS, LEADS_NETS, capsys)
+    assert code == 0, out
+    pl = pb.load_placement(tmp_path / "board.xml")
+    nets = pb.load_netlist(tmp_path / "net.xml")
+    for solder in (False, True):
+        assert "OLED SDA" in pb.render_sheet(pl, nets, solder)
+    md = pb.steps_markdown(pl, nets)
+    lines = [ln for ln in md.splitlines() if ln[:2].isdigit() or ln[:1].isdigit()]
+    steps = [ln for ln in lines if ". " in ln[:4]]
+    assert steps[-2].startswith("2. OLED wires (J1): GND in B28, 3V3 in top + rail at number 9, SDA in J28, "
+                                "SCL in I3. Solder each wire from the top, then tie the bundle to the board edge.")
+    assert steps[-1].startswith("3. Check with a meter")
+    assert "| 2 | J1 OLED wires | GND B28, 3V3 top + rail at number 9, SDA J28, SCL I3 |" in md
+
+
+ROW = LEADS.replace('hole="B28"', 'hole="J25"').replace('hole="T+9"', 'hole="J26"').replace('hole="J28"', 'hole="J27"') \
+           .replace('hole="I3"', 'hole="J28"')
+
+
+def test_leads_in_a_row_get_per_wire_tags_like_scattered_ones_in_the_default_style(tmp_path, capsys):
+    code, out = check_text(tmp_path, ROW, LEADS_NETS, capsys)
+    assert code == 0, out
+    pl = pb.load_placement(tmp_path / "board.xml")
+    nets = pb.load_netlist(tmp_path / "net.xml")
+    assert pb.lead_row(pl.parts[1]) is not None
+    for solder in (False, True):
+        svg = pb.render_sheet(pl, nets, solder)
+        assert ">OLED wires<" not in svg
+        assert "OLED GND" in svg and "OLED SDA" in svg
+    md = pb.steps_markdown(pl, nets)
+    assert ("OLED wires (J1): GND in J25, 3V3 in J26, SDA in J27, SCL in J28. Solder each wire from the top, then "
+            "tie the bundle to the board edge.") in md
+    assert "| J1 OLED wires | GND J25, 3V3 J26, SDA J27, SCL J28 |" in md
+
+
+def test_scattered_leads_keep_per_wire_tags(tmp_path, capsys):
+    code, out = check_text(tmp_path, LEADS, LEADS_NETS, capsys)
+    assert code == 0, out
+    pl = pb.load_placement(tmp_path / "board.xml")
+    assert pb.lead_row(pl.parts[1]) is None
+    svg = pb.render_sheet(pl, pb.load_netlist(tmp_path / "net.xml"), False)
+    assert "OLED SDA" in svg and ">OLED wires<" not in svg
+
+
+def test_leads_in_reverse_pin_order_are_a_row_only_if_adjacent_in_order(tmp_path, capsys):
+    swapped = ROW.replace('hole="J25"', 'hole="TMP"').replace('hole="J26"', 'hole="J25"').replace('hole="TMP"', 'hole="J26"')
+    code, out = check_text(tmp_path, swapped, LEADS_NETS, capsys)
+    assert code == 0, out
+    assert pb.lead_row(pb.load_placement(tmp_path / "board.xml").parts[1]) is None
+
+
+def test_lead_names_follow_name_attribute_else_net_in_drawing_and_steps(tmp_path, capsys):
+    text = ROW.replace('<pin n="1" hole="J25"/>', '<pin n="1" hole="J25" name="ZQ"/>')
+    code, out = check_text(tmp_path, text, LEADS_NETS, capsys)
+    assert code == 0, out
+    pl = pb.load_placement(tmp_path / "board.xml")
+    nets = pb.load_netlist(tmp_path / "net.xml")
+    assert "ZQ in J25, 3V3 in J26, SDA in J27, SCL in J28." in pb.steps_markdown(pl, nets)
+    svg = pb.render_sheet(pl, nets, False)
+    assert "OLED ZQ" in svg and "OLED 3V3" in svg
+
+
+def test_leads_with_a_non_numeric_pin_number_render(tmp_path, capsys):
+    text = LEADS.replace('<pin n="4" hole="I3"/>', '<pin n="SH" hole="I3"/>')
+    nets = dict(LEADS_NETS, SCL=[("J1", "SH")])
+    code, out = check_text(tmp_path, text, nets, capsys)
+    assert code == 0, out
+    pl = pb.load_placement(tmp_path / "board.xml")
+    pb.render_sheet(pl, pb.load_netlist(tmp_path / "net.xml"), False)
+    assert "SCL in I3" in pb.steps_markdown(pl, pb.load_netlist(tmp_path / "net.xml"))
+
+
+def test_leads_steps_come_after_jst_steps(tmp_path, capsys):
+    nets = dict(LEADS_NETS, **{"X": [("J9", "1")], "Y": [("J9", "2")]})
+    jst = ('  <part ref="J9" kind="jst-xh" value="XH-2" label="PWR" latch="down">'
+           '<pin n="1" hole="E5"/><pin n="2" hole="E6"/></part>\n')
+    code, out = check_text(tmp_path, LEADS.replace("</protoboard>", jst + "</protoboard>"), nets, capsys)
+    assert code == 0, out
+    pl = pb.load_placement(tmp_path / "board.xml")
+    steps, _ = pb.build_steps(pl, pb.load_netlist(tmp_path / "net.xml"))
+    texts = [s[1] for s in steps]
+    assert next(i for i, t in enumerate(texts) if t.startswith("J9 ")) < next(
+        i for i, t in enumerate(texts) if t.startswith("OLED wires"))
+
+
+def test_lead_under_a_module_board_is_refused(tmp_path, capsys):
+    nets = dict(MODULE_NETS, **{"A": [("U9", "1"), ("R1", "1")], "W": [("J1", "1")]})
+    text = MODULE.replace("</protoboard>", '  <part ref="J1" kind="leads" label="OLED"><pin n="1" hole="G20"/>'
+                          '</part>\n</protoboard>')
+    code, out = check_text(tmp_path, text.replace("G20", "H11"), nets, capsys)
+    assert code == 1
+    assert "J1 pin 1: hole H11 is under U9's raised board" in out
+
+
+def test_leads_on_two_different_rails_are_not_a_row():
+    two = pb.Part(ref="J1", kind="leads", value="", pins={"1": "T-10", "2": "T+10"})
+    one = pb.Part(ref="J1", kind="leads", value="", pins={"1": "T+10", "2": "T+11"})
+    assert pb.lead_row(two) is None
+    assert pb.lead_row(one) is not None
+
+
+CALLOUTS_NETS = dict(MODULE_NETS, P=[("C9", "1")], N=[("C9", "2")], W1=[("J1", "1")], W2=[("J1", "2")],
+                     W3=[("J1", "3")], W4=[("J1", "4")])
+CALLOUTS = '''<protoboard style="callouts" device="t" hand="power-left" title="T">
+  <offboard ref="LS9">speaker</offboard>
+  <part ref="U9" kind="module" value="AMP" label="amplifier" extends="up" terminal="SPEAKER">
+    <pin n="1" hole="G10" name="X"/><pin n="2" hole="G11" name="Y"/><pin n="3" hole="G12" name="Z"/>
+    <pin n="4" on="module" at="2.54,12.7" name="+"/>
+  </part>
+  <part ref="R1" kind="resistor" value="1k"><pin n="1" hole="C10"/><pin n="2" hole="C14"/></part>
+  <part ref="C9" kind="cap-radial" value="470 uF" d="8" dnp="the supply sags">
+    <pin n="1" hole="B+20"/><pin n="2" hole="B-20"/></part>
+  <part ref="J1" kind="leads" label="OLED">
+    <pin n="1" hole="J25"/><pin n="2" hole="J26"/><pin n="3" hole="J27"/><pin n="4" hole="J28"/>
+  </part>
+  <wire net="A" from="F10" to="E10"/>
+  <wire net="B" from="F11" to="D14" route="channel" y="26"/>
+</protoboard>
+'''
+
+
+def callouts_board(tmp_path, capsys, text=CALLOUTS):
+    code, out = check_text(tmp_path, text, CALLOUTS_NETS, capsys)
+    assert code == 0, out
+    return pb.load_placement(tmp_path / "board.xml"), pb.load_netlist(tmp_path / "net.xml")
+
+
+def test_an_unknown_style_is_refused(tmp_path, capsys):
+    p = tmp_path / "board.xml"
+    p.write_text(CALLOUTS.replace('style="callouts"', 'style="bold"'), encoding="utf-8")
+    with pytest.raises(pb.PlacementError, match="style must be labels or callouts, got 'bold'"):
+        pb.load_placement(p)
+    assert pb.main(["check", str(p), "--netlist", str(netlist(tmp_path, CALLOUTS_NETS))]) == 2
+    assert "style must be labels or callouts" in capsys.readouterr().err
+
+
+def test_style_labels_is_the_default_style(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys, CALLOUTS.replace('style="callouts" ', ""))
+    assert pl.style == "labels"
+    explicit, _ = callouts_board(tmp_path, capsys, CALLOUTS.replace("callouts", "labels"))
+    for solder in (False, True):
+        assert pb.render_sheet(pl, nets, solder) == pb.render_sheet(explicit, nets, solder)
+    assert pb.steps_markdown(pl, nets) == pb.steps_markdown(explicit, nets)
+
+
+STEP_BADGE = 'r="1.05" fill="#111" stroke="#fff"'
+NET_TAG = 'rx="0.5" fill="#ffffff" stroke='
+
+
+def test_callouts_render_has_no_step_badges_and_no_wire_tags(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    default = callouts_board(tmp_path, capsys, CALLOUTS.replace('style="callouts" ', ""))[0]
+    for solder in (False, True):
+        svg = pb.render_sheet(pl, nets, solder)
+        assert STEP_BADGE not in svg and NET_TAG not in svg
+        assert "build step" not in svg and "each wire end is labelled" not in svg
+        base_svg = pb.render_sheet(default, nets, solder)
+        assert NET_TAG in base_svg                                  # the patterns do match the default style
+        assert (STEP_BADGE in base_svg) == (not solder)
+    # The names are off the board; what shows how to fit a part stays.
+    top = pb.render_sheet(pl, nets, False)
+    assert ">flat<" not in top and "SPEAKER" in top and ">X<" in top
+
+
+def callout_centres(svg):
+    import re
+    out = {}
+    for cls, body in re.findall(r'<g class="(callout-(?:part|lead))" data-no="\d+">(.*?)</g>', svg):
+        no = int(re.search(r'>(\d+)</text>', body).group(1))
+        m = re.search(r'<circle cx="([\d.]+)" cy="([\d.]+)"', body)
+        if m:
+            c = (float(m.group(1)), float(m.group(2)))
+        else:
+            m = re.search(r'<rect x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="([\d.]+)"', body)
+            c = (float(m.group(1)) + float(m.group(3)) / 2, float(m.group(2)) + float(m.group(4)) / 2)
+        out[no] = (cls, c)
+    return out
+
+
+def test_callouts_one_per_part_and_per_lead_with_unique_numbers(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    parts_no, leads_no = pb.callout_numbers(pl)
+    # Build order: resistor, capacitor, module; then the device's wires in pin order.
+    assert parts_no == {"R1": 1, "C9": 2, "U9": 3}
+    assert leads_no == {("J1", "1"): 4, ("J1", "2"): 5, ("J1", "3"): 6, ("J1", "4"): 7}
+    for solder in (False, True):
+        found = callout_centres(pb.render_sheet(pl, nets, solder))
+        assert sorted(found) == [1, 2, 3, 4, 5, 6, 7]
+        assert [found[n][0] for n in sorted(found)] == ["callout-part"] * 3 + ["callout-lead"] * 4
+
+
+def test_callouts_cover_no_hole_in_use_and_no_other_callout(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    lead_holes = {h for p in pl.parts if p.kind == "leads" for h in p.pins.values()}
+    for solder in (False, True):
+        v = pb.View(solder, True)
+        found = callout_centres(pb.render_sheet(pl, nets, solder))
+        for no, (_, c) in found.items():
+            for h in pb.used_holes(pl):
+                reach = pb.CALLOUT_R + (pb.LEAD_RING_R if h in lead_holes else 0.78)
+                assert math.dist(c, v.p((pb.HOLES[h].x, pb.HOLES[h].y))) >= reach, (no, h, solder)
+            for other, (_, d) in found.items():
+                assert other == no or math.dist(c, d) >= 2 * pb.CALLOUT_R, (no, other, solder)
+
+
+def test_callouts_legend_lists_every_part_and_device_wire(tmp_path, capsys):
+    import re
+    pl, nets = callouts_board(tmp_path, capsys)
+    for solder in (False, True):
+        svg = pb.render_sheet(pl, nets, solder)
+        texts = re.findall(r"<text[^>]*>([^<]*)</text>", svg)
+        for ref in ("R1", "C9", "U9"):
+            assert any(t.startswith(f"{ref} ") for t in texts), ref
+        assert "Parts" in texts and "Device wires" in texts and "OLED (J1)" in texts
+        assert any(t.startswith("C9 470 uF") for t in texts) and "fit only if the supply sags" in " ".join(texts)
+        assert [t for t in texts if t.startswith(("W1: ", "W2: ", "W3: ", "W4: "))] == \
+            ["W1: J25", "W2: J26", "W3: J27", "W4: J28"]
+        for n in range(1, 8):
+            assert str(n) in texts
+        assert "a part on the board (see Parts)" in texts
+
+
+def test_callouts_row_of_leads_gets_a_thin_outline_only_in_callouts_style(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    assert pb.lead_row(pl.parts[3]) is not None
+    default = callouts_board(tmp_path, capsys, CALLOUTS.replace('style="callouts" ', ""))[0]
+    outline = 'rx="1.0" fill="none" stroke="#333" stroke-width="0.3"'
+    assert pb.render_sheet(pl, nets, False).count(outline) == 1
+    assert outline not in pb.render_sheet(default, nets, False)
+
+
+def test_callouts_steps_are_unnumbered_and_start_with_the_callout_numbers(tmp_path, capsys):
+    pl, nets = callouts_board(tmp_path, capsys)
+    md = pb.steps_markdown(pl, nets)
+    lines = md.splitlines()
+    assert "Build order" in lines[0] and not any(ln[:2].isdigit() for ln in lines if not ln.startswith("|"))
+    bullets = [ln for ln in lines[2:] if ln.startswith("- ")]
+    assert bullets[0].startswith("- Wire B: F11 to D14") and bullets[1].startswith("- Wire A: F10 to E10")
+    assert "- Part 1, R1 (1k): C10 to C14, lying flat." in bullets
+    assert "- Part 3, U9 socket: a 1x3 female header in G10-G12." in " ".join(bullets)
+    assert ("- Device wires 4-7, OLED (J1): 4 W1 in J25, 5 W2 in J26, 6 W3 in J27, 7 W4 in J28. Solder each wire "
+            "from the top, then tie the bundle to the board edge.") in bullets
+    assert next(i for i, ln in enumerate(bullets) if "Part 3" in ln) < next(i for i, ln in enumerate(bullets)
+                                                                           if "Device wires" in ln)
+    assert "- Part 2, C9 (470 uF)" in md and "fit it only if the supply sags" in md
+    assert "| No. | Item | Holes |" in md and "| Step |" not in md
+    assert "|  | wire A | F10 to E10 |" in md
+    assert "| 1 | R1 1k | C10 to C14 |" in md
+    assert "| 2 | C9 470 uF (fit only if needed) |" in md
+    assert "| 4-7 | J1 OLED wires | 4 W1 J25, 5 W2 J26, 6 W3 J27, 7 W4 J28 |" in md

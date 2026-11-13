@@ -13,9 +13,14 @@ labelled with the net it really carries.
     python tools/protoboard.py render devices/printer-station/protoboard/power-left.xml [--pdf]
 
 Part kinds: c3-supermini (hand power-left or power-right), module (a plug-in board on a 1xN female header; pins
-with on="module" sit on the board itself, such as a screw terminal), jst-xh, to92, resistor, diode and cap-radial.
+with on="module" sit on the board itself, such as a screw terminal), jst-xh, to92, resistor, diode, cap-radial and
+leads (a schematic connector placed as loose wires of an off-board device, each soldered into any free hole,
+letter or rail; it needs label="<device>" and has no body).
 Any part may carry dnp="<when to fit it>": its holes are kept and drawn, and it is listed apart from the build
 steps. A wire is straight, has one bend (route hv or vh) or runs along the centre channel (route channel, y=mm).
+<protoboard style="callouts"> picks the drawing style: wire links carry no label, every on-board part and every
+wire of an off-board device carries a number in a callout, and a legend under the board lists the numbers. The
+default, style="labels", puts a net tag and a build-step number on every wire link.
 
 check exits 0 when the board matches the netlist, 1 with each problem named, 2 when a file can't be read
 or the netlist can't be exported. render runs the check first and writes <hand>-top.svg, <hand>-solder.svg
@@ -38,10 +43,12 @@ from __future__ import annotations
 import argparse
 import math
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
+import textwrap
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -156,6 +163,10 @@ C3_POWER_LEFT = {  # pad -> (name, side, index from the USB end); top view with 
     "5": ("9", "R", 4), "6": ("10", "R", 5), "7": ("20", "R", 6), "8": ("21", "R", 7),
 }
 HANDS = ("power-left", "power-right")
+STYLES = ("labels", "callouts")
+# Build order of the part kinds, lowest parts first; the callout numbers follow it too.
+PART_ORDER = {"resistor": 0, "diode": 1, "to92": 2, "cap-radial": 2.5, "c3-supermini": 3, "module": 3.5, "jst-xh": 4,
+              "leads": 5}
 TO92_NAMES = {"1": "D", "2": "G", "3": "S"}
 DIODE_NAMES = {"1": "K", "2": "A"}
 
@@ -392,6 +403,7 @@ class Placement:
     wires: list[Wire]
     bridges: list[str]
     title: str = ""
+    style: str = "labels"       # or "callouts", see the module docstring
 
 
 def load_placement(path: Path) -> Placement:
@@ -452,8 +464,11 @@ def load_placement(path: Path) -> Placement:
         if r not in BRIDGE_PADS:
             raise PlacementError(f"{path}: bridge rail must be + or -, got {r!r}")
         bridges.append(r)
+    style = root.get("style", "labels")
+    if style not in STYLES:
+        raise PlacementError(f"{path}: style must be {' or '.join(STYLES)}, got {style!r}")
     return Placement(path, root.get("device", ""), root.get("hand", ""), schematic, offboard, parts, wires,
-                     bridges, root.get("title", ""))
+                     bridges, root.get("title", ""), style)
 
 
 # ---------------------------------------------------------------------------------------------- netlist
@@ -658,6 +673,13 @@ def _check_part_geometry(p: Part) -> None:
     if k == "c3-supermini":
         module_frame(p)
         return
+    if k == "leads":
+        if not p.attrs.get("label"):
+            raise PlacementError(f"{p.ref}: a leads part needs label=\"<device>\", the device its wires go to")
+        for n, h in p.pins.items():
+            if h in PADS:
+                raise PlacementError(f"{p.ref} pin {n}: a wire can't be soldered into the {HOLES[h].text}")
+        return
     if k == "jst-xh":
         n = len(p.pins)
         if p.attrs.get("latch") not in DIRS:
@@ -778,6 +800,15 @@ def _check_drawing(pl: Placement, rep: Report) -> None:
             if dist_point_poly((mx, my), poly) < M2_KEEPOUT:
                 err(f"{ref}: its body covers an M2 mounting hole")
     by_ref = {p.ref: p for p in pl.parts}
+    # A loose wire's hole can't lie under a raised board (the wire would have to pass through it).
+    for p in pl.parts:
+        if p.kind != "leads":
+            continue
+        for n, h in sorted(p.pins.items()):
+            for ref, poly in raised:
+                if point_in_poly((HOLES[h].x, HOLES[h].y), poly):
+                    err(f"{p.ref} pin {n}: hole {HOLES[h].text} is under {ref}'s raised board, so a wire can't be "
+                        "soldered there")
     # A hole squeezed between two bodies, each covering part of it, can't take a lead either.
     for h in used:
         hh = HOLES[h]
@@ -1000,11 +1031,15 @@ def esc(t: str) -> str:
 class Svg:
     def __init__(self):
         self.out: list[str] = []
+        self.boxes: list[tuple] = []     # (x0, y0, x1, y1) of each text and mark drawn so far, for the callouts
 
     def add(self, s: str):
         self.out.append(s)
 
     def text(self, x, y, t, size=1.6, anchor="middle", weight="normal", fill="#1a1a1a", extra=""):
+        w = 0.62 * size * len(t)
+        x0 = {"middle": x - w / 2, "start": x, "end": x - w}[anchor]
+        self.boxes.append((x0, y - 0.8 * size, x0 + w, y + 0.25 * size))
         self.add(f'<text x="{x:.2f}" y="{y:.2f}" font-size="{size:.2f}" text-anchor="{anchor}" '
                  f'font-weight="{weight}" fill="{fill}" {extra}>{esc(t)}</text>')
 
@@ -1012,8 +1047,9 @@ class Svg:
 class View:
     """Maps board mm to sheet mm; the solder view mirrors left to right."""
 
-    def __init__(self, solder: bool):
+    def __init__(self, solder: bool, callouts: bool = False):
         self.solder = solder
+        self.callouts = callouts        # the "callouts" style: parts carry numbers, not names
 
     def x(self, bx: float) -> float:
         return BX + (BOARD_W - bx if self.solder else bx)
@@ -1038,6 +1074,10 @@ def pin_names(p: Part, node_net: dict) -> dict[str, str]:
         return dict(DIODE_NAMES)
     if p.kind == "jst-xh":
         return {n: net_style(node_net.get((p.ref, n), ""))[1] for n in p.pins}
+    if p.kind == "leads":
+        # Per wire: the name= given in the placement file, else its net's name, else its pin number.
+        return {n: p.names.get(n) or (net_style(node_net[(p.ref, n)])[1] if (p.ref, n) in node_net else n)
+                for n in p.pins}
     if p.kind == "module":
         return dict(p.names)
     if p.kind == "cap-radial":
@@ -1145,7 +1185,7 @@ def draw_wires(svg: Svg, v: View, pl: Placement, steps: dict, placed: list, used
         for h in (w.a, w.b):
             x, y = v.p((HOLES[h].x, HOLES[h].y))
             svg.add(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.62" fill="{col}" stroke="#ffffff" stroke-width="0.18"/>')
-    if v.solder:
+    if v.solder or v.callouts:
         return
     for p in pl.parts:
         polys = [module_outline(p)] if p.kind == "c3-supermini" else [poly for _, poly in body_shapes(p)]
@@ -1246,6 +1286,318 @@ def _step_number(svg, v, w, segs, steps, placed, used_xy):
             break
 
 
+def sorted_pins(p: Part):
+    """The part's (pin number, hole) pairs in pin order."""
+    return sorted(p.pins.items(), key=lambda t: int(t[0]) if t[0].isdigit() else 0)
+
+
+def lead_row(p: Part):
+    """The (pin number, hole) pairs of a leads part whose pins, in pin order, sit in adjacent holes on one straight
+    line, else None."""
+    pins = sorted_pins(p)
+    if len(pins) < 2:
+        return None
+    rails = {h[:2] for _, h in pins if h[:2] in RAIL_Y}
+    if rails and (len(rails) > 1 or any(h[:2] not in RAIL_Y for _, h in pins)):
+        return None
+    pts = [(HOLES[h].x, HOLES[h].y) for _, h in pins]
+    if any(abs(math.dist(a, b) - PITCH) > 0.05 for a, b in zip(pts, pts[1:])):
+        return None
+    if len(pts) > 2 and any(abs(_orient(pts[0], pts[-1], q)) > 0.05 for q in pts):
+        return None
+    return pins
+
+
+def _lead_ring(svg: Svg, hx, hy, col, dnp, r, halo=1.1, width=0.55):
+    dash = ' stroke-dasharray="0.8,0.5"' if dnp else ""
+    svg.add(f'<circle cx="{hx:.2f}" cy="{hy:.2f}" r="{r}" fill="none" stroke="#ffffff" stroke-width="{halo}"/>')
+    svg.add(f'<circle cx="{hx:.2f}" cy="{hy:.2f}" r="{r}" fill="none" stroke="{col}" stroke-width="{width}"{dash}/>')
+
+
+def _row_outline(v: View, row):
+    """The sheet box (x0, y0, x1, y1) round a row's holes."""
+    pts = [v.p((HOLES[h].x, HOLES[h].y)) for _, h in row]
+    xs, ys = [q[0] for q in pts], [q[1] for q in pts]
+    return min(xs) - 1.6, min(ys) - 1.6, max(xs) + 1.6, max(ys) + 1.6
+
+
+def draw_leads(svg: Svg, v: View, pl: Placement, node_net: dict, placed: list, used_xy: list):
+    """Loose wires of an off-board device: a ring in the net's colour round each hole. The default style adds a tag
+    "DEVICE NAME" to each; the callouts style leaves the number to draw_callouts and puts a thin outline round a
+    straight row of adjacent holes."""
+    for p in pl.parts:
+        if p.kind != "leads":
+            continue
+        names = pin_names(p, node_net)
+        row = lead_row(p) if v.callouts else None
+        if row:
+            box = _row_outline(v, row)
+            svg.add(f'<rect x="{box[0]:.2f}" y="{box[1]:.2f}" width="{box[2] - box[0]:.2f}" '
+                    f'height="{box[3] - box[1]:.2f}" rx="1.0" fill="none" stroke="#333" stroke-width="0.3"/>')
+        for n, h in sorted_pins(p):
+            hx, hy = v.p((HOLES[h].x, HOLES[h].y))
+            col = net_style(node_net.get((p.ref, n), ""))[0]
+            if v.callouts:
+                _lead_ring(svg, hx, hy, col, p.dnp, LEAD_RING_R, 0.9, 0.5)
+                svg.add(f'<circle cx="{hx:.2f}" cy="{hy:.2f}" r="0.5" fill="{col}"/>')
+                continue
+            _lead_ring(svg, hx, hy, col, p.dnp, 1.3)
+            svg.add(f'<circle cx="{hx:.2f}" cy="{hy:.2f}" r="0.55" fill="{col}"/>')
+            label = f"{part_label(p)} {names[n]}"
+            wdt = 0.72 * 1.25 * len(label) + 0.9
+            cands = ([(0.0, -2.6), (0.0, 2.6), (0.0, -3.9), (0.0, 3.9)]
+                     + [(s_ * (wdt / 2 + 1.6), dy) for dy in (0.0, -1.4, 1.4) for s_ in (1, -1)]
+                     + [(0.0, -5.2), (0.0, 5.2)])
+            spot = None
+            for dx, dy in cands:
+                cx, cy = hx + dx, hy + dy
+                if _free((cx - wdt / 2, cy - 0.93, cx + wdt / 2, cy + 0.93), placed, used_xy):
+                    spot = (cx, cy)
+                    break
+            if spot is None:
+                spot = (hx + cands[0][0], hy + cands[0][1])
+            svg.add(f'<line x1="{hx:.2f}" y1="{hy:.2f}" x2="{spot[0]:.2f}" y2="{spot[1]:.2f}" stroke="{col}" '
+                    'stroke-width="0.3"/>')
+            tag(svg, spot[0], spot[1], label, col, placed)
+
+
+# ---------------------------------------------------------------------------------------------- callouts
+
+CALLOUT_R = 1.3         # a callout is 2.6 mm across
+LEAD_RING_R = 1.05      # the ring round a device wire's hole in the callouts style
+# Parts whose callout may sit on the body: the others are small, with marks that show how to fit them.
+ON_BODY = ("c3-supermini", "module", "jst-xh", "cap-radial")
+
+
+def callout_numbers(pl: Placement):
+    """(number by part ref, number by (leads ref, pin)): the on-board parts in build order, then each device's
+    wires in pin order, device by device."""
+    n = 0
+    parts, leads = {}, {}
+    for p in sorted(pl.parts, key=lambda p: (PART_ORDER[p.kind], p.ref)):
+        if p.kind == "leads":
+            continue
+        n += 1
+        parts[p.ref] = n
+    for p in sorted((p for p in pl.parts if p.kind == "leads"), key=lambda p: p.ref):
+        for pin, _ in sorted_pins(p):
+            n += 1
+            leads[(p.ref, pin)] = n
+    return parts, leads
+
+
+def _spans(p: Part) -> str:
+    """"D1-D8, H1-H8": the holes of a part's header rows."""
+    rows = {}
+    for n, h in p.pins.items():
+        rows.setdefault(h[0], []).append(int(h[1:]))
+    return ", ".join(f"{r}{min(c)}-{r}{max(c)}" for r, c in sorted(rows.items()))
+
+
+def part_holes(p: Part) -> str:
+    """Where a part sits, as the legend and the hole table say it."""
+    if p.kind == "c3-supermini":
+        return _spans(p)
+    pins = sorted_pins(p)
+    if p.kind == "module":
+        return f"{p.pins[pins[0][0]]}-{p.pins[pins[-1][0]]}"
+    return ", ".join(HOLES[h].text for _, h in pins)
+
+
+def _closest_on_poly(pt, poly):
+    best = None
+    for i in range(len(poly)):
+        a, b = poly[i], poly[(i + 1) % len(poly)]
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        L2 = dx * dx + dy * dy
+        t = 0.0 if L2 == 0 else max(0.0, min(1.0, ((pt[0] - a[0]) * dx + (pt[1] - a[1]) * dy) / L2))
+        q = (a[0] + t * dx, a[1] + t * dy)
+        if best is None or math.dist(pt, q) < math.dist(pt, best):
+            best = q
+    return best
+
+
+class _CalloutSpace:
+    """What a callout must keep clear of, in sheet mm, and the callouts placed so far."""
+
+    def __init__(self, svg: Svg, v: View, pl: Placement):
+        x0, x1 = sorted((v.x(0), v.x(BOARD_W)))
+        self.bounds = (x0 + 0.4, v.y(0) + 0.4, x1 - 0.4, v.y(BOARD_H) - 0.4)
+        lead_holes = {h for p in pl.parts if p.kind == "leads" for h in p.pins.values()}
+        self.holes = [(*v.p((HOLES[h].x, HOLES[h].y)), LEAD_RING_R + 0.2 if h in lead_holes else 0.9)
+                      for h in used_holes(pl)]
+        self.holes += [(*v.p(m), 1.8) for m in M3_HOLES] + [(*v.p(m), 1.3) for m in M2_HOLES]
+        self.rings = {(p.ref, n): v.p((HOLES[h].x, HOLES[h].y)) for p in pl.parts if p.kind == "leads"
+                      for n, h in p.pins.items()}
+        self.boxes = list(svg.boxes)
+        self.wires = [(v.p(a), v.p(b)) for w in pl.wires for a, b in w.segments()]
+        self.wires += [tuple(v.p(q) for q in bridge_points(r)) for r in pl.bridges]
+        self.bodies = {}
+        for p in pl.parts:
+            if p.kind == "c3-supermini":
+                polys = [module_outline(p)]
+            elif p.kind == "module":
+                polys = [generic_module_outline(p)]
+            elif p.kind == "leads":
+                continue
+            else:
+                polys = [poly for _, poly in body_shapes(p)]
+            self.bodies[p.ref] = [[v.p(q) for q in poly] for poly in polys]
+        self.raised = {p.ref for p in pl.parts if p.kind in ("c3-supermini", "module")}
+        self.placed: list[tuple] = []       # centres of the callouts so far
+        self.leaders: list[tuple] = []      # their leader lines
+
+    def clear(self, c, level: int, own: str | None) -> bool:
+        """Whether a callout centred at c covers nothing it must not. Level 0 keeps clear of wires and texts too,
+        level 1 only keeps its centre off a wire, level 2 only of holes in use and other callouts. Another part's
+        body counts at every level; a module's raised board does not."""
+        R = CALLOUT_R + 0.1
+        x0, y0, x1, y1 = self.bounds
+        if not (x0 + R <= c[0] <= x1 - R and y0 + R <= c[1] <= y1 - R):
+            return False
+        if any(math.dist(c, (hx, hy)) < R + hr for hx, hy, hr in self.holes):
+            return False
+        if any(math.dist(c, q) < 2 * R + 0.3 for q in self.placed):
+            return False
+        if any(dist_point_seg(c, a, b) < R + 0.2 for a, b in self.leaders):
+            return False
+        for ref, polys in self.bodies.items():
+            if ref != own and ref not in self.raised and any(dist_point_poly(c, pg) < R for pg in polys):
+                return False
+        if level >= 2:
+            return True
+        if level == 0:
+            for b in self.boxes:
+                if math.hypot(max(b[0] - c[0], 0, c[0] - b[2]), max(b[1] - c[1], 0, c[1] - b[3])) < R - 0.1:
+                    return False
+        lim = R + 0.7 if level == 0 else 0.6
+        return not any(dist_point_seg(c, a, b) < lim for a, b in self.wires)
+
+    def leader_cost(self, c, end, level: int) -> float | None:
+        """None when the line c-end passes a hole in use or a callout (or, short of level 2, crosses another
+        leader), else a cost for each wire or leader it crosses."""
+        for hx, hy, hr in self.holes:
+            if math.dist((hx, hy), end) >= 1.0 and dist_point_seg((hx, hy), c, end) < (hr if hr > 1.0 else 0.8) + 0.1:
+                return None
+        if any(dist_point_seg(q, c, end) < CALLOUT_R + 0.2 for q in self.placed):
+            return None
+        crossed = sum(segs_intersect(c, end, a, b) for a, b in self.leaders)
+        if crossed and level < 2:
+            return None
+        return 3.0 * (sum(segs_intersect(c, end, a, b) for a, b in self.wires) + crossed)
+
+
+def _candidates(space: _CalloutSpace, key, polys, on_body: bool, ring, win: float):
+    """Every spot (cost, centre, leader end) on a 0.5 mm grid within win mm of the part's body or the wire's ring,
+    cheapest first. The end is None when no leader is needed."""
+    xs = [q[0] for pg in polys for q in pg] if polys else [ring[0]]
+    ys = [q[1] for pg in polys for q in pg] if polys else [ring[1]]
+    mid = (sum(xs) / len(xs), sum(ys) / len(ys))
+    R = CALLOUT_R
+    x0, y0 = min(xs) - win, min(ys) - win
+    others = [pg for ref, pgs in space.bodies.items() if ref != key and ref not in space.raised for pg in pgs]
+    cands = []
+    for i in range(int((max(xs) + win - x0) / 0.5) + 1):
+        for j in range(int((max(ys) + win - y0) / 0.5) + 1):
+            c = (x0 + i * 0.5, y0 + j * 0.5)
+            if ring is not None:
+                d = math.dist(c, ring)
+                if d < R + LEAD_RING_R + 0.65:
+                    continue
+                end = ring if d > R + LEAD_RING_R + 1.5 else None
+                if end is None and any(math.dist(c, q) < d + 0.4 for k, q in space.rings.items() if k != key):
+                    continue
+                near_other = any(math.dist(c, q) < d - 0.2 for k, q in space.rings.items() if k != key)
+                cands.append((d - (R + LEAD_RING_R + 0.65) + (3.0 if near_other else 0.0), c, end))
+                continue
+            d = min(dist_point_poly(c, pg) for pg in polys)
+            if d == 0:
+                if on_body:
+                    cands.append((0.02 * math.dist(c, mid), c, None))
+            elif d >= R + 0.1:
+                if d <= R + 0.9:
+                    # Close to its own body, so it must be closer to it than to any other part's.
+                    if any(dist_point_poly(c, pg) < d + 0.4 for pg in others):
+                        continue
+                    end = None
+                else:
+                    end = min((_closest_on_poly(c, pg) for pg in polys), key=lambda q: math.dist(c, q))
+                cands.append(((1.0 if on_body else 0.0) + d - R, c, end))
+    cands.sort(key=lambda t: t[0])
+    return cands
+
+
+def _place_callout(space: _CalloutSpace, key, polys, on_body: bool, ring=None):
+    """The best (centre, leader end) for one callout; the end is None when none is needed. A part's callout sits on
+    the body (if its kind allows) or beside it, a device wire's beside its ring; the nearest clear spot wins, and
+    a spot off the body or the ring gets a leader line to it."""
+    for level, win in ((0, 5), (0, 9), (1, 9), (0, 16), (1, 16), (2, 30)):
+        found = []
+        for cost, c, end in _candidates(space, key, polys, on_body, ring, win):
+            if not space.clear(c, level, None if ring is not None else key):
+                continue
+            lc = 0.0 if end is None else space.leader_cost(c, end, level)
+            if lc is None:
+                continue
+            found.append((cost + lc, c, end))
+            if len(found) >= 6:
+                break
+        if found:
+            return min(found, key=lambda t: t[0])[1:]
+    raise PlacementError(f"no room for the callout of {key}")
+
+
+def _callout_shape(svg: Svg, c, no: int, square: bool):
+    x, y = c
+    if square:
+        shape = (f'<rect x="{x - CALLOUT_R:.2f}" y="{y - CALLOUT_R:.2f}" width="{2 * CALLOUT_R:.2f}" '
+                 f'height="{2 * CALLOUT_R:.2f}" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/>')
+    else:
+        shape = (f'<circle cx="{x:.2f}" cy="{y:.2f}" r="{CALLOUT_R}" fill="#ffffff" stroke="#222222" '
+                 'stroke-width="0.3"/>')
+    svg.add(f'<g class="callout-{"lead" if square else "part"}" data-no="{no}">{shape}'
+            f'<text x="{x:.2f}" y="{y + 0.58:.2f}" font-size="1.7" text-anchor="middle" font-weight="bold" '
+            f'fill="#111111">{no}</text></g>')
+
+
+def draw_callouts(svg: Svg, v: View, pl: Placement):
+    """The numbers: a round callout on or beside each on-board part, a square one beside each device wire's ring.
+    None covers a hole in use, a wire end, another callout or a ring; one that sits off its part gets a thin leader."""
+    parts_no, leads_no = callout_numbers(pl)
+    space = _CalloutSpace(svg, v, pl)
+    todo = []
+    for p in sorted(pl.parts, key=lambda p: (PART_ORDER[p.kind], p.ref)):
+        if p.kind != "leads":
+            todo.append((parts_no[p.ref], p.ref, space.bodies[p.ref], p.kind in ON_BODY, None))
+    wires = []
+    for p in sorted((p for p in pl.parts if p.kind == "leads"), key=lambda p: p.ref):
+        for pin, _ in sorted_pins(p):
+            wires.append((leads_no[(p.ref, pin)], (p.ref, pin), [], False, space.rings[(p.ref, pin)]))
+    # The device wires with the fewest clear spots beside their rings are placed first.
+    def spots(item):
+        _, key, _, _, ring = item
+        return sum(1 for _, c, end in _candidates(space, key, [], False, ring, 4.5)
+                   if end is None and space.clear(c, 0, None))
+    todo += sorted(wires, key=spots)
+    drawn = []
+    for no, key, polys, on_body, ring in todo:
+        c, end = _place_callout(space, key, polys, on_body, ring)
+        space.placed.append(c)
+        if end is not None:
+            space.leaders.append((c, end))
+        drawn.append((no, c, end, ring is not None))
+    for no, c, end, square in drawn:
+        if end is not None:
+            u = _unit(end[0] - c[0], end[1] - c[1])
+            a = (c[0] + u[0] * CALLOUT_R, c[1] + u[1] * CALLOUT_R)
+            if square:
+                end = (end[0] - u[0] * (LEAD_RING_R + 0.3), end[1] - u[1] * (LEAD_RING_R + 0.3))
+            svg.add(f'<line x1="{a[0]:.2f}" y1="{a[1]:.2f}" x2="{end[0]:.2f}" y2="{end[1]:.2f}" stroke="#222222" '
+                    'stroke-width="0.25"/>')
+    for no, c, end, square in drawn:
+        _callout_shape(svg, c, no, square)
+
+
 def draw_parts(svg: Svg, v: View, pl: Placement, node_net: dict, placed: list):
     ghost = v.solder
     for p in pl.parts:
@@ -1256,6 +1608,8 @@ def draw_parts(svg: Svg, v: View, pl: Placement, node_net: dict, placed: list):
         if p.kind == "module":
             _draw_plug_module(svg, v, p, names, ghost, placed)
             continue
+        if p.kind == "leads":
+            continue        # drawn after the wires, see draw_leads
         if p.dnp and not ghost:
             svg.add('<g opacity="0.5">')
         for _, poly in body_shapes(p):
@@ -1284,7 +1638,8 @@ def draw_parts(svg: Svg, v: View, pl: Placement, node_net: dict, placed: list):
                 svg.add(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.55" fill="#ffffff" stroke="#c0392b" stroke-width="0.25"/>')
             else:
                 svg.add(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>')
-        _part_caption(svg, v, p, placed)
+        if not v.callouts:
+            _part_caption(svg, v, p, placed)
 
 
 def _part_caption(svg, v, p, placed):
@@ -1338,6 +1693,7 @@ def _draw_cap(svg, v, p):
     s1 = (m[0] + u[0] * r * 0.62 - nrm[0] * r * 0.75, m[1] + u[1] * r * 0.62 - nrm[1] * r * 0.75)
     (x0, y0), (x1, y1) = v.p(s0), v.p(s1)
     svg.add(f'<line x1="{x0:.2f}" y1="{y0:.2f}" x2="{x1:.2f}" y2="{y1:.2f}" stroke="#d9d9d9" stroke-width="1.0"/>')
+    svg.boxes.append((min(x0, x1) - 0.5, min(y0, y1) - 0.5, max(x0, x1) + 0.5, max(y0, y1) + 0.5))
     px, py = v.p((m[0] - u[0] * r * 0.55, m[1] - u[1] * r * 0.55))
     svg.text(px, py + 0.6, "+", 1.8, weight="bold", fill="#ffffff")
 
@@ -1364,6 +1720,7 @@ def _draw_plug_module(svg, v, p, names, ghost, placed):
             svg.add(f'<rect x="{x - w / 2:.2f}" y="{y - 0.7:.2f}" width="{w:.2f}" height="1.3" rx="0.3" fill="#f1eaf7"/>')
             svg.text(x, y + 0.38, nm, 0.95, weight="bold", fill="#4a2370")
             placed.append((x - w / 2, y - 0.7, x + w / 2, y + 0.6))
+            svg.boxes.append(placed[-1])
     # Pins on the module itself, such as a screw terminal: one block around them, each pin named.
     if p.module_pins:
         pts = [module_point(p, al, out) for al, out in p.module_pins.values()]
@@ -1381,6 +1738,9 @@ def _draw_plug_module(svg, v, p, names, ghost, placed):
             if label:
                 svg.text((x0 + x1) / 2, y0 - 0.6, label, 1.2, weight="bold", fill="#1d5c3a")
             placed.append((x0, y0 - 1.8, x1, y1))
+            svg.boxes.append(placed[-1])
+    if v.callouts:
+        return
     # Caption on the raised board, between the pin names and the far edge.
     mx, my = v.p(module_point(p, (len(pins) - 1) * PITCH / 2, float(p.attrs.get("caption_at", 5.5))))
     halo = 'stroke="#ffffff" stroke-width="0.55" paint-order="stroke" stroke-linejoin="round"'
@@ -1420,6 +1780,8 @@ def _draw_jst(svg, v, p, names):
         hx, hy = HOLES[h].x, HOLES[h].y
         lx, ly = v.p((hx - lat[0] * 1.55, hy - lat[1] * 1.55))
         svg.text(lx, ly + 0.36, names.get(k, k), 0.95, weight="bold", fill="#222")
+    if v.callouts:
+        return
     mid2 = ((a[0] + b[0]) / 2 + lat[0] * 1.75, (a[1] + b[1]) / 2 + lat[1] * 1.75)
     cx2, cy2 = v.p(mid2)
     svg.text(cx2, cy2 + 0.5, f"{p.ref} {part_label(p)}", 1.35, weight="bold", fill="#1a1a1a")
@@ -1468,7 +1830,7 @@ def _draw_axial(svg, v, p, names):
     d = " ".join(f"{x:.2f},{y:.2f}" for x, y in (v.p(q) for q in poly))
     if p.kind == "resistor":
         svg.add(f'<polygon points="{d}" fill="#cfe0ef" stroke="#2c3e50" stroke-width="0.3"/>')
-        bands = RES_BANDS.get(p.value.replace(" \u03a9", "").replace("\u03a9", "").strip(), [])
+        bands = RES_BANDS.get(p.value.replace("\u03a9", "").replace(" ", ""), [])
         for i, colr in enumerate(bands):
             t = -L / 2 + 1.0 + i * 1.25 if i < 3 else L / 2 - 1.0
             c = (m[0] + u[0] * t, m[1] + u[1] * t)
@@ -1505,10 +1867,13 @@ def _draw_module(svg, v, p, names, ghost):
     _, up = _rect_along((mu[0] - usb[0] * 1.7, mu[1] - usb[1] * 1.7), (mu[0] + usb[0] * 1.6, mu[1] + usb[1] * 1.6), 0, 4.45, 4.45)
     ud = " ".join(f"{x:.2f},{y:.2f}" for x, y in (v.p(q) for q in up))
     svg.add(f'<polygon points="{ud}" fill="#bdc3c7" stroke="#1f4e79" stroke-width="0.3"/>')
+    ups = [v.p(q) for q in up]
+    svg.boxes.append((min(q[0] for q in ups), min(q[1] for q in ups), max(q[0] for q in ups), max(q[1] for q in ups)))
     ux, uy = v.p(mu)
     svg.text(ux, uy + 0.5, "USB-C", 1.3, weight="bold", fill="#1f4e79")
     bx, by = v.p((cx - usb[0] * 4.2, 26.0))
-    svg.add(f'<rect x="{bx - 6.6:.2f}" y="{by - 2.2:.2f}" width="13.2" height="4.3" rx="0.6" fill="#ffffff" opacity="0.92"/>')
+    if not v.callouts:
+        svg.add(f'<rect x="{bx - 6.6:.2f}" y="{by - 2.2:.2f}" width="13.2" height="4.3" rx="0.6" fill="#ffffff" opacity="0.92"/>')
     if not ghost:
         for n, h in p.pins.items():
             hx, hy = HOLES[h].x, HOLES[h].y
@@ -1598,8 +1963,81 @@ def _hand_picture(svg: Svg, x, y, power_left: bool = True):
     svg.text(tx, y + 7.3, side, 1.3, anchor=anchor, weight="bold", fill="#c0392b")
 
 
+def callout_legend(pl: Placement, node_net: dict):
+    """The callout legend's blocks, each a list of (callout number or None, shape, text lines) that stays in one
+    column: one block per part (the first led by the heading "Parts"), then one per device (the first led by the
+    heading "Device wires") with the device's name above its wires."""
+    parts_no, leads_no = callout_numbers(pl)
+    blocks = []
+    for p in sorted(pl.parts, key=lambda p: (PART_ORDER[p.kind], p.ref)):
+        if p.kind == "leads":
+            continue
+        what = f"{p.ref} {p.value}".strip()
+        if part_label(p):
+            what += f" {part_label(p)}" if p.value else f" ({part_label(p)})"
+        text = f"{what}: {part_holes(p)}" + (f"; fit only if {p.dnp}" if p.dnp else "")
+        blocks.append([(None, "head", ["Parts"])] if not blocks else [])
+        blocks[-1].append((parts_no[p.ref], "round", textwrap.wrap(text, 37) or [text]))
+    for i, p in enumerate(sorted((p for p in pl.parts if p.kind == "leads"), key=lambda p: p.ref)):
+        names = pin_names(p, node_net)
+        group = [(None, "head", ["Device wires"])] if i == 0 else []
+        group.append((None, "sub", [f"{part_label(p)} ({p.ref})"]))
+        for n, h in sorted_pins(p):
+            group.append((leads_no[(p.ref, n)], "square", textwrap.wrap(f"{names[n]}: {HOLES[h].text}", 37)))
+        blocks.append(group)
+    return blocks
+
+
+def draw_callout_legend(svg: Svg, pl: Placement, node_net: dict, y0: float) -> float:
+    """The callouts legend in three columns under the board: every part, then every device's wires. A block (a
+    part, or a device with its wires) stays in one column."""
+    LH = 2.6
+
+    def height(entries):
+        return sum(LH + 0.4 if shape == "head" else LH * len(lines) for _, shape, lines in entries)
+    units = callout_legend(pl, node_net)
+    cap = sum(height(u) for u in units) / 3 + LH
+    cols, used = [[]], 0.0
+    for entries in units:
+        if used and used + height(entries) > cap and len(cols) < 3:
+            cols.append([])
+            used = 0.0
+        cols[-1].append(entries)
+        used += height(entries)
+    colw = (SHEET_W - 8) / 3
+    bottom = y0
+    for ci, col in enumerate(cols):
+        x = 4 + ci * colw
+        y = y0
+        for entries in col:
+            for no, shape, lines in entries:
+                if shape in ("head", "sub") and y > y0:
+                    y += 1.2 if shape == "head" else 0.8
+                if shape == "head":
+                    svg.text(x, y, lines[0], 1.9, anchor="start", weight="bold")
+                    y += LH + 0.4
+                elif shape == "sub":
+                    svg.text(x, y, lines[0], 1.5, anchor="start", weight="bold", fill="#333")
+                    y += LH
+                else:
+                    if shape == "square":
+                        svg.add(f'<rect x="{x:.2f}" y="{y - 1.4:.2f}" width="2.4" height="2.4" rx="0.55" fill="#ffffff" '
+                                'stroke="#222222" stroke-width="0.28"/>')
+                    else:
+                        svg.add(f'<circle cx="{x + 1.2:.2f}" cy="{y - 0.2:.2f}" r="1.2" fill="#ffffff" stroke="#222222" '
+                                'stroke-width="0.28"/>')
+                    svg.text(x + 1.2, y + 0.38, str(no), 1.5, weight="bold", fill="#111")
+                    for k, line in enumerate(lines):
+                        svg.text(x + 3.4, y + k * LH, line, 1.4, anchor="start", fill="#333")
+                    y += LH * len(lines)
+        bottom = max(bottom, y)
+    return bottom + 1.5
+
+
 def draw_legend(svg: Svg, pl: Placement, y0: float, nets_used: list[str], solder: bool) -> float:
-    svg.text(4, y0, "Nets (each wire end is labelled too)", 1.9, anchor="start", weight="bold")
+    callouts = pl.style == "callouts"
+    svg.text(4, y0, "Nets (wire colours)" if callouts else "Nets (each wire end is labelled too)", 1.9, anchor="start",
+             weight="bold")
     cols = 2
     colw = (SHEET_W - 8) / cols
     for i, net in enumerate(nets_used):
@@ -1616,11 +2054,21 @@ def draw_legend(svg: Svg, pl: Placement, y0: float, nets_used: list[str], solder
     y = y0 + 3 + ((len(nets_used) + 1) // cols) * 2.9 + 1.0
     svg.add(f'<circle cx="5" cy="{y - 0.5:.2f}" r="0.62" fill="#0072B2" stroke="#fff" stroke-width="0.18"/>')
     svg.text(6.6, y, "wire end: solder here", 1.45, anchor="start", fill="#444")
-    svg.add(f'<circle cx="38" cy="{y - 0.5:.2f}" r="1.05" fill="#111"/>')
-    svg.text(38, y - 0.05, "3", 1.25, weight="bold", fill="#fff")
-    svg.text(39.8, y, "build step", 1.45, anchor="start", fill="#444")
+    if not callouts:
+        svg.add(f'<circle cx="38" cy="{y - 0.5:.2f}" r="1.05" fill="#111"/>')
+        svg.text(38, y - 0.05, "3", 1.25, weight="bold", fill="#fff")
+        svg.text(39.8, y, "build step", 1.45, anchor="start", fill="#444")
     svg.add(f'<rect x="58" y="{y - 1.3:.2f}" width="1.6" height="1.6" rx="0.8" fill="#c98b3a" opacity="0.6"/>')
     svg.text(60.4, y, "copper strip: its holes are joined", 1.45, anchor="start", fill="#444")
+    if callouts:
+        y += 3.4
+        svg.add(f'<circle cx="5.2" cy="{y - 0.5:.2f}" r="1.2" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>')
+        svg.text(5.2, y - 0.1, "4", 1.4, weight="bold", fill="#111")
+        svg.text(7.4, y, "a part on the board (see Parts)", 1.45, anchor="start", fill="#444")
+        svg.add(f'<rect x="58" y="{y - 1.7:.2f}" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" '
+                'stroke-width="0.28"/>')
+        svg.text(59.2, y - 0.1, "9", 1.4, weight="bold", fill="#111")
+        svg.text(62, y, "a wire of an off-board device (see Device wires)", 1.45, anchor="start", fill="#444")
     y += 3.2
     svg.add(f'<line x1="4" y1="{y - 0.5:.2f}" x2="10" y2="{y - 0.5:.2f}" stroke="#c0392b" stroke-width="0.45" stroke-dasharray="1.2,0.7"/>')
     svg.text(11, y, "unmarked edge trace, broken at the link pads beside the M3 holes; the links join the halves",
@@ -1647,8 +2095,13 @@ def draw_legend(svg: Svg, pl: Placement, y0: float, nets_used: list[str], solder
     return y + 3
 
 
-def build_steps(pl: Placement):
-    """Build order, lowest parts first: links and wires, resistors, diode, transistor, sockets, headers."""
+def build_steps(pl: Placement, nets: dict | None = None):
+    """Build order, lowest parts first: links and wires, resistors, diode, transistor, sockets, headers, loose
+    wires. nets (the netlist) names each loose wire; without it the placement file's pin names are used. Each step
+    is (kind, text, item, holes, number); the number is the callout number(s) of a step in the callouts style."""
+    node_net = {m: n for n, ms in (nets or {}).items() for m in ms}
+    callouts = pl.style == "callouts"
+    parts_no, leads_no = callout_numbers(pl)
     steps = []
     wire_steps = {}
     for r in pl.bridges:
@@ -1668,11 +2121,11 @@ def build_steps(pl: Placement):
                       f"wire {label}", f"{HOLES[w.a].text} to {HOLES[w.b].text}" +
                       {"": "", "channel": " (along the channel)"}.get(w.route, " (one bend)")))
         wire_steps[id(w)] = len(steps)
-    order = {"resistor": 0, "diode": 1, "to92": 2, "cap-radial": 2.5, "c3-supermini": 3, "module": 3.5, "jst-xh": 4}
-    for p in sorted(pl.parts, key=lambda p: (order[p.kind], p.ref)):
+    for p in sorted(pl.parts, key=lambda p: (PART_ORDER[p.kind], p.ref)):
         if p.dnp:
             continue
         pins = sorted(p.pins.items(), key=lambda t: int(t[0]) if t[0].isdigit() else 0)
+        first = len(steps)
         if p.kind == "resistor":
             steps.append(("part", f"{p.ref} ({p.value}): {HOLES[pins[0][1]].text} to {HOLES[pins[1][1]].text}, "
                                   "lying flat.",
@@ -1686,10 +2139,7 @@ def build_steps(pl: Placement):
                                   f"flat face toward the {_dir_word(p.attrs['flat'])}.",
                           f"{p.ref} {p.value}", f"D {p.pins['1']}, G {p.pins['2']}, S {p.pins['3']}"))
         elif p.kind == "c3-supermini":
-            rows = {}
-            for n, h in p.pins.items():
-                rows.setdefault(h[0], []).append(int(h[1:]))
-            spans = ", ".join(f"{r}{min(c)}-{r}{max(c)}" for r, c in sorted(rows.items()))
+            spans = _spans(p)
             steps.append(("part", f"U1 sockets: two 1x8 female headers in {spans}. Plug U1 in while soldering to keep "
                                   "them square, then take it out.", "U1 sockets", spans))
         elif p.kind == "jst-xh":
@@ -1701,15 +2151,35 @@ def build_steps(pl: Placement):
             span = f"{p.pins[pins[0][0]]}-{p.pins[pins[-1][0]]}"
             steps.append(("part", f"{p.ref} socket: a 1x{len(pins)} female header in {span}. Plug {p.ref} in while "
                                   "soldering to keep it square, then take it out.", f"{p.ref} socket", span))
+        elif p.kind == "leads":
+            pin_names_ = pin_names(p, node_net)
+            if callouts:
+                nos = [leads_no[(p.ref, n)] for n, _ in pins]
+                span = f"{nos[0]}-{nos[-1]}" if len(nos) > 1 else str(nos[0])
+                listing = ", ".join(f"{leads_no[(p.ref, n)]} {pin_names_[n]} in {HOLES[h].text}" for n, h in pins)
+                steps.append(("part", f"Device wire{'s' if len(nos) > 1 else ''} {span}, {part_label(p)} ({p.ref}): "
+                                      f"{listing}. Solder each wire from the top, then tie the bundle to the board "
+                                      "edge.", f"{p.ref} {part_label(p)} wires",
+                              ", ".join(f"{leads_no[(p.ref, n)]} {pin_names_[n]} {HOLES[h].text}" for n, h in pins),
+                              span))
+                continue
+            listing = ", ".join(f"{pin_names_[n]} in {HOLES[h].text}" for n, h in pins)
+            steps.append(("part", f"{part_label(p)} wires ({p.ref}): {listing}. Solder each wire from the top, then "
+                                  "tie the bundle to the board edge.",
+                          f"{p.ref} {part_label(p)} wires",
+                          ", ".join(f"{pin_names_[n]} {HOLES[h].text}" for n, h in pins)))
         elif p.kind == "cap-radial":
             steps.append(("part", f"{p.ref} ({p.value}): + lead in {HOLES[p.pins['1']].text}, − lead (the striped "
                                   f"side) in {HOLES[p.pins['2']].text}.", f"{p.ref} {p.value}",
                           f"+ {HOLES[p.pins['1']].text}, − {HOLES[p.pins['2']].text}"))
+        if callouts and len(steps) > first:
+            kind, text, item, holes = steps[-1]
+            steps[-1] = (kind, f"Part {parts_no[p.ref]}, {text}", item, holes, str(parts_no[p.ref]))
     plug = "".join(f" Plug {p.ref} in {p.attrs['fit']}." for p in pl.parts if p.kind == "module" and p.attrs.get("fit"))
     steps.append(("check", "Check with a meter: no short from 5V, 3V3 or SDA/SCL to GND. Then plug U1 in, USB-C "
                            f"toward the board edge as drawn, after checking it is a {hand_words(pl)['hand']} module."
                   + plug, "", ""))
-    return steps, wire_steps
+    return [s if len(s) == 5 else s + ("",) for s in steps], wire_steps
 
 
 def _dir_word(d: str) -> str:
@@ -1721,8 +2191,8 @@ def render_sheet(pl: Placement, nets: dict, solder: bool) -> str:
     node_net = {m: n for n, ms in nets.items() for m in ms}
     uf = connectivity(pl)
     used = used_holes(pl)
-    v = View(solder)
-    steps, wire_steps = build_steps(pl)
+    v = View(solder, pl.style == "callouts")
+    steps, wire_steps = build_steps(pl, nets)
     svg = Svg()
     draw_header(svg, pl, solder)
     draw_board(svg, v, pl, uf, used)
@@ -1730,36 +2200,62 @@ def render_sheet(pl: Placement, nets: dict, solder: bool) -> str:
     used_xy = [v.p((HOLES[h].x, HOLES[h].y)) for h in used]
     draw_parts(svg, v, pl, node_net, placed)
     draw_wires(svg, v, pl, wire_steps, placed, used_xy)
-    for p in pl.parts:
-        if p.kind == "c3-supermini":
-            _module_caption(svg, v, p)
+    draw_leads(svg, v, pl, node_net, placed, used_xy)
+    if v.callouts:
+        draw_callouts(svg, v, pl)
+    else:
+        for p in pl.parts:
+            if p.kind == "c3-supermini":
+                _module_caption(svg, v, p)
     nets_used = []
     for net in NET_STYLE:
         if any(w.net == net for w in pl.wires) or any(node_net.get((p.ref, n)) == net for p in pl.parts for n in p.pins):
             nets_used.append(net)
-    hgt = draw_legend(svg, pl, BY + BOARD_H + 7.5, nets_used, solder)
+    y0 = BY + BOARD_H + 7.5
+    if v.callouts:
+        y0 = draw_callout_legend(svg, pl, node_net, y0) + 2.0
+    hgt = draw_legend(svg, pl, y0, nets_used, solder)
     body = "\n".join(svg.out)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{SHEET_W}mm" height="{hgt:.1f}mm" '
             f'viewBox="0 0 {SHEET_W} {hgt:.1f}" font-family="Arial, Helvetica, sans-serif">\n'
             f'<rect x="0" y="0" width="{SHEET_W}" height="{hgt:.1f}" fill="#ffffff"/>\n{body}\n</svg>\n')
 
 
-def steps_markdown(pl: Placement) -> str:
-    steps, _ = build_steps(pl)
-    out = ["Build order (lowest parts first; the numbers on the wires in the top view are these step numbers):", ""]
-    for i, (_, text, _, _) in enumerate(steps, 1):
-        out.append(f"{i}. {text}")
+def steps_markdown(pl: Placement, nets: dict | None = None) -> str:
+    steps, _ = build_steps(pl, nets)
+    callouts = pl.style == "callouts"
+    if callouts:
+        out = ["Build order (lowest parts first). The numbers are the callouts on the drawing; wire links carry "
+               "no number:", ""]
+        out += [f"- {text}" for _, text, _, _, _ in steps]
+    else:
+        out = ["Build order (lowest parts first; the numbers on the wires in the top view are these step numbers):",
+               ""]
+        for i, (_, text, _, _, _) in enumerate(steps, 1):
+            out.append(f"{i}. {text}")
     dnp = [p for p in pl.parts if p.dnp]
+    parts_no, _ = callout_numbers(pl)
     if dnp:
         out += ["", "Parts fitted only when needed (marked DNP on the drawing): leave their holes free.", ""]
         for p in sorted(dnp, key=lambda p: p.ref):
             holes = " and ".join(HOLES[h].text for _, h in sorted(p.pins.items()))
-            out.append(f"- {p.ref} ({p.value}), {holes}: fit it only if {p.dnp}.")
-    out += ["", "| Step | Item | Holes |", "|---|---|---|"]
-    for i, (kind, _, item, holes) in enumerate(steps, 1):
-        if kind == "check":
-            continue
-        out.append(f"| {i} | {item} | {holes} |")
+            no = f"Part {parts_no[p.ref]}, " if callouts else ""
+            out.append(f"- {no}{p.ref} ({p.value}), {holes}: fit it only if {p.dnp}.")
+    if callouts:
+        rows = [(s[4], s[2], s[3]) for s in steps if s[0] != "check"]
+        for p in dnp:
+            rows.append((str(parts_no[p.ref]), f"{p.ref} {p.value} (fit only if needed)",
+                         " and ".join(HOLES[h].text for _, h in sorted(p.pins.items()))))
+        # Wire links first, then the numbered rows in number order.
+        rows.sort(key=lambda r: int(r[0].split("-")[0]) if r[0] else 0)
+        out += ["", "| No. | Item | Holes |", "|---|---|---|"]
+        out += [f"| {no} | {item} | {holes} |" for no, item, holes in rows]
+    else:
+        out += ["", "| Step | Item | Holes |", "|---|---|---|"]
+        for i, (kind, _, item, holes, _) in enumerate(steps, 1):
+            if kind == "check":
+                continue
+            out.append(f"| {i} | {item} | {holes} |")
     return "\n".join(out) + "\n"
 
 
@@ -1779,7 +2275,6 @@ def write_pdf(pl: Placement, top: str, solder: str, md: str, out: Path, page: st
     size = {"a4": "210mm 297mm", "letter": "8.5in 11in"}[page]
 
     def scaled(svg: str, k: float) -> str:
-        import re
         w = float(re.search(r'width="([\d.]+)mm"', svg).group(1))
         h = float(re.search(r'height="([\d.]+)mm"', svg).group(1))
         return re.sub(r'width="[\d.]+mm" height="[\d.]+mm"', f'width="{w * k:.1f}mm" height="{h * k:.1f}mm"', svg, count=1)
@@ -1788,9 +2283,25 @@ def write_pdf(pl: Placement, top: str, solder: str, md: str, out: Path, page: st
     for line in md.splitlines():
         if line.startswith("| ") and not line.startswith("|---"):
             cells = [c.strip() for c in line.strip("|").split("|")]
-            tagname = "th" if cells[0] == "Step" else "td"
+            tagname = "th" if cells[0] in ("Step", "No.") else "td"
             rows.append("<tr>" + "".join(f"<{tagname}>{_h.escape(c)}</{tagname}>" for c in cells) + "</tr>")
-    items = [f"<li>{_h.escape(l.split('. ', 1)[1])}</li>" for l in md.splitlines() if l[:1].isdigit()]
+    if pl.style == "callouts":
+        # The build list is the first run of bullets; it is not numbered by step.
+        first = md.splitlines()
+        start = next(i for i, l in enumerate(first) if l.startswith("- "))
+        run = []
+        for l in first[start:]:
+            if not l.startswith("- "):
+                break
+            run.append(l[2:])
+        items = [f"<li>{_h.escape(l)}</li>" for l in run]
+    else:
+        items = [f"<li>{_h.escape(l.split('. ', 1)[1])}</li>" for l in md.splitlines() if l[:1].isdigit()]
+    list_tag = "ul" if pl.style == "callouts" else "ol"
+    # The enlarged pages scale the sheet to fit the page when a tall sheet (the callouts legend) needs it.
+    page_h = {"a4": 297.0, "letter": 279.4}[page]
+    height = float(re.search(r'height="([\d.]+)mm"', top).group(1))
+    k = min(1.45, (page_h - 16 - 14) / height)
     warn = top[top.index("<svg"):]
     hw = hand_words(pl)
     html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
@@ -1800,19 +2311,19 @@ body {{ margin: 0; font-family: Arial, Helvetica, sans-serif; }}
 .page:last-child {{ page-break-after: auto; }}
 h2 {{ font-size: 13pt; margin: 2mm 0; text-align: left; }}
 p.note {{ font-size: 9pt; text-align: left; margin: 1mm 0 3mm; }}
-ol {{ text-align: left; font-size: 8.5pt; margin: 0 0 3mm 5mm; padding-left: 4mm; }}
+ol, ul {{ text-align: left; font-size: 8.5pt; margin: 0 0 3mm 5mm; padding-left: 4mm; }}
 table {{ border-collapse: collapse; font-size: 8pt; text-align: left; width: 100%; }}
 td, th {{ border: 0.2mm solid #999; padding: 0.6mm 1.2mm; }}
 </style></head><body>
-<div class="page"><h2>Top view, enlarged for reading</h2>{scaled(top, 1.45)}</div>
-<div class="page"><h2>Solder side, enlarged for reading</h2>{scaled(solder, 1.45)}</div>
+<div class="page"><h2>Top view, enlarged for reading</h2>{scaled(top, k)}</div>
+<div class="page"><h2>Solder side, enlarged for reading</h2>{scaled(solder, k)}</div>
 <div class="page"><h2>Real size (print at 100 %, "actual size"): lay the board on the drawing</h2>
 <p class="note">Check the 20 mm bar with a ruler before you rely on the drawing.</p>{top}</div>
 <div class="page"><h2>Real size, solder side</h2>{solder}</div>
 <div class="page"><h2>Build order and hole table</h2>
 <p class="note">For a C3 {hw['HAND']} module only (USB up: 5V, G, 3V3 at the top of the {hw['SIDE']} row). A {hw['other']} module
 in this layout puts 5 V on a GPIO pin and can destroy it.</p>
-<ol>{''.join(items)}</ol><table>{''.join(rows)}</table></div>
+<{list_tag}>{''.join(items)}</{list_tag}><table>{''.join(rows)}</table></div>
 </body></html>"""
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
         hp = Path(td) / "sheet.html"
@@ -1844,7 +2355,7 @@ def cmd_render(args) -> int:
     base = pl.path.with_suffix("")
     top = render_sheet(pl, nets, False)
     solder = render_sheet(pl, nets, True)
-    md = steps_markdown(pl)
+    md = steps_markdown(pl, nets)
     Path(f"{base}-top.svg").write_text(top, encoding="utf-8", newline="\n")
     Path(f"{base}-solder.svg").write_text(solder, encoding="utf-8", newline="\n")
     Path(f"{base}-steps.md").write_text(md, encoding="utf-8", newline="\n")
