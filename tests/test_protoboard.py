@@ -105,3 +105,17 @@ def test_render_writes_sized_svg_and_steps():
     md = pb.steps_markdown(pl)
     assert "| 1 | wire GND | D13 to D6 |" in md
     assert "R1 1k" in md
+
+
+def test_jst_pin_1_must_match_the_latch_side(tmp_path, capsys):
+    # With the latch (deep) side toward the viewer, a JST-XH header's pin 1 is on the left (KiCad footprint).
+    code, out = run_check(tmp_path, base(), capsys)
+    assert code == 0, out                       # latch down, pin 1 at the left (C5), pin 2 at C6
+    mirrored = base().replace('latch="down"', 'latch="up"')
+    code, out = run_check(tmp_path, mirrored, capsys)
+    assert code == 1
+    assert "J1: pin 1 is on the wrong end" in out
+    swapped = base().replace('hole="C5"', 'hole="@"').replace('hole="C6"', 'hole="C5"').replace('hole="@"', 'hole="C6"')
+    code, out = run_check(tmp_path, swapped, capsys)
+    assert code == 1
+    assert "J1: pin 1 is on the wrong end" in out

@@ -609,6 +609,13 @@ def _check_part_geometry(p: Part) -> None:
         lat = DIRS[p.attrs["latch"]]
         if abs(u[0] * lat[0] + u[1] * lat[1]) > 0.01:
             raise PlacementError(f"{p.ref}: latch must face across the pin row, not along it")
+        # The real part fixes which end pin 1 is on: seen from above with the latch (the deep side of the body,
+        # 3.4 mm from the pins against 2.35 mm) toward you, pin 1 is on the left (KiCad Connector_JST
+        # JST_XH_BnB-XH-A_1xNN_P2.50mm_Vertical: pad 1 at x 0, the next pads at +x, the body from y -2.35 to +3.4).
+        if u[0] * lat[1] - u[1] * lat[0] < 0.5:
+            raise PlacementError(f"{p.ref}: pin 1 is on the wrong end for latch=\"{p.attrs['latch']}\": with the latch "
+                                 "side toward you a JST-XH header has pin 1 on the left, so this header can't be "
+                                 "fitted as drawn (turn the latch round or reverse the pin order)")
         return
     if k == "to92":
         if p.attrs.get("flat") not in DIRS:
@@ -975,7 +982,11 @@ def draw_wires(svg: Svg, v: View, pl: Placement, steps: dict, placed: list, used
     for p in pl.parts:
         polys = [module_outline(p)] if p.kind == "c3-supermini" else [poly for _, poly in body_shapes(p)]
         if p.kind == "c3-supermini":
-            continue        # raised on its sockets: labels may sit over its outline, not over its pins
+            # Raised on its sockets: labels may sit over its outline, not over its pins or its caption.
+            usb, _, (cx, _) = module_frame(p)
+            mx, my = v.p((cx - usb[0] * 4.2, 26.0))
+            placed.append((mx - 6.6, my - 2.2, mx + 6.6, my + 2.1))
+            continue
         for poly in polys:
             xs = [v.x(a) for a, _ in poly]
             ys = [v.y(b) for _, b in poly]
@@ -1024,6 +1035,20 @@ def _end_tags(svg, v, w, segs, col, label, placed, used_xy):
                 tag(svg, cx, cy, label, col, placed)
                 done = True
                 break
+        if not done and len(segs) > 1:
+            # Every spot on the end leg is taken (by a part, its caption or another label): try along the others.
+            for s0, s1 in (segs[1:] if end == 0 else segs[-2::-1]):
+                L2 = math.dist(s0, s1)
+                u2 = _unit(s1[0] - s0[0], s1[1] - s0[1])
+                for f in (0.5, 0.3, 0.7):
+                    cx, cy = v.p((s0[0] + u2[0] * L2 * f, s0[1] + u2[1] * L2 * f))
+                    wdt = 0.72 * 1.25 * len(label) + 0.9
+                    if _free((cx - wdt / 2, cy - 0.93, cx + wdt / 2, cy + 0.93), placed, used_xy):
+                        tag(svg, cx, cy, label, col, placed)
+                        done = True
+                        break
+                if done:
+                    break
         if not done and end == 0:
             mid = (a[0] + u[0] * L / 2, a[1] + u[1] * L / 2)
             cx, cy = v.p(mid)
@@ -1229,15 +1254,8 @@ def _draw_module(svg, v, p, names, ghost):
     svg.add(f'<polygon points="{ud}" fill="#bdc3c7" stroke="#1f4e79" stroke-width="0.3"/>')
     ux, uy = v.p(mu)
     svg.text(ux, uy + 0.5, "USB-C", 1.3, weight="bold", fill="#1f4e79")
-    # Caption inside the outline, in the channel, shifted toward the far (antenna) end so it stays clear of
-    # the M3 hole beside the USB end and of the outline itself.
-    ch = (cx - usb[0] * 4.2, 26.0)
-    mx, my = v.p(ch)
-    arrow = "→" if (usb[0] > 0) != v.solder else "←"
-    svg.add(f'<rect x="{mx - 6.6:.2f}" y="{my - 2.2:.2f}" width="13.2" height="4.3" rx="0.6" fill="#ffffff" opacity="0.92"/>')
-    svg.text(mx, my - 0.45, "U1 ESP32-C3", 1.5, weight="bold", fill="#1f4e79")
-    line2 = f"{arrow} USB-C end" if arrow == "←" else f"USB-C end {arrow}"
-    svg.text(mx, my + 1.45, line2, 1.25, fill="#1f4e79")
+    bx, by = v.p((cx - usb[0] * 4.2, 26.0))
+    svg.add(f'<rect x="{bx - 6.6:.2f}" y="{by - 2.2:.2f}" width="13.2" height="4.3" rx="0.6" fill="#ffffff" opacity="0.92"/>')
     if not ghost:
         for n, h in p.pins.items():
             hx, hy = HOLES[h].x, HOLES[h].y
@@ -1251,6 +1269,19 @@ def _draw_module(svg, v, p, names, ghost):
             svg.add(f'<rect x="{x - 1.4:.2f}" y="{y - 0.75:.2f}" width="2.8" height="1.3" rx="0.3" fill="#eaf1f8"/>')
             svg.text(x, y + 0.4, names[n], 1.1, weight="bold", fill="#1f4e79")
 
+
+
+def _module_caption(svg, v, p):
+    """U1's caption text inside its outline, in the channel, shifted toward the far (antenna) end so it stays clear
+    of the M3 hole beside the USB end and of the outline itself. Drawn after the wires, with a white halo, so a wire
+    under U1 can't hide it; its backing box is drawn with the module, under the wires and labels."""
+    usb, _, (cx, _) = module_frame(p)
+    mx, my = v.p((cx - usb[0] * 4.2, 26.0))
+    arrow = "→" if (usb[0] > 0) != v.solder else "←"
+    halo = 'stroke="#ffffff" stroke-width="0.55" paint-order="stroke" stroke-linejoin="round"'
+    svg.text(mx, my - 0.45, "U1 ESP32-C3", 1.5, weight="bold", fill="#1f4e79", extra=halo)
+    line2 = f"{arrow} USB-C end" if arrow == "←" else f"USB-C end {arrow}"
+    svg.text(mx, my + 1.45, line2, 1.25, fill="#1f4e79", extra=halo)
 
 def draw_header(svg: Svg, pl: Placement, solder: bool):
     title = f"{pl.title or pl.device} \u2014 protoboard"
@@ -1395,6 +1426,9 @@ def render_sheet(pl: Placement, nets: dict, solder: bool) -> str:
     used_xy = [v.p((HOLES[h].x, HOLES[h].y)) for h in used]
     draw_parts(svg, v, pl, node_net, placed)
     draw_wires(svg, v, pl, wire_steps, placed, used_xy)
+    for p in pl.parts:
+        if p.kind == "c3-supermini":
+            _module_caption(svg, v, p)
     nets_used = []
     for net in NET_STYLE:
         if any(w.net == net for w in pl.wires) or any(node_net.get((p.ref, n)) == net for p in pl.parts for n in p.pins):
