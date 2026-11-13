@@ -368,3 +368,710 @@ def test_two_word_term_drawn_as_positioned_tj_without_space_is_found(tmp_path):
     p = make_type3_pdf(tmp_path / "k.pdf", shown, CMAP)
     assert cod.scan_file(p, "k.pdf", ["zzqfirst last"]) == ["k.pdf!text4:joined: owner term #1"]
     assert cod.scan_file(p, "k.pdf", ["zzqfirst other"]) == []
+
+
+# The project's public account name is allowed only inside its own github.com / ko-fi.com links. Built in two parts so
+# this file does not trip the owner scan itself.
+NAME = "thompson" + "fabco"
+BS = chr(92)
+HOST_LINKS = [f"github.com/{NAME}", f"ko-fi.com/{NAME}", f"{NAME}/filament-kit", f"{NAME}/filament-library",
+              f"{NAME}/filament-kit-hardware"]
+
+
+@pytest.mark.parametrize("line", [
+    f"github.com/{NAME}",
+    f"GitHub.com/{NAME.upper()}/Some-Repo",
+    f"Ko-Fi.com/{NAME.title()}",
+    f"https://github.com/{NAME}/filament-kit-hardware",
+    f"https://www.github.com/{NAME}",
+    f"https://ko-fi.com/{NAME}",
+    f"[Support](https://ko-fi.com/{NAME})",
+    f"[repo](https://github.com/{NAME}/x) and more",
+    f'<a href="https://github.com/{NAME}">x</a>',
+    f"see https://github.com/{NAME}.",
+    f"see github.com/{NAME} now",
+    f"see github.com/{NAME}\tnow",
+    f"clone {NAME}/filament-kit",
+    f"clone {NAME.upper()}/FILAMENT-LIBRARY please",
+    f"uses {NAME}/filament-kit-hardware.",
+    f'"{NAME}/filament-kit"',
+    f"({NAME}/filament-kit)",
+])
+def test_account_name_inside_its_own_links_passes(line):
+    assert cod.scan_text("f", line, [NAME]) == []
+
+
+def term_hits(text, words):
+    """Owner-term findings only (the generic e-mail, host and path patterns also fire on some of these lines)."""
+    return [f for f in cod.scan_text("f", text, words) if "owner term" in f]
+
+
+@pytest.mark.parametrize("line", [
+    f"made by {NAME}",
+    f"user@{NAME}.com",
+    f"{NAME}.local",
+    f"{NAME}.github.io",
+    f"/home/{NAME}/filament-kit",
+    f"C:{BS}Users{BS}{NAME}",
+    f"notgithub.com/{NAME}/x",
+    f"github.com.example.org/{NAME}",
+    f"github.com/{NAME}-x/repo",
+    f"github.com/{NAME}x",
+    f"github.com/{NAME}_x",
+    f"api.github.com/repos/{NAME}/x",
+    f"raw.githubusercontent.com/{NAME}/x",
+    f"sub.github.com/{NAME}",
+    f"x-github.com/{NAME}",
+    f"ko-fi.com.example.org/{NAME}",
+    f"mko-fi.com/{NAME}",
+    f"github.com/{NAME}/x and {NAME}",
+    f"{NAME} and https://ko-fi.com/{NAME}",
+    f"github.com/other/{NAME}",
+    f"github.com/{NAME[:-1]}/x {NAME}",
+    f"x{NAME}/filament-kit",
+    f"-{NAME}/filament-kit",
+    f".{NAME}/filament-kit",
+    f"/{NAME}/filament-kit",
+    f"{BS}{NAME}{BS}filament-kit",
+    f"a@{NAME}/filament-kit",
+    f"{NAME}/other-repo",
+    f"{NAME}/filament",
+    f"{NAME}x/filament-kit",
+])
+def test_account_name_elsewhere_stays_a_hit(line):
+    assert term_hits(line, [NAME]) == ["f:1: owner term #1"]
+
+
+def test_longer_repository_name_with_an_allowed_prefix_is_covered():
+    assert cod.scan_text("f", f"{NAME}/filament-kitchen-sink", [NAME]) == []
+
+
+def test_another_term_in_an_allowed_link_is_still_a_hit():
+    words = [NAME, "zzqpath", f"github.com/{NAME}", f"com/{NAME[:5]}", f"{NAME[3:]}/z"]
+    line = f"https://github.com/{NAME}/zzqpath"
+    assert term_hits(line, words) == ["f:1: owner term #2", "f:1: owner term #3", "f:1: owner term #4",
+                                      "f:1: owner term #5"]
+    assert cod.scan_text("f", f"https://github.com/{NAME}/x", [NAME, "zzqpath"]) == []
+
+
+def test_term_that_is_part_of_the_account_name_is_never_excused():  # L1
+    for words in ([NAME[:8]], [NAME[2:6]], [NAME[:-1]]):
+        assert cod.scan_text("f", f"github.com/{NAME}/x", words) == ["f:1: owner term #1"]
+    assert cod.scan_text("f", f"github.com/{NAME}/x", [NAME[:8], NAME]) == ["f:1: owner term #1"]
+
+
+def test_dotted_capital_i_term_is_matched_as_without_the_allowance():  # L2
+    for line in ("İzmir", "i̇zmir", "see İZMIR here"):
+        assert cod.scan_text("f", line, ["İzmir", NAME]) == ["f:1: owner term #1"], line
+    assert cod.scan_text("f", f"github.com/{NAME} İzmir", ["İzmir", NAME]) == ["f:1: owner term #1"]
+
+
+@pytest.mark.parametrize("line", [
+    f"~{NAME}/filament-kit",
+    f"C:{NAME}/filament-kit",
+    f"nas:{NAME}/filament-kit",
+    f"HOME={NAME}/filament-kit",
+    f"x_github.com/{NAME}",
+    f"_ko-fi.com/{NAME}",
+    f"İgithub.com/{NAME}",
+    f"égithub.com/{NAME}",
+    f"x{NAME}/filament-library",
+])
+def test_boundary_before_a_link_form_is_a_whitelist(line):  # L3
+    assert term_hits(line, [NAME]) == ["f:1: owner term #1"]
+
+
+@pytest.mark.parametrize("line", [
+    f"gıthub.com/{NAME}",
+    f"{NAME}/fılament-kit",
+    f"ko-fı.com/{NAME}",
+])
+def test_dotless_i_does_not_complete_a_link_form(line):  # L4
+    assert term_hits(line, [NAME]) == ["f:1: owner term #1"]
+
+
+@pytest.mark.parametrize("line", [
+    f"github.com/{NAME}.local",
+    f"github.com/{NAME}@x",
+    f"github.com/{NAME}.x",
+    f"github.com/{NAME}..",
+    f"ko-fi.com/{NAME}.com",
+    f"https://github.com/{NAME}&x",
+])
+def test_what_follows_the_account_name_in_a_host_form_is_a_whitelist(line):  # L5
+    assert term_hits(line, [NAME]) == ["f:1: owner term #1"]
+
+
+@pytest.mark.parametrize("line", [
+    f"github.com/{NAME}.", f"github.com/{NAME}. next", f"github.com/{NAME}.)", f"github.com/{NAME}, ok",
+    f"(github.com/{NAME}).", f"github.com/{NAME}?x", f"github.com/{NAME}#top", f"see ko-fi.com/{NAME}!",
+    f"`{NAME}/filament-kit`", f"<{NAME}/filament-kit>", f"[{NAME}/filament-kit]",
+])
+def test_usual_punctuation_around_a_link_is_excused(line):
+    assert cod.scan_text("f", line, [NAME]) == []
+
+
+def test_dotless_i_forms_are_hits_and_plain_forms_are_not():  # L4 (exact strings)
+    assert term_hits(f"gıthub.com/{NAME}", [NAME]) == ["f:1: owner term #1"]
+    assert term_hits(f"{NAME}/fılament-kit", [NAME]) == ["f:1: owner term #1"]
+    assert term_hits(f"github.com/{NAME}", [NAME]) == []
+
+
+def test_every_occurrence_counts_once_per_line():
+    line = f"github.com/{NAME} ko-fi.com/{NAME}"
+    assert cod.scan_text("f", line, [NAME]) == []
+    assert cod.scan_text("f", f"{line} {NAME} {NAME}", [NAME]) == ["f:1: owner term #1"]
+    assert cod.scan_text("f", f"{line}\n{line}\nplain {NAME}", [NAME]) == ["f:3: owner term #1"]
+
+
+def test_account_links_in_svg_text_after_entity_unescape(tmp_path):
+    p = tmp_path / "a.svg"
+    p.write_text(f"<svg><text>https:&#47;&#47;github.com&#47;{NAME}&gt;</text>\n"
+                 f"<text>ko-fi.com&#x2F;{NAME}&quot;</text></svg>", encoding="utf-8")
+    assert cod.scan_file(p, "a.svg", [NAME]) == []
+    p.write_text(f"<svg><text>user&#64;{NAME}.com</text></svg>", encoding="utf-8")
+    assert cod.scan_file(p, "a.svg", [NAME]) == ["a.svg:1: owner term #1"] or \
+        any("owner term #1" in f for f in cod.scan_file(p, "a.svg", [NAME]))
+
+
+def test_account_links_in_archive_member(tmp_path):
+    p = make_zip(tmp_path / "a.3mf", {"Metadata/info.txt": f"Source: https://github.com/{NAME}/x\nko-fi.com/{NAME}"})
+    assert cod.scan_file(p, "a.3mf", [NAME]) == []
+    p = make_zip(tmp_path / "b.3mf", {"Metadata/info.txt": f"ok github.com/{NAME}\nDesigner: {NAME}"})
+    assert cod.scan_file(p, "b.3mf", [NAME]) == ["b.3mf!Metadata/info.txt:2: owner term #1"]
+
+
+def type3_font_cmap(chars):
+    lines = [f"<{i:02X}> <{ord(c):04X}>" for i, c in enumerate(sorted(set(chars)), 1)]
+    return (b"1 begincodespacerange <00> <FF> endcodespacerange\n"
+            + f"{len(lines)} beginbfchar {' '.join(lines)} endbfchar\n".encode())
+
+
+def drawn(tmp_path, first, second):
+    """A PDF whose page draws `first` in an unmapped font and then `second` through a ToUnicode font."""
+    chars = sorted(set(second))
+    codes = "".join(f"{chars.index(c) + 1:02X}" for c in second)
+    shown = f"BT /F2 9 Tf ({first}) Tj ET BT /F1 9 Tf <{codes}> Tj ET".encode()
+    return make_type3_pdf(tmp_path / "k.pdf", shown, type3_font_cmap(second))
+
+
+def test_account_links_in_pdf_text_split_over_runs(tmp_path):
+    for first, second in [(f"see github.com/{NAME[:6]}", f"{NAME[6:]}/x)"),
+                          (f"see Ko-Fi.com/{NAME[:6]}", f"{NAME[6:]}"),
+                          (f"clone {NAME[:6]}", f"{NAME[6:]}/filament-kit"),
+                          (f"https://github.com/{NAME[:6]}", f"{NAME[6:]}.")]:
+        p = drawn(tmp_path, first, second)
+        assert [t for _, t in cod.pdf_text(p.read_bytes())] == [[first, second]]
+        assert cod.scan_file(p, "k.pdf", [NAME]) == [], (first, second)
+    for first, second in [(f"see {NAME[:6]}", f"{NAME[6:]}"),
+                          (f"notgithub.com/{NAME[:6]}", f"{NAME[6:]}/x"),
+                          (f"github.com/{NAME[:6]}", f"{NAME[6:]}x/y"),
+                          (f"user@{NAME[:6]}", f"{NAME[6:]}.com")]:
+        out = cod.scan_file(drawn(tmp_path, first, second), "k.pdf", [NAME])
+        assert out == ["k.pdf!text4:joined: owner term #1"], (first, second)
+
+
+def test_bare_mention_next_to_a_pdf_link_is_a_hit(tmp_path):
+    p = drawn(tmp_path, f"github.com/{NAME[:6]}", f"{NAME[6:]} and {NAME}")
+    assert cod.scan_file(p, "k.pdf", [NAME]) == ["k.pdf!text4:2: owner term #1"]
+
+
+def test_account_links_in_pdf_text_with_whitespace_removed(tmp_path):
+    p = drawn(tmp_path, f"see github.com/ {NAME[:6]}", f"{NAME[6:]} / x")  # a space inside the link text is not a link
+    assert cod.scan_file(p, "k.pdf", [NAME]) == ["k.pdf!text4:joined: owner term #1"]
+    p = drawn(tmp_path, f"see ko-fi.com/{NAME[:6]}", f"{NAME[6:]} ")
+    assert cod.scan_file(p, "k.pdf", [NAME]) == []
+    p = drawn(tmp_path, f"see {NAME[:6]}", f" {NAME[6:]}")  # plain prose with the space dropped between runs
+    assert cod.scan_file(p, "k.pdf", [NAME]) == ["k.pdf!text4:joined: owner term #1"]
+    p = drawn(tmp_path, f"see x github.com/{NAME[:6]}", f"{NAME[6:]} x")
+    assert cod.scan_file(p, "k.pdf", [NAME]) == []
+    p = drawn(tmp_path, f"see xgithub.com/{NAME[:6]}", f"{NAME[6:]} x")
+    assert cod.scan_file(p, "k.pdf", [NAME]) == ["k.pdf!text4:joined: owner term #1"]
+
+
+def test_account_forms_in_the_default_links_all_pass_together():
+    assert cod.scan_text("f", "\n".join(HOST_LINKS), [NAME]) == []
+
+
+def drawn_runs(tmp_path, runs):
+    """A PDF whose page draws each text in `runs` in a font of its own, alternating an unmapped and a mapped font."""
+    mapped = "".join(r for k, r in enumerate(runs) if k % 2)
+    chars = sorted(set(mapped))
+    parts = []
+    for k, r in enumerate(runs):
+        if k % 2:
+            parts.append(f"BT /F1 9 Tf <{''.join(f'{chars.index(c) + 1:02X}' for c in r)}> Tj ET")
+        else:
+            parts.append(f"BT /F2 9 Tf ({r}) Tj ET")
+    return make_type3_pdf(tmp_path / "k.pdf", " ".join(parts).encode(), type3_font_cmap(mapped or "a"))
+
+
+@pytest.mark.parametrize("runs", [
+    [f"github.com/{NAME} see {NAME[:6]}", NAME[6:]],
+    [f"github.com/{NAME}", f"(c) {NAME[:6]}", NAME[6:]],
+    [NAME[:6], f"{NAME[6:]} github.com/{NAME}"],
+    [f"see {NAME[:6]}", f"{NAME[6:]}", f"https://github.com/{NAME}/x"],
+    [f"{NAME[:6]}", f"{NAME[6:]}"],
+])
+def test_split_mention_is_reported_even_beside_a_whole_mention_in_a_link(tmp_path, runs):  # M
+    p = drawn_runs(tmp_path, runs)
+    assert [t for _, t in cod.pdf_text(p.read_bytes())] == [runs]
+    assert cod.scan_file(p, "k.pdf", [NAME]) == ["k.pdf!text4:joined: owner term #1"]
+
+
+@pytest.mark.parametrize("runs", [
+    [f"github.com/{NAME}"],
+    [f"github.com/{NAME} and ko-fi.com/{NAME}"],
+    [f"github.com/{NAME} ", f"ko-fi.com/{NAME} ", f"{NAME}/filament-kit"],
+])
+def test_whole_mentions_only_inside_links_report_nothing_in_a_pdf(tmp_path, runs):
+    assert cod.scan_file(drawn_runs(tmp_path, runs), "k.pdf", [NAME]) == []
+
+
+def test_whole_mention_outside_a_link_is_reported_once_in_a_pdf(tmp_path):
+    p = drawn_runs(tmp_path, [f"github.com/{NAME}", f"by {NAME} {NAME[:6]}", NAME[6:]])
+    assert cod.scan_file(p, "k.pdf", [NAME]) == ["k.pdf!text4:2: owner term #1"]
+    p = drawn_runs(tmp_path, ["x ", f"made by {NAME}"])
+    assert cod.scan_file(p, "k.pdf", [NAME]) == ["k.pdf!text4:2: owner term #1"]
+
+
+def test_other_terms_in_a_pdf_are_checked_as_without_the_allowance(tmp_path):
+    p = drawn_runs(tmp_path, [f"github.com/{NAME} zzq", "first", "last"])
+    assert cod.scan_file(p, "k.pdf", [NAME, "zzqfirstlast"]) == ["k.pdf!text4:joined: owner term #2"]
+    p = drawn_runs(tmp_path, ["x ", f"github.com/{NAME} {NAME[:6]}", NAME[6:]])
+    assert cod.scan_file(p, "k.pdf", [NAME[:8]]) == ["k.pdf!text4:2: owner term #1"]
+
+
+def pdf_hits(tmp_path, runs, words=None):
+    p = drawn_runs(tmp_path, runs)
+    assert [t for _, t in cod.pdf_text(p.read_bytes())] == [runs]
+    return cod.scan_file(p, "k.pdf", words or [NAME])
+
+
+JOINED = ["k.pdf!text4:joined: owner term #1"]
+TWO_WORDS = f"{NAME[:8].title()} {NAME[8:].title()}"  # the name spelled as two words
+
+
+@pytest.mark.parametrize("runs", [
+    ["See", f"github.com/{NAME}"],
+    [f"github.com/{NAME}", "Support"],
+    [f"ko-fi.com/{NAME}", "and more"],
+    ["clone", f"{NAME}/filament-kit"],
+    ["x", f"https://github.com/{NAME}/filament-kit-hardware", "y"],
+    [f"github.com/{NAME[:6]}", f"{NAME[6:]}/filament-kit"],
+    [f"github.com/{NAME[:6]}", NAME[6:]],
+    [f"{NAME[:6]}", f"{NAME[6:]}/filament-kit"],
+    [f"ko-fi.com/{NAME} ", f"github.com/{NAME[:4]}", f"{NAME[4:]}/x"],
+])
+def test_whole_link_in_a_run_of_its_own_next_to_a_run_without_a_space_reports_nothing(tmp_path, runs):  # M
+    assert pdf_hits(tmp_path, runs) == []
+
+
+@pytest.mark.parametrize("runs", [
+    [NAME[:6], NAME[6:]],
+    [f"github.com/{NAME}", f"(c) {NAME[:6]}", NAME[6:]],
+    [f"github.com/{NAME[:6]}", f"{NAME[6:]}x"],
+    [f"seegithub.com/{NAME[:6]}", f"{NAME[6:]}"],
+    [NAME[:6], f"{NAME[6:]}", f"ko-fi.com/{NAME}"],
+    [f"x{NAME[:6]}", f"{NAME[6:]}/filament-kit"],
+])
+def test_split_mention_without_spaces_is_still_reported(tmp_path, runs):  # M
+    assert pdf_hits(tmp_path, runs) == JOINED
+
+
+@pytest.mark.parametrize("runs", [
+    [f"Contact: github.com/ {TWO_WORDS}"],
+    ["see github.com/", TWO_WORDS],
+    [f"github.com/{NAME[:8].title()}", f" {NAME[8:].title()}"],
+    [f"github.com/{NAME[:8]} {NAME[8:]}"],
+    [f"ko-fi.com/ {NAME[:6]}", NAME[6:]],
+    [f"github.com/{NAME[:6]} ", f" {NAME[6:]}"],
+    [f"github.com/ {NAME[:6]}", f"{NAME[6:]}"],
+    [f"{NAME[:6]} ", f"{NAME[6:]}/filament-kit"],
+    [f"{NAME[:6]}", f" {NAME[6:]}/filament-kit"],
+    ["x ", NAME[:6], f"{NAME[6:]}/filament -kit"],
+])
+def test_whitespace_inside_a_link_form_is_not_a_link(tmp_path, runs):  # L1
+    assert pdf_hits(tmp_path, runs) == JOINED
+
+
+def test_whitespace_before_the_name_in_one_run_is_reported_by_the_run_scan(tmp_path):  # L1
+    assert pdf_hits(tmp_path, ["x", f"github.com/ {NAME}"]) == ["k.pdf!text4:2: owner term #1"]
+
+
+def test_account_term_listed_twice_prints_the_lines_it_printed_before(tmp_path):  # L3
+    assert pdf_hits(tmp_path, ["x", f"by {NAME}"], [NAME, NAME]) == ["k.pdf!text4:2: owner term #1"] * 2
+    assert pdf_hits(tmp_path, [f"github.com/{NAME}", "x"], [NAME, NAME]) == []
+    assert pdf_hits(tmp_path, [NAME[:6], NAME[6:]], [NAME, NAME]) == [
+        "k.pdf!text4:joined: owner term #1", "k.pdf!text4:joined: owner term #2"]
+    assert pdf_hits(tmp_path, ["x", f"by {NAME}", NAME[:6], NAME[6:]], [NAME, "zzq", NAME]) == [
+        "k.pdf!text4:2: owner term #1"] * 2
+
+
+def test_a_mention_the_glued_text_does_not_hold_is_judged_as_before(tmp_path, monkeypatch):
+    monkeypatch.setattr(cod, "split_mentions_in_links", lambda runs: None)
+    assert pdf_hits(tmp_path, [NAME[:6], NAME[6:]]) == JOINED
+    assert pdf_hits(tmp_path, [f"github.com/{NAME}", "x"]) == []
+
+
+@pytest.mark.parametrize("line", [
+    f"Ko-fi.com/{NAME}",
+    f"KO-FI.COM/{NAME}",
+    f"{NAME}/filament-Kit",
+    f"{NAME}/filament-KIT",
+    f"gİthub.com/{NAME}",
+    f"gıthub.com/{NAME}",
+    f"github.com/{NAME}ſ",
+    f"github.com/{NAME}K",
+    f"ſ{NAME}/filament-kit",
+    f"K{NAME}/filament-kit",
+    f"github.com/{NAME}/x K{NAME}",
+])
+def test_non_ascii_letters_do_not_complete_or_surround_a_link_form(line):  # L2
+    assert term_hits(line, [NAME]) == ["f:1: owner term #1"]
+
+
+def test_non_ascii_letters_do_not_complete_a_link_form_in_a_pdf(tmp_path):  # L2
+    assert pdf_hits(tmp_path, ["x", "see Ko-fi.com/" + NAME[:6], NAME[6:]]) == JOINED
+    assert pdf_hits(tmp_path, [NAME[:6], f"{NAME[6:]}/filament-Kit"]) == JOINED
+
+
+@pytest.mark.parametrize("line", [
+    f"`github.com/{NAME}`",
+    f"`https://ko-fi.com/{NAME}`",
+    f"`github.com/{NAME}.`",
+    f"`{NAME}/filament-kit`",
+])
+def test_a_backtick_around_a_link_is_excused(line):  # L4
+    assert term_hits(line, [NAME]) == []
+
+
+PRINTABLE = [chr(c) for c in range(32, 127)]
+HOSTS = ["github.com", "www.github.com", "ko-fi.com"]
+BARES = [f"{NAME}/filament-kit", f"{NAME}/filament-library"]
+# every character a form accepts at each position; the tests below assert a hit for every other printable ASCII character
+BEFORE_HOST_OK = " !\"#$%&'()*+,/:;<=>?@[\\]^`{|}~"  # all but letters, digits and _ . -
+AFTER_NAME_OK = " )]}>\"',;:!?#/`."  # a "." is excused at the end of the line; AFTER_DOT_OK is what may follow it
+AFTER_DOT_OK = " )]}>\"'`"
+BEFORE_BARE_OK = " \"'([<`"
+
+
+@pytest.mark.parametrize("host", HOSTS)
+def test_every_character_before_a_host_form(host):  # L5
+    for c in PRINTABLE:
+        got = term_hits(f"{c}{host}/{NAME}", [NAME])
+        assert got == ([] if c in BEFORE_HOST_OK else ["f:1: owner term #1"]), repr(c)
+    assert term_hits(f"{host}/{NAME}", [NAME]) == []
+
+
+@pytest.mark.parametrize("host", HOSTS)
+def test_every_character_after_the_name_in_a_host_form(host):  # L5
+    for c in PRINTABLE:
+        got = term_hits(f"{host}/{NAME}{c}", [NAME])
+        assert got == ([] if c in AFTER_NAME_OK else ["f:1: owner term #1"]), repr(c)
+        got = term_hits(f"{host}/{NAME}{c}x", [NAME])
+        assert got == ([] if c in AFTER_NAME_OK and c != "." else ["f:1: owner term #1"]), repr(c)
+
+
+@pytest.mark.parametrize("host", HOSTS)
+def test_every_character_after_the_full_stop_that_follows_the_name(host):  # L5
+    for c in PRINTABLE:
+        got = term_hits(f"{host}/{NAME}.{c}", [NAME])
+        assert got == ([] if c in AFTER_DOT_OK else ["f:1: owner term #1"]), repr(c)
+        got = term_hits(f"{host}/{NAME}.{c}x", [NAME])
+        assert got == ([] if c in AFTER_DOT_OK else ["f:1: owner term #1"]), repr(c)
+    assert term_hits(f"{host}/{NAME}.", [NAME]) == []
+
+
+@pytest.mark.parametrize("bare", BARES)
+def test_every_character_before_a_bare_form(bare):  # L5
+    for c in PRINTABLE:
+        got = term_hits(f"{c}{bare}", [NAME])
+        assert got == ([] if c in BEFORE_BARE_OK else ["f:1: owner term #1"]), repr(c)
+    assert term_hits(bare, [NAME]) == []
+
+
+@pytest.mark.parametrize("term", [NAME.title(), NAME.upper(), NAME[:6] + NAME[6:].upper()])
+def test_account_term_in_any_case_is_excused_only_in_links(term):  # L5
+    for line in (f"github.com/{NAME}", f"Ko-Fi.com/{NAME.upper()}/x", f"{NAME}/filament-kit",
+                 f"see {NAME.title()}/Filament-Kit"):
+        assert cod.scan_text("f", line, [term]) == [], line
+    assert term_hits(f"made by {NAME}", [term]) == ["f:1: owner term #1"]
+    assert term_hits(f"made by {NAME.upper()} github.com/{NAME}", [term]) == ["f:1: owner term #1"]
+    assert term_hits(f"made by {NAME}", [NAME.title(), NAME.upper()]) == ["f:1: owner term #1", "f:1: owner term #2"]
+    assert term_hits(f"github.com/{NAME}", [NAME.title(), NAME.upper(), NAME]) == []
+
+
+def head_hits(text, words):
+    """The owner-term findings the scan printed before the account allowance: w.lower() in line.lower()."""
+    return [f"f:{n}: owner term #{words.index(w) + 1}" for n, line in enumerate(text.splitlines(), 1)
+            for w in words if w.lower() in line.lower()]
+
+
+@pytest.mark.parametrize("line, words", [
+    ("Ko", ["ko"]),
+    ("Ko", ["k"]),
+    ("ſ", ["s"]),
+    ("ſo", ["so"]),
+    ("ﬁlament-kit", ["filament-kit"]),
+    ("filament-Kit", ["filament-kit"]),
+    ("filament-Kit", ["filament-Kit"]),
+    ("İzmir", ["izmir", "İzmir", "i̇zmir"]),
+    ("i̇zmir ızmir", ["izmir", "İZMIR", "ızmir"]),
+    ("straße", ["strasse", "STRAẞE"]),
+    (f"github.com/{NAME} K", ["k", "github", NAME[:6], NAME[3:9]]),
+    (f"Kſ {NAME.title()}", [NAME[:6], "ks", "ſ"]),
+])
+def test_other_terms_lower_case_exactly_as_before(line, words):  # L5
+    assert term_hits(line, words) == head_hits(line, words)
+    assert term_hits(line + "\n" + line, words) == head_hits(line + "\n" + line, words)
+
+
+def test_other_terms_in_a_pdf_lower_case_exactly_as_before(tmp_path):  # L5
+    assert pdf_hits(tmp_path, ["x", "zzqK", "o"], ["zzqko"]) == ["k.pdf!text4:joined: owner term #1"]
+    assert pdf_hits(tmp_path, ["x", "zzqſ", "o"], ["zzqso"]) == []
+    assert pdf_hits(tmp_path, ["x", "zzqﬁ", "lament"], ["zzqfilament"]) == []
+
+
+@pytest.mark.parametrize("term", [NAME.title(), NAME.upper()])
+def test_account_term_in_any_case_is_judged_the_same_in_a_pdf(tmp_path, term):  # L5
+    assert pdf_hits(tmp_path, ["See", f"github.com/{NAME}"], [term]) == []
+    assert pdf_hits(tmp_path, [f"github.com/{NAME}", f"(c) {NAME[:6]}", NAME[6:]], [term]) == JOINED
+    assert pdf_hits(tmp_path, ["x", f"by {NAME}"], [term]) == ["k.pdf!text4:2: owner term #1"]
+
+
+# A copyright notice "(c) <year> <account>" is excused too, as that line shape only.
+SIGN = "\u00a9"
+NBSP = "\u00a0"
+NOTICE_BEFORE_OK = " \"'([<`"  # plus other whitespace; anything else before the marker is a hit
+NOTICE_AFTER_OK = " )]}>\"',;:!`"  # a "." is excused at the end of the line or before one of AFTER_DOT_OK
+
+
+@pytest.mark.parametrize("line", [
+    f"Everything outside `enclosures/` is licensed under GPL-3.0-only (see `LICENSE`), (c) 2026 {NAME}.",
+    f"The model files in this folder (STEP, 3MF) are (c) 2026 {NAME}.",
+    f"(C) 2026 {NAME}",
+    f"(c) 2026 {NAME.upper()}",
+    f"Copyright 2026 {NAME}",
+    f"COPYRIGHT 2026 {NAME.title()}",
+    f"Copyright (c) 2024-2026 {NAME}.",
+    f"Copyright (C) 2024\u20132026 {NAME}",
+    f"copyright {SIGN} 2025, 2026 {NAME}",
+    f"copyright   {SIGN}  2025, 2026, 2027\t{NAME}",
+    f"{SIGN} 2026 {NAME}",
+    f"Licensed by {SIGN} 2026 {NAME}",
+    f"{SIGN} 2026 {NAME} and (c) 2027 {NAME}",
+    f"1999 2026 (c) 1999 {NAME}",
+    f"(c) 2019-2020, 2021-2022 {NAME}",
+    f"(c)\t2026\t{NAME}",
+    f"x (c) 2026 {NAME}",
+    f'"(c) 2026 {NAME}"',
+    f"((c) 2026 {NAME})",
+    f"[(c) 2026 {NAME}]",
+    f"<(c) 2026 {NAME}>",
+    f"`(c) 2026 {NAME}`",
+    f"{NBSP}(c) 2026 {NAME}",
+    f"(c) 2026 {NAME}) next",
+    f"(c) 2026 {NAME}, all rights",
+    f"(c) 2026 {NAME}; see",
+    f'(c) 2026 {NAME}" end',
+    f"(c) 2026 {NAME}. Next sentence.",
+    f"(c) 2026 {NAME}.)",
+    f"(c) 2026 {NAME}:",
+    f"github.com/{NAME} (c) 2026 {NAME}",
+])
+def test_copyright_notice_with_the_account_name_passes(line):
+    assert cod.scan_text("f", line, [NAME]) == []
+
+
+def test_copyright_notice_in_entity_escaped_text_and_not_without_unescape():
+    for line in (f"&#169; 2026 {NAME}", f"&#xA9; 2026 {NAME}", f"&copy; 2026 {NAME}", f"&#40;c&#41; 2026 {NAME}",
+                 f"Copyright &copy; 2026 {NAME}"):
+        assert cod.scan_text("f", line, [NAME], unescape=True) == [], line
+        assert term_hits(line, [NAME]) == ["f:1: owner term #1"], line
+
+
+def test_copyright_notice_in_files_and_archives(tmp_path):
+    p = tmp_path / "a.svg"
+    p.write_text(f"<svg><text> &#169; 2026 {NAME} </text>\n<text> (c) 2026 {NAME}. </text></svg>", encoding="utf-8")
+    assert cod.scan_file(p, "a.svg", [NAME]) == []
+    p = make_zip(tmp_path / "a.3mf", {"Metadata/info.txt": f"Copyright {SIGN} 2026 {NAME}\n(c) 2026 {NAME}"})
+    assert cod.scan_file(p, "a.3mf", [NAME]) == []
+    p = make_zip(tmp_path / "b.3mf", {"Metadata/info.txt": f"(c) 2026 {NAME}\nDesigner: {NAME}"})
+    assert cod.scan_file(p, "b.3mf", [NAME]) == ["b.3mf!Metadata/info.txt:2: owner term #1"]
+
+
+def test_copyright_notice_in_one_drawn_pdf_run(tmp_path):
+    assert pdf_hits(tmp_path, [f"Copyright (c) 2026 {NAME}.", "x"]) == []
+    assert pdf_hits(tmp_path, ["x", f"{SIGN} 2026 {NAME}"]) == []
+    assert pdf_hits(tmp_path, ["See", f"(c) 2024-2026 {NAME}", "github.com/" + NAME]) == []
+
+
+@pytest.mark.parametrize("line", [
+    f"(c) {NAME}",
+    f"2026 {NAME}",
+    f"(c) 2026 by {NAME}",
+    f"(c) 2026, {NAME}",
+    f"(c) 2026{NAME}",
+    f"(c)2026 {NAME}",
+    f"(c) 2026{NBSP}{NAME}",
+    f"(c){NBSP}2026 {NAME}",
+    f"copyright{NBSP}2026 {NAME}",
+    f"(c)\u2003 2026 {NAME}",
+    f"(c) 2026\u3000{NAME}",
+    f"(c) 26 {NAME}",
+    f"(c) 202 {NAME}",
+    f"(c) 20266 {NAME}",
+    f"(c) 3026 {NAME}",
+    f"(c) 1899 {NAME}",
+    f"(c) 2126 {NAME}",
+    f"(c) {chr(0xFF12)}{chr(0xFF10)}{chr(0xFF12)}{chr(0xFF16)} {NAME}",
+    f"(c) {chr(0x0662)}{chr(0x0660)}{chr(0x0662)}{chr(0x0666)} {NAME}",
+    f"(c) 20{chr(0xFF12)}{chr(0xFF16)} {NAME}",
+    f"(c) 20{chr(0x0662)}{chr(0x0666)} {NAME}",
+    f"(c) 2024-20{chr(0xFF12)}{chr(0xFF16)} {NAME}",
+    f"(c) 2024, 20{chr(0x0662)}{chr(0x0666)} {NAME}",
+    f"(c) 2026 2027 {NAME}",
+    f"(c) 2026 - 2027 {NAME}",
+    f"(c) 2024 -2026 {NAME}",
+    f"(c) 2024- 2026 {NAME}",
+    f"(c) 2024,2026 {NAME}",
+    f"(c) 2024,  2026 {NAME}",
+    f"(c) 2024-26 {NAME}",
+    f"(c) 2024-2026- {NAME}",
+    f"(c) 2024,, 2026 {NAME}",
+    f"x(c) 2026 {NAME}",
+    f"\u00e9(c) 2026 {NAME}",
+    f"nocopyright 2026 {NAME}",
+    f"xcopyright 2026 {NAME}",
+    f"x{SIGN} 2026 {NAME}",
+    f"copy right 2026 {NAME}",
+    f"copyr\u0131ght 2026 {NAME}",
+    f"cop\u0443right 2026 {NAME}",
+    f"copyr\u0130ght 2026 {NAME}",
+    f"copyright(c) 2026 {NAME}",
+    f"copyright (c)(c) 2026 {NAME}",
+    f"((c)) 2026 {NAME}",
+    f"(c 2026 {NAME}",
+    f"c) 2026 {NAME}",
+    f"[c] 2026 {NAME}",
+    f"(r) 2026 {NAME}",
+    f"(x) 2026 {NAME}",
+    f"copyright: 2026 {NAME}",
+    f"(c) 2024{chr(0x2014)}2026 {NAME}",
+    f"{NAME} (c) 2026 {NAME}",
+    f"(c) 2026 {NAME}.local",
+    f"(c) 2026 {NAME}@example.org",
+    f"(c) 2026 {NAME}-pc",
+    f"(c) 2026 {NAME}_x",
+    f"(c) 2026 {NAME}x",
+    f"(c) 2026 {NAME}2",
+    f"(c) 2026 {NAME}/secret",
+    f"(c) 2026 {NAME}?x",
+    f"(c) 2026 {NAME}#top",
+    f"(c) 2026 {NAME}.x",
+    f"(c) 2026 {NAME}..",
+    f"(c) 2026 {NAME}&x",
+    f"(c) 2026 {NAME}K",
+    f"(c) 2026 {NAME}\u00e9",
+    f"(c) 2026 x{NAME}",
+])
+def test_text_that_is_not_a_copyright_notice_stays_a_hit(line):
+    assert term_hits(line, [NAME]) == ["f:1: owner term #1"]
+
+
+@pytest.mark.parametrize("c", PRINTABLE + [NBSP, "\u2003", "\u00e9", "\u212a", "\ufeff"])
+def test_every_character_before_a_notice_marker(c):
+    for marker in ("(c)", "copyright", SIGN):  # not "copyright (c)": its "(c)" is a marker after a space
+        ok = c in NOTICE_BEFORE_OK or c.isspace()
+        assert term_hits(f"{c}{marker} 2026 {NAME}", [NAME]) == ([] if ok else ["f:1: owner term #1"]), (c, marker)
+
+
+@pytest.mark.parametrize("marker", ["(c)", "copyright", SIGN, "copyright (c)", f"copyright {SIGN}"])
+def test_every_character_after_the_name_in_a_notice(marker):
+    for c in PRINTABLE:
+        ok = c in NOTICE_AFTER_OK or c == "."
+        assert term_hits(f"{marker} 2026 {NAME}{c}", [NAME]) == ([] if ok else ["f:1: owner term #1"]), repr(c)
+        ok = c in NOTICE_AFTER_OK
+        assert term_hits(f"{marker} 2026 {NAME}{c}x", [NAME]) == ([] if ok else ["f:1: owner term #1"]), repr(c)
+        ok = c in AFTER_DOT_OK
+        assert term_hits(f"{marker} 2026 {NAME}.{c}x", [NAME]) == ([] if ok else ["f:1: owner term #1"]), repr(c)
+    assert term_hits(f"{marker} 2026 {NAME}", [NAME]) == []
+    assert term_hits(f"{marker} 2026 {NAME}.", [NAME]) == []
+
+
+@pytest.mark.parametrize("c", ["/", "?", "#"])
+def test_slash_question_mark_and_hash_after_a_notice_name_are_hits_where_a_link_allows_them(c):
+    assert term_hits(f"github.com/{NAME}{c}x", [NAME]) == []
+    assert term_hits(f"(c) 2026 {NAME}{c}x", [NAME]) == ["f:1: owner term #1"]
+
+
+def test_notice_between_the_marker_and_the_name_takes_only_spaces_and_tabs():
+    for sep in (" ", "  ", "\t", " \t "):
+        assert term_hits(f"(c){sep}2026{sep}{NAME}", [NAME]) == []
+    for c in PRINTABLE + [NBSP, "\u2003", "\u3000", "\u200b"]:
+        if c in " \t":
+            continue
+        assert term_hits(f"(c){c}2026 {NAME}", [NAME]) == ["f:1: owner term #1"], repr(c)
+        assert term_hits(f"(c) 2026{c}{NAME}", [NAME]) == ["f:1: owner term #1"], repr(c)
+
+
+@pytest.mark.parametrize("year", ["1900", "1999", "2000", "2026", "2099", "1999-2026", "2024\u20132026", "2025, 2026",
+                                  "2000-2010, 2020, 2022-2026"])
+def test_notice_years_that_are_excused(year):
+    assert term_hits(f"(c) {year} {NAME}", [NAME]) == []
+
+
+@pytest.mark.parametrize("year", ["", "0", "26", "202", "20260", "1899", "2100", "3026", "0000", "x2026", "2026x", "2O26",
+                                  "2026-", "-2026", "2026,", ",2026", "2026 ,2027", "2026,2027", "2026-27", "2026 2027",
+                                  "2026-2027-", "2026,  2027", "2026, ", "2026;2027", "2026/2027", "20 26"])
+def test_notice_years_that_are_not_excused(year):
+    assert term_hits(f"(c) {year} {NAME}", [NAME]) == ["f:1: owner term #1"]
+
+
+def test_notice_excuses_only_its_own_name_span():
+    assert term_hits(f"(c) 2026 {NAME} and {NAME}", [NAME]) == ["f:1: owner term #1"]
+    assert term_hits(f"{NAME} (c) 2026 {NAME}", [NAME]) == ["f:1: owner term #1"]
+    assert term_hits(f"(c) 2026 {NAME}, github.com/{NAME} and (c) 2027 {NAME}.", [NAME]) == []
+    assert term_hits(f"(c) 2026 {NAME}\n(c) 2026 by {NAME}\n(c) 2026 {NAME}", [NAME]) == ["f:2: owner term #1"]
+    assert term_hits(f"(c) 2026 {NAME}-{NAME}", [NAME]) == ["f:1: owner term #1"]
+
+
+def test_notice_excuses_only_the_account_name_term():
+    holder = f"(c) 2026 {NAME}"
+    assert term_hits(holder, [NAME, NAME[:6]]) == ["f:1: owner term #2"]
+    assert term_hits(holder, [NAME[3:], NAME]) == ["f:1: owner term #1"]
+    assert term_hits(holder, [f"2026 {NAME}"]) == ["f:1: owner term #1"]
+    assert term_hits(holder, [f"(c) 2026 {NAME}"]) == ["f:1: owner term #1"]
+    assert term_hits(holder, ["(c) 2026"]) == ["f:1: owner term #1"]
+    assert term_hits(holder + " zzqterm", [NAME, "zzqterm", "zzq"]) == ["f:1: owner term #2", "f:1: owner term #3"]
+    assert term_hits(holder, ["zzqterm"]) == []
+
+
+@pytest.mark.parametrize("line, words", [
+    ("(c) 2026 Some One", ["some one"]),
+    ("Copyright 2026 zzq", ["zzq", "ZZQ"]),
+    (f"(c) 2026 {NAME[:6]}", [NAME[:6], NAME[:8]]),
+    (f"(c) 2026 {NAME[:6]}", [NAME]),
+    (f"(c) 2026 by {NAME}", []),
+    ("(c) 2026 K", ["k"]),
+    (f"{SIGN} 2026 zzq github.com/{NAME}", ["zzq", "github"]),
+])
+def test_without_the_account_term_a_notice_changes_nothing(line, words):
+    assert term_hits(line, words) == head_hits(line, words)
+
+
+def test_notice_in_a_pdf_is_judged_per_run_never_by_the_joined_text(tmp_path):
+    for runs in ([f"(c) 2026 {NAME[:6]}", NAME[6:]],
+                 [f"Copyright 2026 {NAME[:6]}", NAME[6:]],
+                 ["x", f"{SIGN} 2026 {NAME[:6]}", NAME[6:]],
+                 [f"(c) 2026 {NAME[:6]}", f"{NAME[6:]}.", "y"]):
+        assert pdf_hits(tmp_path, runs) == JOINED, runs
+    assert pdf_hits(tmp_path, ["(c) 2026", NAME]) == ["k.pdf!text4:2: owner term #1"]
+    assert pdf_hits(tmp_path, ["(c)", f"2026 {NAME}"]) == ["k.pdf!text4:2: owner term #1"]
+    assert pdf_hits(tmp_path, [f"(c)2026{NAME}"]) == ["k.pdf!stream1:1: owner term #1"]
+    assert pdf_hits(tmp_path, [f"(c) 2026 {NAME}", NAME[:6], NAME[6:]]) == JOINED
+    assert pdf_hits(tmp_path, [f"(c) 2026 {NAME}", f"by {NAME}"]) == ["k.pdf!text4:2: owner term #1"]
+    assert pdf_hits(tmp_path, [f"(c) 2026 {NAME}", NAME[:6], NAME[6:]], [NAME.upper()]) == JOINED
+    assert cod.split_mentions_in_links([f"(c) 2026 {NAME[:6]}", NAME[6:]]) is False
+    assert cod.split_mentions_in_links([f"(c) 2026 {NAME}"]) is True

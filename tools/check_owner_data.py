@@ -16,6 +16,14 @@ CMap (a font with no map is read as Latin-1; findings read `path!textN:line`, N 
 owner terms, email addresses and Windows user paths are checked in it, since neighbouring words run together; terms
 are also matched with whitespace removed). Exit status 1 means something was found.
 
+The project's public account name, when it is one of the terms, is excused only where it forms the account part of
+its own github.com and ko-fi.com links (or the bare owner/repo form tools use), or is the holder in a copyright notice
+(a marker "(c)", the copyright sign or "Copyright" with an optional "(c)" or sign, one year or a range or list of
+years, then the name, with spaces or tabs between); everywhere else it is a hit like any other owner term. The
+allowance applies to that one term only: every other term, including a part of the account name, is matched exactly as
+without it. The forms are matched on text lower-cased for A-Z only, and a link form with whitespace inside is none;
+a mention split over PDF text runs is excused only as part of a link form, never as a notice.
+
 Environment: FK_OWNER_BANS names an extra terms file (one term per line, or a JSON object whose `plain`, `code_plain`
 and `ota_plain` lists hold terms) used in addition to `tools/owner-terms.local`; A terms file that is
 named but missing, unreadable, malformed or empty makes the scan exit 2 (the message names the path and the reason,
@@ -32,8 +40,10 @@ import json
 import os
 import pathlib
 import re
+import string
 import subprocess
 import sys
+import unicodedata
 import zipfile
 import zlib
 
@@ -60,6 +70,25 @@ PDF_OBJECT = re.compile(rb"(?<!\d)(\d+)\s+\d+\s+obj\b(.*?)endobj", re.S)
 PDF_REF = rb"(\d+)\s+\d+\s+R"
 DRAWN_PATTERNS = ("email address", "Windows user path")  # generic patterns applied to decoded PDF text
 BAN_KEYS = ("plain", "code_plain", "ota_plain")  # string lists in the JSON form of a bans file
+# The project's public account name, allowed only as the account part of these link forms (host/account, or the bare
+# account/repo form tools use). Hosts are matched whole (github.com, www.github.com, ko-fi.com; no subdomain).
+PUBLIC_ACCOUNT_LINKS = ("github.com/thompsonfabco", "www.github.com/thompsonfabco", "ko-fi.com/thompsonfabco",
+                        "thompsonfabco/filament-kit", "thompsonfabco/filament-library")
+PUBLIC_ACCOUNT = PUBLIC_ACCOUNT_LINKS[0].split("/", 1)[1]
+HOST_BEFORE = "_.-"  # with letters, digits and combining marks: what makes a host part of a longer name
+BARE_BEFORE = "\"'([<`"  # with whitespace: the only characters (besides the line start) that may precede the bare form
+NAME_END = ")]}>\"',;:!?#/`"  # with whitespace: what may follow the account name in a host form
+DOT_END = ")]}>\"'`"  # with whitespace: what may follow a full stop that follows the account name
+ASCII_LOWER = str.maketrans(string.ascii_uppercase, string.ascii_lowercase)  # no str.lower(): U+212A is not a k here
+# A copyright notice naming the account as holder: "(c) 2026 name", "copyright 2024-2026 name", or with the sign in
+# place of "(c)" ("copyright (c) 2026 name" is the "(c)" form after a space). Matched on one line of ASCII-lowered
+# text; the name ends as in a host form except that "/", "?" and "#" straight after it are hits.
+YEAR = r"(?:19|20)[0-9]{2}"
+NOTICE_END = re.escape("".join(c for c in NAME_END if c not in "/?#"))
+NOTICE = re.compile(
+    r"(?<![^\s\"'(\[<`])(?:\(c\)|\u00a9|copyright)"  # marker after line start or one of these
+    rf"[ \t]+{YEAR}(?:[-\u2013]{YEAR}|, {YEAR})*[ \t]+"
+    + rf"({re.escape(PUBLIC_ACCOUNT)})(?=\Z|[\s{NOTICE_END}]|\.(?:\Z|[\s{re.escape(DOT_END)}]))")
 
 
 def tracked() -> list[pathlib.Path]:
@@ -115,9 +144,90 @@ def load_terms() -> tuple[list[str], str | None]:
     return words, problem
 
 
+def glue(runs: list[str]) -> tuple[str, list[bool], list[int]]:
+    """The runs joined with nothing between them and whitespace removed; for each index (and the end) whether whitespace
+    was dropped just before it; and for each character the run it came from."""
+    kept, gap, run_of, pending = [], [], [], True
+    for r, text in enumerate(runs):
+        for c in text:
+            if c.isspace():
+                pending = True
+                continue
+            kept.append(c)
+            gap.append(pending)
+            run_of.append(r)
+            pending = False
+    gap.append(pending)
+    return "".join(kept), gap, run_of
+
+
+def account_starts(low: str, gap: list[bool]) -> set[int]:
+    """Indexes where the public account name starts inside an allowed link form, in text lower-cased for A-Z only (`gap`
+    marks where whitespace was dropped, see glue; it counts as a boundary like the start or end of the line, but a form
+    with whitespace dropped inside it is not a form)."""
+    def host_ok(i: int, end: int) -> bool:  # host starting at i, name ending at end
+        before = low[i - 1] if i and not gap[i] else ""
+        if before and (before.isalnum() or before in HOST_BEFORE or unicodedata.category(before).startswith("M")):
+            return False
+        if end >= len(low) or gap[end] or low[end].isspace() or low[end] in NAME_END:
+            return True
+        return low[end] == "." and (end + 1 >= len(low) or gap[end + 1] or low[end + 1].isspace()
+                                    or low[end + 1] in DOT_END)
+
+    def bare_ok(i: int) -> bool:
+        return i == 0 or gap[i] or low[i - 1].isspace() or low[i - 1] in BARE_BEFORE
+
+    starts = set()
+    for link in PUBLIC_ACCOUNT_LINKS:
+        host = "." in link.split("/", 1)[0]
+        offset = link.index("/") + 1 if host else 0
+        i = low.find(link)
+        while i >= 0:
+            end = i + offset + len(PUBLIC_ACCOUNT)
+            if (host_ok(i, end) if host else bare_ok(i)) and not any(gap[i + 1:i + len(link)]):
+                starts.add(i + offset)
+            i = low.find(link, i + 1)
+    return starts
+
+
+def only_in_links(text: str) -> bool:
+    """Whether the public account name occurs in text, and every time as the account part of an allowed link form or
+    as the holder in a copyright notice."""
+    low = text.translate(ASCII_LOWER)
+    starts = account_starts(low, [False] * (len(low) + 1)) | {m.start(1) for m in NOTICE.finditer(low)}
+    i = low.find(PUBLIC_ACCOUNT)
+    if i < 0:
+        return False
+    while i >= 0:
+        if i not in starts:
+            return False
+        i = low.find(PUBLIC_ACCOUNT, i + 1)
+    return True
+
+
+def split_mentions_in_links(runs: list[str]) -> bool | None:
+    """Whether every mention of the public account name that the per-run scan did not judge (it crosses a run edge, or
+    whitespace was dropped inside it) is the account part of an allowed link form in the runs glued together; None when
+    the glued text holds no mention at all. A mention inside one run is the per-run scan's to judge."""
+    compact, gap, run_of = glue(runs)
+    low = compact.translate(ASCII_LOWER)
+    starts = account_starts(low, gap)
+    last = len(PUBLIC_ACCOUNT) - 1
+    i = low.find(PUBLIC_ACCOUNT)
+    if i < 0:
+        return None
+    while i >= 0:
+        whole = run_of[i] == run_of[i + last] and not any(gap[i + 1:i + last + 1])
+        if not whole and i not in starts:
+            return False
+        i = low.find(PUBLIC_ACCOUNT, i + 1)
+    return True
+
+
 def scan_text(label: str, text: str, words: list[str], unescape: bool = False,
               patterns: tuple[str, ...] | None = None) -> list[str]:
     out = []
+    lowered = [w.lower() for w in words]
     for n, line in enumerate(text.splitlines(), 1):
         if unescape:
             line = html.unescape(line)
@@ -128,8 +238,8 @@ def scan_text(label: str, text: str, words: list[str], unescape: bool = False,
                 if not any(a in m.group(0) for a in ALLOWED):
                     out.append(f"{label}:{n}: {why}: {m.group(0)}")
         low = line.lower()
-        for w in words:
-            if w.lower() in low:
+        for w, lw in zip(words, lowered):
+            if lw in low and not (lw == PUBLIC_ACCOUNT and only_in_links(line)):
                 out.append(f"{label}:{n}: owner term #{words.index(w) + 1}")
     return out
 
@@ -366,14 +476,22 @@ def scan_pdf(data: bytes, rel: str, words: list[str]) -> list[str]:
         out += scan_text(f"{rel}!stream{n}", pdf_inflate(m.group(1)).decode("utf-8", errors="replace"), words)
     seen = {f.split(":", 1)[1] for f in out if "!stream" in f}  # "line: what" already reported from a raw stream
     for label, runs in pdf_text(data):
-        out += [f for f in scan_text(f"{rel}!{label}", "\n".join(runs), words, patterns=DRAWN_PATTERNS)
-                if f.split(":", 1)[1] not in seen]
+        drawn = scan_text(f"{rel}!{label}", "\n".join(runs), words, patterns=DRAWN_PATTERNS)
+        out += [f for f in drawn if f.split(":", 1)[1] not in seen]
         # a term can span two runs ("First" "Last") or be drawn without its space, so the runs joined are checked
         # for terms alone, whitespace removed on both sides
         joined = re.sub(r"\s+", "", "".join(runs)).lower()
         for n, w in enumerate(words, 1):
             squeezed = re.sub(r"\s+", "", w).lower()
-            if squeezed and squeezed in joined and not any(w.lower() in run.lower() for run in runs):
+            if not squeezed or squeezed not in joined:
+                continue
+            covered = any(w.lower() in run.lower() for run in runs)
+            if w.lower() == PUBLIC_ACCOUNT:  # a whole mention not in a link is already reported above
+                covered = any(f.endswith(f": owner term #{words.index(w) + 1}") for f in drawn)
+                if not covered:
+                    split = split_mentions_in_links(runs)
+                    covered = any(w.lower() in run.lower() for run in runs) if split is None else split
+            if not covered:
                 out.append(f"{rel}!{label}:joined: owner term #{n}")
     return out
 
