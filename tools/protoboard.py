@@ -139,6 +139,7 @@ C3_POWER_LEFT = {  # pad -> (name, side, index from the USB end); top view with 
     "1": ("5", "R", 0), "2": ("6", "R", 1), "3": ("7", "R", 2), "4": ("8", "R", 3),
     "5": ("9", "R", 4), "6": ("10", "R", 5), "7": ("20", "R", 6), "8": ("21", "R", 7),
 }
+HANDS = ("power-left", "power-right")
 TO92_NAMES = {"1": "D", "2": "G", "3": "S"}
 DIODE_NAMES = {"1": "K", "2": "A"}
 
@@ -157,12 +158,13 @@ def _strip_of(hole: str) -> str:
 def module_frame(part: Part) -> tuple[tuple[float, float], tuple[float, float], tuple[float, float]]:
     """For the C3 module: (USB direction, power-row side direction, centre). Raises on a bad or mirrored placement.
 
-    In the module's own top view (USB up) the power row is on the left for a power-left module. Pins i
+    In the module's own top view (USB up) the power row is on the left for a power-left module and on the right for
+    a power-right one; the pads keep their numbers (9-16 the power row, 1-8 GPIO 5 to 21). Pins i
     (0 = USB end) of each row sit at 2.54 mm steps away from the USB end; the rows are 15.24 mm apart.
     """
     hand = part.attrs.get("hand", "")
-    if hand != "power-left":
-        raise PlacementError(f"{part.ref}: only hand=\"power-left\" C3 modules are drawn so far")
+    if hand not in HANDS:
+        raise PlacementError(f"{part.ref}: hand must be \"power-left\" or \"power-right\", got {hand!r}")
     need = set(C3_POWER_LEFT)
     if set(part.pins) != need:
         raise PlacementError(f"{part.ref}: the C3 module needs pins 1-16, got {sorted(part.pins, key=int)}")
@@ -179,12 +181,15 @@ def module_frame(part: Part) -> tuple[tuple[float, float], tuple[float, float], 
                                  f"which doesn't fit a C3 module on two 1x8 rows")
     if abs(math.dist(l0, r0) - 6 * PITCH) > 0.05:
         raise PlacementError(f"{part.ref}: the two pin rows must be 15.24 mm (6 holes) apart")
-    # Handedness: seen from above with USB up, the power row must be on the left. "Up" is usb; the viewer's
-    # left of "up" in y-down screen coordinates is (usb.y, -usb.x).
+    # Handedness: seen from above with USB up, the power row must be on the module's own side. "Up" is usb; the
+    # viewer's left of "up" in y-down screen coordinates is (usb.y, -usb.x).
     viewer_left = (usb[1], -usb[0])
-    if viewer_left[0] * left[0] + viewer_left[1] * left[1] < 0.9:
+    want = 1.0 if hand == "power-left" else -1.0
+    if want * (viewer_left[0] * left[0] + viewer_left[1] * left[1]) < 0.9:
+        other = "power-right" if hand == "power-left" else "power-left"
+        side = "right" if hand == "power-left" else "left"
         raise PlacementError(f"{part.ref}: these pin holes describe a mirrored module: with USB up the power "
-                             "row would be on the right, which is the power-right module")
+                             f"row would be on the {side}, which is the {other} module")
     cx = (l0[0] + l7[0] + r0[0] + p["8"][0]) / 4
     cy = (l0[1] + l7[1] + r0[1] + p["8"][1]) / 4
     return usb, left, (cx, cy)
@@ -548,11 +553,13 @@ def check(pl: Placement, nets: dict[str, set[tuple[str, str]]]) -> Report:
             err(f"hole {HOLES[h].text}: used twice ({'; '.join(users)})")
 
     # Part geometry (module handedness, pin rows, lead spans).
+    bad_geometry = set()
     for p in pl.parts:
         try:
             _check_part_geometry(p)
         except PlacementError as e:
             err(str(e))
+            bad_geometry.add(p.ref)
 
     # Connectivity against the netlist.
     uf = connectivity(pl)
@@ -588,7 +595,10 @@ def check(pl: Placement, nets: dict[str, set[tuple[str, str]]]) -> Report:
         if not group_nets.get(g):
             err(f"{r} rail link: bridges rails that carry no part pin")
 
-    _check_drawing(pl, rep)
+    if bad_geometry:
+        rep.notes.append("drawing rules not checked: " + ", ".join(sorted(bad_geometry)) + " can't be placed as given")
+    else:
+        _check_drawing(pl, rep)
     rep.stats.update(wires=len(pl.wires), bridges=len(pl.bridges), parts=len(pl.parts),
                      nets=sum(1 for n, m in nets.items() if any(r in placed for r, _ in m)))
     return rep
@@ -1283,6 +1293,21 @@ def _module_caption(svg, v, p):
     line2 = f"{arrow} USB-C end" if arrow == "←" else f"USB-C end {arrow}"
     svg.text(mx, my + 1.45, line2, 1.25, fill="#1f4e79", extra=halo)
 
+def module_hand(pl: Placement) -> str:
+    """The C3 module's hand, from U1's placement (the placement file's own hand if it has no C3)."""
+    for p in pl.parts:
+        if p.kind == "c3-supermini":
+            return p.attrs.get("hand", pl.hand)
+    return pl.hand
+
+
+def hand_words(pl: Placement) -> dict[str, str]:
+    """The texts that name the module's hand: this hand, its power row side and the other hand."""
+    left = module_hand(pl) != "power-right"
+    return {"HAND": "POWER-LEFT" if left else "POWER-RIGHT", "hand": "power-left" if left else "power-right",
+            "SIDE": "LEFT" if left else "RIGHT", "other": "power-right" if left else "power-left"}
+
+
 def draw_header(svg: Svg, pl: Placement, solder: bool):
     title = f"{pl.title or pl.device} \u2014 protoboard"
     svg.text(4, 6, title, 3.0, anchor="start", weight="bold")
@@ -1294,30 +1319,40 @@ def draw_header(svg: Svg, pl: Placement, solder: bool):
     # Hand warning with the identification picture.
     y0 = 16.5
     svg.add(f'<rect x="4" y="{y0}" width="{SHEET_W - 8}" height="15" rx="1" fill="#fff4f2" stroke="#c0392b" stroke-width="0.5"/>')
-    svg.text(6, y0 + 3.6, "For a C3 POWER-LEFT module only", 2.3, anchor="start", weight="bold", fill="#c0392b")
+    hw = hand_words(pl)
+    svg.text(6, y0 + 3.6, f"For a C3 {hw['HAND']} module only", 2.3, anchor="start", weight="bold", fill="#c0392b")
     for i, t in enumerate(["Hold the module USB up, chip facing you: 5V, G and 3V3 must be the top",
-                           "three pins of the LEFT row. A power-right module here puts 5 V on a",
+                           f"three pins of the {hw['SIDE']} row. A {hw['other']} module here puts 5 V on a",
                            "GPIO pin and can destroy it. Check before you plug U1 in."]):
         svg.text(6, y0 + 6.6 + i * 2.5, t, 1.75, anchor="start", fill="#5a1a12")
-    _hand_picture(svg, SHEET_W - 24, y0 + 0.8)
+    _hand_picture(svg, SHEET_W - 24, y0 + 0.8, hw["SIDE"] == "LEFT")
 
 
-def _hand_picture(svg: Svg, x, y):
+def _hand_picture(svg: Svg, x, y, power_left: bool = True):
     w, h = 9.0, 11.3
     svg.add(f'<rect x="{x:.2f}" y="{y + 1.6:.2f}" width="{w}" height="{h}" rx="0.8" fill="#1f4e79"/>')
     svg.add(f'<rect x="{x + w / 2 - 2.0:.2f}" y="{y + 0.6:.2f}" width="4.0" height="1.6" rx="0.5" fill="#bdc3c7"/>')
     svg.text(x + w / 2, y + 0.3, "USB up", 1.05, weight="bold", fill="#1f4e79")
-    left = ["5V", "G", "3V3", "4", "3", "2", "1", "0"]
-    for i, t in enumerate(left):
+    power = ["5V", "G", "3V3", "4", "3", "2", "1", "0"]
+    px, ox = (x + 0.9, x + w - 0.9) if power_left else (x + w - 0.9, x + 0.9)
+    for i, t in enumerate(power):
         yy = y + 2.8 + i * 1.3
         hi = i < 3
-        svg.add(f'<circle cx="{x + 0.9:.2f}" cy="{yy:.2f}" r="0.35" fill="{"#f1c40f" if hi else "#d9d9d9"}"/>')
-        svg.add(f'<circle cx="{x + w - 0.9:.2f}" cy="{yy:.2f}" r="0.35" fill="#d9d9d9"/>')
-        svg.text(x - 0.5, yy + 0.38, t, 1.05, anchor="end", weight="bold" if hi else "normal",
-                 fill="#c0392b" if hi else "#333")
-    svg.text(x + w + 1.2, y + 4.5, "power", 1.1, anchor="start", fill="#c0392b")
-    svg.text(x + w + 1.2, y + 5.9, "on the", 1.1, anchor="start", fill="#c0392b")
-    svg.text(x + w + 1.2, y + 7.3, "LEFT", 1.3, anchor="start", weight="bold", fill="#c0392b")
+        svg.add(f'<circle cx="{px:.2f}" cy="{yy:.2f}" r="0.35" fill="{"#f1c40f" if hi else "#d9d9d9"}"/>')
+        svg.add(f'<circle cx="{ox:.2f}" cy="{yy:.2f}" r="0.35" fill="#d9d9d9"/>')
+        if power_left:
+            svg.text(x - 0.5, yy + 0.38, t, 1.05, anchor="end", weight="bold" if hi else "normal",
+                     fill="#c0392b" if hi else "#333")
+        else:
+            svg.text(x + w + 0.5, yy + 0.38, t, 1.05, anchor="start", weight="bold" if hi else "normal",
+                     fill="#c0392b" if hi else "#333")
+    if power_left:
+        tx, anchor, side = x + w + 1.2, "start", "LEFT"
+    else:
+        tx, anchor, side = x - 1.2, "end", "RIGHT"
+    svg.text(tx, y + 4.5, "power", 1.1, anchor=anchor, fill="#c0392b")
+    svg.text(tx, y + 5.9, "on the", 1.1, anchor=anchor, fill="#c0392b")
+    svg.text(tx, y + 7.3, side, 1.3, anchor=anchor, weight="bold", fill="#c0392b")
 
 
 def draw_legend(svg: Svg, pl: Placement, y0: float, nets_used: list[str], solder: bool) -> float:
@@ -1404,7 +1439,8 @@ def build_steps(pl: Placement):
                                   f"latch side toward the {_dir_word(p.attrs['latch'])}.",
                           f"{p.ref} {part_label(p)}", "pin " + names))
     steps.append(("check", "Check with a meter: no short from 5V, 3V3 or SDA/SCL to GND. Then plug U1 in, USB-C "
-                           "toward the board edge as drawn, after checking it is a power-left module.", "", ""))
+                           f"toward the board edge as drawn, after checking it is a {hand_words(pl)['hand']} module.",
+                  "", ""))
     return steps, wire_steps
 
 
@@ -1482,6 +1518,7 @@ def write_pdf(pl: Placement, top: str, solder: str, md: str, out: Path, page: st
             rows.append("<tr>" + "".join(f"<{tagname}>{_h.escape(c)}</{tagname}>" for c in cells) + "</tr>")
     items = [f"<li>{_h.escape(l.split('. ', 1)[1])}</li>" for l in md.splitlines() if l[:1].isdigit()]
     warn = top[top.index("<svg"):]
+    hw = hand_words(pl)
     html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
 @page {{ size: {size}; margin: 8mm; }}
 body {{ margin: 0; font-family: Arial, Helvetica, sans-serif; }}
@@ -1499,7 +1536,7 @@ td, th {{ border: 0.2mm solid #999; padding: 0.6mm 1.2mm; }}
 <p class="note">Check the 20 mm bar with a ruler before you rely on the drawing.</p>{top}</div>
 <div class="page"><h2>Real size, solder side</h2>{solder}</div>
 <div class="page"><h2>Build order and hole table</h2>
-<p class="note">For a C3 POWER-LEFT module only (USB up: 5V, G, 3V3 at the top of the LEFT row). A power-right module
+<p class="note">For a C3 {hw['HAND']} module only (USB up: 5V, G, 3V3 at the top of the {hw['SIDE']} row). A {hw['other']} module
 in this layout puts 5 V on a GPIO pin and can destroy it.</p>
 <ol>{''.join(items)}</ol><table>{''.join(rows)}</table></div>
 </body></html>"""

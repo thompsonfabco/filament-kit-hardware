@@ -119,3 +119,45 @@ def test_jst_pin_1_must_match_the_latch_side(tmp_path, capsys):
     code, out = run_check(tmp_path, swapped, capsys)
     assert code == 1
     assert "J1: pin 1 is on the wrong end" in out
+
+
+def c3_hand(hand: str, rows: tuple[str, str], usb_col_end: int) -> pb.Part:
+    """A C3 with USB toward the column-30 end: power row (pads 9-16) in rows[0], GPIO row (pads 1-8) in rows[1]."""
+    part = c3(rows, usb_col_end)
+    part.attrs["hand"] = hand
+    return part
+
+
+def test_c3_power_right_accepted_and_mirror_rejected():
+    # USB toward number 30 means "up" is +x; the viewer's right of that is the bottom half (rows A-E).
+    pb.module_frame(c3_hand("power-right", ("E", "I"), 25))      # power row on the bottom: power-right
+    with pytest.raises(pb.PlacementError, match="mirrored.*power-left module"):
+        pb.module_frame(c3_hand("power-right", ("I", "E"), 25))
+    with pytest.raises(pb.PlacementError, match="mirrored.*power-right module"):
+        pb.module_frame(c3_hand("power-left", ("E", "I"), 25))
+    with pytest.raises(pb.PlacementError, match="hand must be"):
+        pb.module_frame(c3_hand("left", ("I", "E"), 25))
+
+
+@pytest.mark.parametrize("hand,rows,side,other", [("power-left", ("I", "E"), "LEFT", "power-right"),
+                                                  ("power-right", ("E", "I"), "RIGHT", "power-left")])
+def test_sheet_texts_follow_the_hand(hand, rows, side, other):
+    pl = pb.load_placement(FIX / "board.xml")
+    nets = pb.load_netlist(NET)
+    pl.parts = [p for p in pl.parts if p.ref != "J1"] + [c3_hand(hand, rows, 25)]
+    top = pb.render_sheet(pl, nets, False)
+    assert f"For a C3 {hand.upper()} module only" in top
+    assert f"three pins of the {side} row. A {other} module here" in top
+    assert f">{side}</text>" in top                       # the hand picture's "power on the LEFT/RIGHT"
+    md = pb.steps_markdown(pl)
+    assert f"after checking it is a {hand} module." in md
+
+
+def test_unknown_hand_is_reported_not_raised(tmp_path, capsys):
+    u1 = "".join(f'    <pin n="{n}" hole="{r}{k}"/>\n' for n, r, k in
+                 [(str(i + 1), "H", 20 + i) for i in range(8)] + [(str(i + 9), "D", 20 + i) for i in range(8)])
+    text = base().replace("</protoboard>", f'  <part ref="U1" kind="c3-supermini" value="C3" hand="power-up">\n{u1}'
+                                           "  </part>\n</protoboard>")
+    code, out = run_check(tmp_path, text, capsys)
+    assert code == 1
+    assert 'U1: hand must be "power-left" or "power-right"' in out
