@@ -12,6 +12,11 @@ labelled with the net it really carries.
     python tools/protoboard.py check  devices/printer-station/protoboard/power-left.xml [--netlist N.xml]
     python tools/protoboard.py render devices/printer-station/protoboard/power-left.xml [--pdf]
 
+Part kinds: c3-supermini (hand power-left or power-right), module (a plug-in board on a 1xN female header; pins
+with on="module" sit on the board itself, such as a screw terminal), jst-xh, to92, resistor, diode and cap-radial.
+Any part may carry dnp="<when to fit it>": its holes are kept and drawn, and it is listed apart from the build
+steps. A wire is straight, has one bend (route hv or vh) or runs along the centre channel (route channel, y=mm).
+
 check exits 0 when the board matches the netlist, 1 with each problem named, 2 when a file can't be read
 or the netlist can't be exported. render runs the check first and writes <hand>-top.svg, <hand>-solder.svg
 and <hand>-steps.md beside the placement file; --pdf also writes <hand>-a4.pdf and <hand>-letter.pdf
@@ -70,6 +75,9 @@ DRILL_R = 0.6
 LEAD_CLEAR = 0.05
 WIRE_R = 0.15       # a wire may lie against a part body but not over it
 PAD_STUB = 0.7      # the length of wire over its own pad, where it may touch a neighbouring body edge
+# A "channel" wire drops from its first hole into the centre channel (no copper), runs along it at a set y and
+# rises to its second hole: two bends. Its run stays at least a hole's ring away from rows F and E.
+CHANNEL_Y = (round(22.19 + HOLE_R + 0.1, 2), round(29.81 - HOLE_R - 0.1, 2))
 
 
 def col_x(k: int) -> float:
@@ -126,10 +134,18 @@ class Part:
     pins: dict[str, str]                    # pin number -> hole name
     attrs: dict[str, str] = field(default_factory=dict)
     names: dict[str, str] = field(default_factory=dict)   # pin number -> pin name shown on the drawing
+    # Pins on the module itself, not in a board hole (a module's screw terminal): pin number -> (along, out) in
+    # mm from pin 1, along the pin row and out toward the side the module extends to.
+    module_pins: dict[str, tuple[float, float]] = field(default_factory=dict)
 
     def xy(self, pin: str) -> tuple[float, float]:
         h = HOLES[self.pins[pin]]
         return h.x, h.y
+
+    @property
+    def dnp(self) -> str:
+        """The "fit only if" note of a part whose holes are kept but which is not fitted at first, else ""."""
+        return self.attrs.get("dnp", "")
 
 
 # Pin names, by kind, for the drawing. A JST's names come from the placement file (they are the net order).
@@ -214,6 +230,11 @@ def body_shapes(part: Part) -> list[tuple]:
         a, b = part.xy("1"), part.xy("3")
         flat = DIRS[part.attrs["flat"]]
         shapes.append(_rect_along(a, b, 0.25, 2.45, 1.75, flat))
+    elif k == "module":
+        pins = sorted(part.pins, key=int)
+        shapes.append(_rect_along(part.xy(pins[0]), part.xy(pins[-1]), 1.27, 1.27, 1.27))
+    elif k == "cap-radial":
+        shapes.append(("poly", cap_outline(part)))
     elif k in ("resistor", "diode"):
         a, b = part.xy("1"), part.xy("2")
         length, width = (6.3, 2.5) if k == "resistor" else (5.2, 2.7)
@@ -338,7 +359,8 @@ class Wire:
     net: str
     a: str
     b: str
-    route: str = ""         # "" straight, "hv" horizontal then vertical, "vh" vertical then horizontal
+    route: str = ""         # "" straight, "hv" horizontal then vertical, "vh" vertical then horizontal,
+    lane: float = 0.0       # "channel": down (or up) into the centre channel, along it at y = lane, and out
 
     def points(self) -> list[tuple[float, float]]:
         ha, hb = HOLES[self.a], HOLES[self.b]
@@ -346,6 +368,8 @@ class Wire:
             return [(ha.x, ha.y), (hb.x, ha.y), (hb.x, hb.y)]
         if self.route == "vh":
             return [(ha.x, ha.y), (ha.x, hb.y), (hb.x, hb.y)]
+        if self.route == "channel":
+            return [(ha.x, ha.y), (ha.x, self.lane), (hb.x, self.lane), (hb.x, hb.y)]
         return [(ha.x, ha.y), (hb.x, hb.y)]
 
     def segments(self):
@@ -384,17 +408,25 @@ def load_placement(path: Path) -> Placement:
     for e in root.findall("part"):
         pins = {}
         names = {}
+        on_module = {}
         for p in e.findall("pin"):
             n, h = p.get("n"), p.get("hole")
-            if h not in HOLES:
-                raise PlacementError(f"{path}: {e.get('ref')} pin {n}: no hole named {h!r}")
-            if n in pins:
+            if n in pins or n in on_module:
                 raise PlacementError(f"{path}: {e.get('ref')} pin {n} is listed twice")
-            pins[n] = h
+            if p.get("on") == "module":
+                try:
+                    along, out = (float(v) for v in p.get("at", "").split(","))
+                except ValueError:
+                    raise PlacementError(f"{path}: {e.get('ref')} pin {n}: an on-module pin needs at=\"along,out\" in mm")
+                on_module[n] = (along, out)
+            else:
+                if h not in HOLES:
+                    raise PlacementError(f"{path}: {e.get('ref')} pin {n}: no hole named {h!r}")
+                pins[n] = h
             if p.get("name"):
                 names[n] = p.get("name")
         attrs = {k: v for k, v in e.attrib.items() if k not in ("ref", "kind", "value")}
-        parts.append(Part(e.get("ref"), e.get("kind"), e.get("value", ""), pins, attrs, names))
+        parts.append(Part(e.get("ref"), e.get("kind"), e.get("value", ""), pins, attrs, names, on_module))
     wires = []
     for e in root.findall("wire"):
         a, b = e.get("from"), e.get("to")
@@ -402,9 +434,18 @@ def load_placement(path: Path) -> Placement:
             if h not in HOLES:
                 raise PlacementError(f"{path}: wire {a} to {b}: no hole named {h!r}")
         route = e.get("route", "")
-        if route not in ("", "hv", "vh"):
-            raise PlacementError(f"{path}: wire {a} to {b}: route must be hv or vh")
-        wires.append(Wire(e.get("net", ""), a, b, route))
+        if route not in ("", "hv", "vh", "channel"):
+            raise PlacementError(f"{path}: wire {a} to {b}: route must be hv, vh or channel")
+        lane = 0.0
+        if route == "channel":
+            try:
+                lane = float(e.get("y", ""))
+            except ValueError:
+                raise PlacementError(f"{path}: wire {a} to {b}: a channel wire needs y=\"mm\", its run across the channel")
+            if not CHANNEL_Y[0] < lane < CHANNEL_Y[1]:
+                raise PlacementError(f"{path}: wire {a} to {b}: y={lane} is not inside the channel "
+                                     f"({CHANNEL_Y[0]}-{CHANNEL_Y[1]} mm)")
+        wires.append(Wire(e.get("net", ""), a, b, route, lane))
     bridges = []
     for e in root.findall("bridge"):
         r = e.get("rail")
@@ -529,11 +570,16 @@ def check(pl: Placement, nets: dict[str, set[tuple[str, str]]]) -> Report:
         for m in members:
             node_net[m] = name
     for p in pl.parts:
-        want = {pin for (ref, pin) in node_net if ref == p.ref}
+        want = {pin for (ref, pin) in node_net if ref == p.ref} - set(p.module_pins)
         for pin in sorted(want - set(p.pins)):
             err(f"{p.ref} pin {pin} (net {node_net[(p.ref, pin)]}): not placed")
-        for pin in sorted(set(p.pins) - want):
+        for pin in sorted((set(p.pins) | set(p.module_pins)) - want - set(p.module_pins)):
             err(f"{p.ref} pin {pin}: placed but not in the netlist")
+        for pin in sorted(p.module_pins):
+            if (p.ref, pin) not in node_net:
+                err(f"{p.ref} pin {pin}: listed on the module but not in the netlist")
+            elif p.kind != "module":
+                err(f"{p.ref} pin {pin}: only a plug-in module (kind=\"module\") has pins on the module itself")
 
     # Holes: each holds at most one lead (a part pin, a wire end or a bridge end).
     use: dict[str, list[str]] = {}
@@ -559,6 +605,9 @@ def check(pl: Placement, nets: dict[str, set[tuple[str, str]]]) -> Report:
             _check_part_geometry(p)
         except PlacementError as e:
             err(str(e))
+            bad_geometry.add(p.ref)
+        except KeyError as e:
+            err(f"{p.ref}: pin {e.args[0]} has no hole, so the part can't be drawn")
             bad_geometry.add(p.ref)
 
     # Connectivity against the netlist.
@@ -639,6 +688,33 @@ def _check_part_geometry(p: Part) -> None:
             raise PlacementError(f"{p.ref}: with the flat face {p.attrs['flat']}, legs 1-2-3 must run left to right "
                                  "as seen facing the flat face")
         return
+    if k == "module":
+        n = len(p.pins)
+        if p.attrs.get("extends") not in DIRS:
+            raise PlacementError(f"{p.ref}: a module needs extends=\"up|down|left|right\", the side its board lies on")
+        pts = [p.xy(str(i)) for i in range(1, n + 1)]
+        _check_in_line(p, pts, "a module's header pins must sit in one row of adjacent holes, in pin order")
+        u = _unit(pts[-1][0] - pts[0][0], pts[-1][1] - pts[0][1])
+        ext = DIRS[p.attrs["extends"]]
+        if abs(u[0] * ext[0] + u[1] * ext[1]) > 0.01:
+            raise PlacementError(f"{p.ref}: extends must point across the pin row, not along it")
+        x0, y0, x1, y1 = _bbox(generic_module_outline(p))
+        if x0 < 0 or y0 < 0 or x1 > BOARD_W or y1 > BOARD_H:
+            raise PlacementError(f"{p.ref}: the module's board reaches past the edge of the protoboard")
+        return
+    if k == "cap-radial":
+        a, b = p.xy("1"), p.xy("2")
+        span = math.dist(a, b)
+        if abs(a[0] - b[0]) > 0.01 and abs(a[1] - b[1]) > 0.01:
+            raise PlacementError(f"{p.ref}: put its two leads along a letter or a number, not diagonally")
+        if not 2.0 <= span <= 5.2:
+            raise PlacementError(f"{p.ref}: its leads are {span:.2f} mm apart; a radial capacitor's leads bend to "
+                                 "2.0-5.2 mm")
+        try:
+            float(p.attrs.get("d", ""))
+        except ValueError:
+            raise PlacementError(f"{p.ref}: a radial capacitor needs d=\"mm\", its body diameter")
+        return
     if k in ("resistor", "diode"):
         a, b = p.xy("1"), p.xy("2")
         span = math.dist(a, b)
@@ -679,6 +755,20 @@ def _check_drawing(pl: Placement, rep: Report) -> None:
         for j in range(i + 1, len(bodies)):
             if bodies[i][0] != bodies[j][0] and polys_overlap(bodies[i][1][1], bodies[j][1][1]):
                 err(f"{bodies[i][0]} and {bodies[j][0]}: their bodies overlap")
+    # A plug-in module's board is raised on its header: only flat parts (resistors and wires) may lie under it, and
+    # two raised modules may not overlap.
+    raised = [(p.ref, raised_outline(p)) for p in pl.parts if raised_outline(p) is not None]
+    for p in pl.parts:
+        if p.kind != "module":
+            continue
+        mod = generic_module_outline(p)
+        for ref, (_, poly) in bodies:
+            kind = next(q.kind for q in pl.parts if q.ref == ref)
+            if ref != p.ref and kind not in ("resistor",) and polys_overlap(mod, poly):
+                err(f"{ref}: its body sits under {p.ref}'s raised module board")
+        for ref, poly in raised:
+            if ref != p.ref and polys_overlap(mod, poly):
+                err(f"{p.ref} and {ref}: their raised module boards overlap")
     # No body may sit on a mounting hole's screw head (U1's sockets included; U1 itself is raised above them).
     for ref, (_, poly) in bodies:
         for (mx, my) in M3_HOLES:
@@ -746,8 +836,8 @@ def _check_drawing(pl: Placement, rep: Report) -> None:
                 crossings += 1
     under = 0
     for p in pl.parts:
-        if p.kind == "c3-supermini":
-            poly = module_outline(p)
+        if raised_outline(p) is not None:
+            poly = raised_outline(p)
             for i, w in enumerate(pl.wires, 1):
                 if any(seg_hits_poly(a, b, poly) for a, b in w.segments()):
                     under += 1
@@ -767,6 +857,48 @@ def module_outline(p: Part):
     a = (mid_far[0] - usb[0] * 1.24, mid_far[1] - usb[1] * 1.24)
     b = (mid_usb[0] + usb[0] * 3.5, mid_usb[1] + usb[1] * 3.5)
     return _rect_along(a, b, 0.0, 9.0, 9.0)[1]
+
+
+def generic_module_outline(p: Part):
+    """A plug-in module's board, raised on its female header: from `over` mm before pin 1 to `over` mm past the
+    last pin, and from `back` mm behind the pin row to `reach` mm on the side it extends to."""
+    pins = sorted(p.pins, key=int)
+    a, b = p.xy(pins[0]), p.xy(pins[-1])
+    ext = DIRS[p.attrs["extends"]]
+    over = float(p.attrs.get("over", 1.28))
+    return _rect_along(a, b, over, float(p.attrs.get("back", 1.27)), float(p.attrs.get("reach", 18.03)), ext)[1]
+
+
+def raised_outline(p: Part):
+    """The outline of a module that sits raised on sockets (U1 or a plug-in module), else None."""
+    if p.kind == "c3-supermini":
+        return module_outline(p)
+    if p.kind == "module":
+        return generic_module_outline(p)
+    return None
+
+
+def module_point(p: Part, along: float, out: float):
+    """Board mm of a point on a plug-in module: `along` mm from pin 1 toward the last pin, `out` mm toward extends."""
+    pins = sorted(p.pins, key=int)
+    a, b = p.xy(pins[0]), p.xy(pins[-1])
+    u = _unit(b[0] - a[0], b[1] - a[1])
+    ext = DIRS[p.attrs["extends"]]
+    return a[0] + u[0] * along + ext[0] * out, a[1] + u[1] * along + ext[1] * out
+
+
+def cap_outline(p: Part, sides: int = 20):
+    a, b = p.xy("1"), p.xy("2")
+    cx, cy = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+    r = float(p.attrs.get("d", 8.0)) / 2
+    return [(cx + r * math.cos(2 * math.pi * i / sides), cy + r * math.sin(2 * math.pi * i / sides))
+            for i in range(sides)]
+
+
+def _bbox(poly):
+    xs = [q[0] for q in poly]
+    ys = [q[1] for q in poly]
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 # ---------------------------------------------------------------------------------------------- cli
@@ -822,14 +954,36 @@ NET_STYLE = {
     "BUZZER": ("#8C564B", "BUZ", "signal"),
     "BZ_G": ("#7F7F7F", "GATE", "signal"),
     "BZ-": ("#6A3D9A", "BZ\u2212", "signal"),
+    # Intake panel (its schematic names the supplies +5V and +3V3).
+    "+5V": ("#D55E00", "5V", "power"),
+    "+3V3": ("#CC79A7", "3V3", "power"),
+    "I2S_BCLK": ("#009E73", "BCLK", "signal"),
+    "I2S_LRC": ("#E69F00", "LRC", "signal"),
+    "I2S_DIN": ("#B8A100", "DIN", "signal"),
+    "AMP_SD": ("#7F7F7F", "SD", "signal"),
+    "BTN_HOLD": ("#C9A400", "HOLD", "signal"),
+    "BTN_DISCARD": ("#E15759", "DISC", "signal"),
+    "LAMP_HOLD": ("#8CB33E", "LAMP Y", "signal"),
+    "LAMP_DISCARD": ("#F28E2B", "LAMP R", "signal"),
+    "Q1_G": ("#76B7B2", "GATE Y", "signal"),
+    "Q2_G": ("#B07AA1", "GATE R", "signal"),
+    "HOLD_LAMP-": ("#6A3D9A", "LED− Y", "signal"),
+    "DISCARD_LAMP-": ("#A50F15", "LED− R", "signal"),
 }
 NET_TEXT = {
     "GND": "ground", "5V": "USB 5 V", "3V3": "3.3 V from the C3", "SDA": "I2C data, GPIO 5",
     "SCL": "I2C clock, GPIO 6", "ENC_CLK": "encoder A, GPIO 3", "ENC_DT": "encoder B, GPIO 4",
     "ENC_SW": "encoder switch, GPIO 1", "BUZZER": "buzzer drive, GPIO 0", "BZ_G": "Q1 gate",
     "BZ-": "buzzer \u2212 / Q1 drain",
+    "+5V": "USB 5 V", "+3V3": "3.3 V from the C3", "I2S_BCLK": "amplifier bit clock, GPIO 10",
+    "I2S_LRC": "amplifier word select, GPIO 20", "I2S_DIN": "amplifier data, GPIO 21",
+    "AMP_SD": "amplifier SD (on/off)", "BTN_HOLD": "yellow button, GPIO 3", "BTN_DISCARD": "red button, GPIO 4",
+    "LAMP_HOLD": "yellow lamp drive, GPIO 1", "LAMP_DISCARD": "red lamp drive, GPIO 7", "Q1_G": "Q1 gate",
+    "Q2_G": "Q2 gate", "HOLD_LAMP-": "yellow lamp − / Q1 drain", "DISCARD_LAMP-": "red lamp − / Q2 drain",
 }
 RES_BANDS = {"220": ["#d62728", "#d62728", "#7f4f24", "#c9a227"],
+             "4.7k": ["#f2d000", "#7b2cbf", "#d62728", "#c9a227"],
+             "10k": ["#7f4f24", "#111111", "#e67e22", "#c9a227"],
              "100k": ["#7f4f24", "#111111", "#f2d000", "#c9a227"]}
 SHEET_W = 128.0
 BX, BY = 19.5, 36.0      # board origin on the sheet
@@ -884,6 +1038,10 @@ def pin_names(p: Part, node_net: dict) -> dict[str, str]:
         return dict(DIODE_NAMES)
     if p.kind == "jst-xh":
         return {n: net_style(node_net.get((p.ref, n), ""))[1] for n in p.pins}
+    if p.kind == "module":
+        return dict(p.names)
+    if p.kind == "cap-radial":
+        return {"1": "+", "2": "\u2212"}
     return {}
 
 
@@ -1095,6 +1253,11 @@ def draw_parts(svg: Svg, v: View, pl: Placement, node_net: dict, placed: list):
         if p.kind == "c3-supermini":
             _draw_module(svg, v, p, names, ghost)
             continue
+        if p.kind == "module":
+            _draw_plug_module(svg, v, p, names, ghost, placed)
+            continue
+        if p.dnp and not ghost:
+            svg.add('<g opacity="0.5">')
         for _, poly in body_shapes(p):
             pts = " ".join(f"{a:.2f},{b:.2f}" for a, b in (v.p(q) for q in poly))
             if ghost:
@@ -1106,10 +1269,21 @@ def draw_parts(svg: Svg, v: View, pl: Placement, node_net: dict, placed: list):
                 _draw_to92(svg, v, p, names)
             elif p.kind in ("resistor", "diode"):
                 _draw_axial(svg, v, p, names)
-        # Leads / joints.
+            elif p.kind == "cap-radial":
+                _draw_cap(svg, v, p)
+        if p.dnp and not ghost:
+            svg.add('</g>')
+            for _, poly in body_shapes(p):
+                pts = " ".join(f"{a:.2f},{b:.2f}" for a, b in (v.p(q) for q in poly))
+                svg.add(f'<polygon points="{pts}" fill="none" stroke="#c0392b" stroke-width="0.3" '
+                        'stroke-dasharray="0.9,0.6"/>')
+        # Leads / joints: an empty red ring for a part fitted only when needed.
         for n, h in p.pins.items():
             x, y = v.p((HOLES[h].x, HOLES[h].y))
-            svg.add(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>')
+            if p.dnp:
+                svg.add(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.55" fill="#ffffff" stroke="#c0392b" stroke-width="0.25"/>')
+            else:
+                svg.add(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>')
         _part_caption(svg, v, p, placed)
 
 
@@ -1123,9 +1297,11 @@ def _part_caption(svg, v, p, placed):
         side = {"left": "right", "right": "left"}[side]
     text1 = p.ref + (f" {p.value}" if p.value and p.kind != "c3-supermini" else "")
     text2 = part_label(p)
+    if p.dnp:
+        text2 = "DNP"
     if side in ("left", "right") and p.value and not text2:
         text1, text2 = p.ref, p.value
-    if p.kind in ("c3-supermini", "jst-xh"):
+    if p.kind in ("c3-supermini", "jst-xh", "module"):
         return
     lines = [text1] + ([text2] if text2 else [])
     wmax = max(len(t) for t in lines) * 0.95 + 1
@@ -1144,8 +1320,75 @@ def _part_caption(svg, v, p, placed):
             f'rx="0.4" fill="#ffffff" opacity="0.85"/>')
     svg.text(cx, y, text1, 1.55, weight="bold")
     if text2:
-        svg.text(cx, y + 1.7, text2, 1.3, fill="#444")
+        svg.text(cx, y + 1.7, text2, 1.3, fill="#c0392b" if p.dnp else "#444", weight="bold" if p.dnp else "normal")
 
+
+
+def _draw_cap(svg, v, p):
+    """A radial electrolytic seen from above: its can, a stripe on the - side and a + by the + lead."""
+    poly = cap_outline(p, 36)
+    d = " ".join(f"{x:.2f},{y:.2f}" for x, y in (v.p(q) for q in poly))
+    svg.add(f'<polygon points="{d}" fill="#2c3e50" stroke="#111" stroke-width="0.3"/>')
+    a, b = p.xy("1"), p.xy("2")
+    u = _unit(b[0] - a[0], b[1] - a[1])
+    r = float(p.attrs.get("d", 8.0)) / 2
+    m = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+    nrm = (-u[1], u[0])
+    s0 = (m[0] + u[0] * r * 0.62 + nrm[0] * r * 0.75, m[1] + u[1] * r * 0.62 + nrm[1] * r * 0.75)
+    s1 = (m[0] + u[0] * r * 0.62 - nrm[0] * r * 0.75, m[1] + u[1] * r * 0.62 - nrm[1] * r * 0.75)
+    (x0, y0), (x1, y1) = v.p(s0), v.p(s1)
+    svg.add(f'<line x1="{x0:.2f}" y1="{y0:.2f}" x2="{x1:.2f}" y2="{y1:.2f}" stroke="#d9d9d9" stroke-width="1.0"/>')
+    px, py = v.p((m[0] - u[0] * r * 0.55, m[1] - u[1] * r * 0.55))
+    svg.text(px, py + 0.6, "+", 1.8, weight="bold", fill="#ffffff")
+
+
+def _draw_plug_module(svg, v, p, names, ghost, placed):
+    """A plug-in module on a 1xN female header: the socket, the raised board's outline, the pin names, any pins on
+    the module itself (a screw terminal) and the caption."""
+    for _, sp in body_shapes(p):
+        sd = " ".join(f"{x:.2f},{y:.2f}" for x, y in (v.p(q) for q in sp))
+        svg.add(f'<polygon points="{sd}" fill="#2b2b2b" opacity="{0.25 if ghost else 0.8}"/>')
+    poly = generic_module_outline(p)
+    d = " ".join(f"{x:.2f},{y:.2f}" for x, y in (v.p(q) for q in poly))
+    svg.add(f'<polygon points="{d}" fill="#6a3d9a" fill-opacity="0.07" stroke="#6a3d9a" stroke-width="0.4" '
+            f'stroke-dasharray="1.6,0.8"/>')
+    for n, h in p.pins.items():
+        x, y = v.p((HOLES[h].x, HOLES[h].y))
+        svg.add(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>')
+    pins = sorted(p.pins, key=int)
+    if not ghost:
+        for n in pins:
+            x, y = v.p(module_point(p, (int(n) - 1) * PITCH, 1.75))
+            nm = names.get(n, n)
+            w = 0.62 * len(nm) + 0.6
+            svg.add(f'<rect x="{x - w / 2:.2f}" y="{y - 0.7:.2f}" width="{w:.2f}" height="1.3" rx="0.3" fill="#f1eaf7"/>')
+            svg.text(x, y + 0.38, nm, 0.95, weight="bold", fill="#4a2370")
+            placed.append((x - w / 2, y - 0.7, x + w / 2, y + 0.6))
+    # Pins on the module itself, such as a screw terminal: one block around them, each pin named.
+    if p.module_pins:
+        pts = [module_point(p, al, out) for al, out in p.module_pins.values()]
+        xs = [v.x(q[0]) for q in pts]
+        ys = [v.y(q[1]) for q in pts]
+        x0, x1, y0, y1 = min(xs) - 2.2, max(xs) + 2.2, min(ys) - 2.0, max(ys) + 2.0
+        svg.add(f'<rect x="{x0:.2f}" y="{y0:.2f}" width="{x1 - x0:.2f}" height="{y1 - y0:.2f}" rx="0.5" '
+                f'fill="#2e8b57" fill-opacity="{0.2 if ghost else 0.85}" stroke="#1d5c3a" stroke-width="0.3"/>')
+        if not ghost:
+            for n, q in zip(p.module_pins, pts):
+                x, y = v.p(q)
+                svg.add(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.8" fill="#d9d9d9" stroke="#1d5c3a" stroke-width="0.2"/>')
+                svg.text(x, y + 0.42, names.get(n, n), 1.2, weight="bold", fill="#1d5c3a")
+            label = p.attrs.get("terminal", "")
+            if label:
+                svg.text((x0 + x1) / 2, y0 - 0.6, label, 1.2, weight="bold", fill="#1d5c3a")
+            placed.append((x0, y0 - 1.8, x1, y1))
+    # Caption on the raised board, between the pin names and the far edge.
+    mx, my = v.p(module_point(p, (len(pins) - 1) * PITCH / 2, float(p.attrs.get("caption_at", 5.5))))
+    halo = 'stroke="#ffffff" stroke-width="0.55" paint-order="stroke" stroke-linejoin="round"'
+    svg.text(mx, my, f"{p.ref} {p.value}", 1.5, weight="bold", fill="#4a2370", extra=halo)
+    if part_label(p):
+        svg.text(mx, my + 1.8, part_label(p), 1.2, fill="#4a2370", extra=halo)
+    w = 0.85 * len(f"{p.ref} {p.value}") + 1
+    placed.append((mx - w / 2, my - 1.5, mx + w / 2, my + (2.3 if part_label(p) else 0.5)))
 
 def _draw_jst(svg, v, p, names):
     _, poly = body_shapes(p)[0]
@@ -1382,6 +1625,19 @@ def draw_legend(svg: Svg, pl: Placement, y0: float, nets_used: list[str], solder
     svg.add(f'<line x1="4" y1="{y - 0.5:.2f}" x2="10" y2="{y - 0.5:.2f}" stroke="#c0392b" stroke-width="0.45" stroke-dasharray="1.2,0.7"/>')
     svg.text(11, y, "unmarked edge trace, broken at the link pads beside the M3 holes; the links join the halves",
              1.4, anchor="start", fill="#444")
+    if any(p.dnp for p in pl.parts):
+        y += 3.2
+        svg.add(f'<circle cx="5" cy="{y - 0.5:.2f}" r="0.55" fill="#ffffff" stroke="#c0392b" stroke-width="0.25"/>')
+        svg.add(f'<rect x="7" y="{y - 1.5:.2f}" width="4" height="2" fill="none" stroke="#c0392b" stroke-width="0.3" '
+                'stroke-dasharray="0.9,0.6"/>')
+        svg.text(12.5, y, "DNP: a part fitted only when needed (see the build list); keep its holes free", 1.4,
+                 anchor="start", fill="#444")
+    if any(w.route == "channel" for w in pl.wires):
+        y += 3.2
+        svg.add(f'<polyline points="4,{y - 1.4:.2f} 4,{y - 0.3:.2f} 10,{y - 0.3:.2f} 10,{y - 1.4:.2f}" fill="none" '
+                'stroke="#555" stroke-width="0.6"/>')
+        svg.text(11, y, "a wire laid along the centre channel (no copper there), under U1 where drawn", 1.4,
+                 anchor="start", fill="#444")
     y += 3.6
     svg.add(f'<line x1="4" y1="{y:.2f}" x2="24" y2="{y:.2f}" stroke="#111" stroke-width="0.4"/>')
     for xx in (4, 24):
@@ -1402,17 +1658,20 @@ def build_steps(pl: Placement):
                               f"the top and bottom {sym} rails.", f"{sym} rail link", f"{HOLES[a].text} to {HOLES[b].text}"))
 
     def wkey(w):
-        under = any(seg_hits_poly(a, b, module_outline(p)) for p in pl.parts if p.kind == "c3-supermini"
+        under = any(seg_hits_poly(a, b, raised_outline(p)) for p in pl.parts if raised_outline(p) is not None
                     for a, b in w.segments())
         return (0 if under else 1, -w.length)
     for w in sorted(pl.wires, key=wkey):
         label = net_style(w.net)[1]
-        shape = "straight" if not w.route else "one bend"
+        shape = {"": "straight", "channel": "two bends, along the centre channel"}.get(w.route, "one bend")
         steps.append(("wire", f"Wire {label}: {HOLES[w.a].text} to {HOLES[w.b].text} ({shape}, {w.length:.0f} mm).",
-                      f"wire {label}", f"{HOLES[w.a].text} to {HOLES[w.b].text}" + (" (one bend)" if w.route else "")))
+                      f"wire {label}", f"{HOLES[w.a].text} to {HOLES[w.b].text}" +
+                      {"": "", "channel": " (along the channel)"}.get(w.route, " (one bend)")))
         wire_steps[id(w)] = len(steps)
-    order = {"resistor": 0, "diode": 1, "to92": 2, "c3-supermini": 3, "jst-xh": 4}
+    order = {"resistor": 0, "diode": 1, "to92": 2, "cap-radial": 2.5, "c3-supermini": 3, "module": 3.5, "jst-xh": 4}
     for p in sorted(pl.parts, key=lambda p: (order[p.kind], p.ref)):
+        if p.dnp:
+            continue
         pins = sorted(p.pins.items(), key=lambda t: int(t[0]) if t[0].isdigit() else 0)
         if p.kind == "resistor":
             steps.append(("part", f"{p.ref} ({p.value}): {HOLES[pins[0][1]].text} to {HOLES[pins[1][1]].text}, "
@@ -1438,9 +1697,18 @@ def build_steps(pl: Placement):
             steps.append(("part", f"{p.ref} ({part_label(p)}, JST-XH {len(pins)}-pin): pin 1 in {p.pins['1']}, "
                                   f"latch side toward the {_dir_word(p.attrs['latch'])}.",
                           f"{p.ref} {part_label(p)}", "pin " + names))
+        elif p.kind == "module":
+            span = f"{p.pins[pins[0][0]]}-{p.pins[pins[-1][0]]}"
+            steps.append(("part", f"{p.ref} socket: a 1x{len(pins)} female header in {span}. Plug {p.ref} in while "
+                                  "soldering to keep it square, then take it out.", f"{p.ref} socket", span))
+        elif p.kind == "cap-radial":
+            steps.append(("part", f"{p.ref} ({p.value}): + lead in {HOLES[p.pins['1']].text}, − lead (the striped "
+                                  f"side) in {HOLES[p.pins['2']].text}.", f"{p.ref} {p.value}",
+                          f"+ {HOLES[p.pins['1']].text}, − {HOLES[p.pins['2']].text}"))
+    plug = "".join(f" Plug {p.ref} in {p.attrs['fit']}." for p in pl.parts if p.kind == "module" and p.attrs.get("fit"))
     steps.append(("check", "Check with a meter: no short from 5V, 3V3 or SDA/SCL to GND. Then plug U1 in, USB-C "
-                           f"toward the board edge as drawn, after checking it is a {hand_words(pl)['hand']} module.",
-                  "", ""))
+                           f"toward the board edge as drawn, after checking it is a {hand_words(pl)['hand']} module."
+                  + plug, "", ""))
     return steps, wire_steps
 
 
@@ -1481,6 +1749,12 @@ def steps_markdown(pl: Placement) -> str:
     out = ["Build order (lowest parts first; the numbers on the wires in the top view are these step numbers):", ""]
     for i, (_, text, _, _) in enumerate(steps, 1):
         out.append(f"{i}. {text}")
+    dnp = [p for p in pl.parts if p.dnp]
+    if dnp:
+        out += ["", "Parts fitted only when needed (marked DNP on the drawing): leave their holes free.", ""]
+        for p in sorted(dnp, key=lambda p: p.ref):
+            holes = " and ".join(HOLES[h].text for _, h in sorted(p.pins.items()))
+            out.append(f"- {p.ref} ({p.value}), {holes}: fit it only if {p.dnp}.")
     out += ["", "| Step | Item | Holes |", "|---|---|---|"]
     for i, (kind, _, item, holes) in enumerate(steps, 1):
         if kind == "check":

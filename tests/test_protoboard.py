@@ -161,3 +161,92 @@ def test_unknown_hand_is_reported_not_raised(tmp_path, capsys):
     code, out = run_check(tmp_path, text, capsys)
     assert code == 1
     assert 'U1: hand must be "power-left" or "power-right"' in out
+
+
+def netlist(tmp_path, nets: dict) -> Path:
+    """A minimal kicadxml netlist: {net: [(ref, pin), ...]}."""
+    body = "".join(f'<net name="{n}">' + "".join(f'<node ref="{r}" pin="{p}"/>' for r, p in m) + "</net>"
+                   for n, m in nets.items())
+    path = tmp_path / "net.xml"
+    path.write_text(f"<export><nets>{body}</nets></export>", encoding="utf-8")
+    return path
+
+
+def check_text(tmp_path, text: str, nets: dict, capsys):
+    p = tmp_path / "board.xml"
+    p.write_text(text, encoding="utf-8")
+    code = pb.main(["check", str(p), "--netlist", str(netlist(tmp_path, nets))])
+    return code, capsys.readouterr().out
+
+
+MODULE_NETS = {"A": [("U9", "1"), ("R1", "1")], "B": [("U9", "2"), ("R1", "2")], "C": [("U9", "3")],
+               "SPK": [("U9", "4"), ("LS9", "1")]}
+MODULE = '''<protoboard device="t" hand="power-left" title="T">
+  <offboard ref="LS9">speaker</offboard>
+  <part ref="U9" kind="module" value="AMP" extends="up" terminal="SPEAKER">
+    <pin n="1" hole="G10" name="X"/><pin n="2" hole="G11" name="Y"/><pin n="3" hole="G12" name="Z"/>
+    <pin n="4" on="module" at="2.54,12.7" name="+"/>
+  </part>
+  <part ref="R1" kind="resistor" value="1k"><pin n="1" hole="C10"/><pin n="2" hole="C14"/></part>
+  <wire net="B" from="F11" to="D14" route="channel" y="26"/>
+</protoboard>
+'''
+
+
+def test_module_with_a_pin_on_the_module_and_a_channel_wire(tmp_path, capsys):
+    code, out = check_text(tmp_path, MODULE.replace('<wire net="B"', '<wire net="A" from="F10" to="E10"/>\n  <wire net="B"'),
+                           MODULE_NETS, capsys)
+    assert code == 0, out
+    pl = pb.load_placement(tmp_path / "board.xml")
+    md = pb.steps_markdown(pl)
+    assert "U9 socket: a 1x3 female header in G10-G12" in md
+    assert "two bends, along the centre channel" in md
+    top = pb.render_sheet(pl, pb.load_netlist(tmp_path / "net.xml"), False)
+    assert "SPEAKER" in top and "U9 AMP" in top
+
+
+def test_module_pin_on_the_module_must_be_declared(tmp_path, capsys):
+    text = MODULE.replace('    <pin n="4" on="module" at="2.54,12.7" name="+"/>\n', "")
+    code, out = check_text(tmp_path, text, MODULE_NETS, capsys)
+    assert code == 1
+    assert "U9 pin 4 (net SPK): not placed" in out
+
+
+def test_no_tall_part_under_a_raised_module(tmp_path, capsys):
+    nets = dict(MODULE_NETS, A=[("U9", "1"), ("R1", "1"), ("J9", "1")], C=[("U9", "3"), ("J9", "2")])
+    text = MODULE.replace("</protoboard>", '  <part ref="J9" kind="jst-xh" value="XH-2" latch="down">'
+                          '<pin n="1" hole="I10"/><pin n="2" hole="I12"/></part>\n</protoboard>')
+    text = text.replace('hole="I12"', 'hole="I11"')
+    code, out = check_text(tmp_path, text, nets, capsys)
+    assert code == 1
+    assert "J9: its body sits under U9's raised module board" in out
+
+
+def test_channel_wire_must_run_inside_the_channel(tmp_path, capsys):
+    with pytest.raises(pb.PlacementError, match="not inside the channel"):
+        p = tmp_path / "b.xml"
+        p.write_text(MODULE.replace('y="26"', 'y="21"'), encoding="utf-8")
+        pb.load_placement(p)
+
+
+CAP = '''<protoboard device="t" hand="power-left" title="T">
+  <part ref="C9" kind="cap-radial" value="470 uF" d="8" dnp="the supply sags">
+    <pin n="1" hole="B+15"/><pin n="2" hole="B-15"/></part>
+  <part ref="R1" kind="resistor" value="1k"><pin n="1" hole="B20"/><pin n="2" hole="B-20"/></part>
+</protoboard>
+'''
+
+
+def test_radial_capacitor_and_dnp(tmp_path, capsys):
+    nets = {"P": [("C9", "1")], "N": [("C9", "2"), ("R1", "2")], "Q": [("R1", "1")]}
+    code, out = check_text(tmp_path, CAP, nets, capsys)
+    assert code == 0, out
+    pl = pb.load_placement(tmp_path / "board.xml")
+    md = pb.steps_markdown(pl)
+    assert "C9 (470 uF)" not in md.split("Parts fitted only when needed")[0]
+    assert ("- C9 (470 uF), bottom + rail at number 15 and bottom − rail at number 15: fit it only if the "
+            "supply sags.") in md
+    top = pb.render_sheet(pl, pb.load_netlist(tmp_path / "net.xml"), False)
+    assert "DNP" in top
+    code, out = check_text(tmp_path, CAP.replace('hole="B-15"', 'hole="B-17"'), nets, capsys)
+    assert code == 1 and "C9: put its two leads along a letter or a number" in out
