@@ -1,5 +1,6 @@
 import sys
 import zipfile
+import zlib
 from pathlib import Path
 
 import pytest
@@ -9,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 import check_owner_data as cod  # noqa: E402
 
 EMAIL = "person@" + "mail.test"
+JUNK = b"h@" + b"D.Nx"  # bytes that look like an address
 
 
 def make_zip(path, members):
@@ -139,3 +141,49 @@ def test_dangling_symlink_with_user_path_is_a_finding(tmp_path, monkeypatch, cap
     out = capsys.readouterr().out
     assert "link:1: Windows user path" in out
     assert "link: dangling symlink" in out
+
+
+def make_pdf(path, stream_text=b"", raw_stream=None):
+    body = zlib.compress(stream_text) if raw_stream is None else raw_stream
+    path.write_bytes(b"%PDF-1.4\n1 0 obj\n<< /Producer (Skia/PDF) /Filter /FlateDecode >>\nstream\n" + body
+                     + b"\nendstream\nendobj\ntrailer\n%%EOF\n")
+    return path
+
+
+def test_pdf_email_inside_compressed_stream_is_found(tmp_path):
+    p = make_pdf(tmp_path / "a.pdf", b"BT (Contact " + EMAIL.encode() + b") Tj ET")
+    assert EMAIL.encode() not in p.read_bytes()  # the old raw-byte scan could not see it
+    out = cod.scan_file(p, "a.pdf", [])
+    assert len(out) == 1 and "email address" in out[0] and EMAIL in out[0]
+
+
+def test_pdf_owner_term_inside_compressed_stream_is_found(tmp_path):
+    p = make_pdf(tmp_path / "a.pdf", b"BT (Made by ZZQTerm) Tj ET")
+    assert cod.scan_file(p, "a.pdf", ["zzqterm"]) == ["a.pdf!stream1:1: owner term #1"]
+
+
+def test_pdf_email_like_compressed_bytes_are_not_flagged(tmp_path):
+    # a valid stream followed by bytes that look like an address but are not part of the inflated text
+    p = make_pdf(tmp_path / "a.pdf", raw_stream=zlib.compress(b"BT (hello) Tj ET") + JUNK)
+    assert JUNK in p.read_bytes()
+    assert cod.scan_file(p, "a.pdf", []) == []
+
+
+def test_pdf_stream_that_will_not_inflate_is_scanned_raw(tmp_path):
+    p = make_pdf(tmp_path / "a.pdf", raw_stream=b"not zlib " + EMAIL.encode())
+    out = cod.scan_file(p, "a.pdf", [])
+    assert len(out) == 1 and out[0].startswith("a.pdf!stream1:1: email address")
+
+
+def test_pdf_metadata_outside_streams_is_scanned(tmp_path):
+    p = tmp_path / "a.pdf"
+    p.write_bytes(b"%PDF-1.4\n<< /Author (" + EMAIL.encode() + b") >>\n%%EOF\n")
+    out = cod.scan_file(p, "a.pdf", [])
+    assert len(out) == 1 and out[0].startswith("a.pdf:2: email address")
+
+
+def test_repo_schematic_pdfs_scan_clean():
+    pdfs = list(cod.ROOT.glob("devices/*/images/*.pdf"))
+    assert pdfs
+    for p in pdfs:
+        assert cod.scan_file(p, p.name, []) == [], p

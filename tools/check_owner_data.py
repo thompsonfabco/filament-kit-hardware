@@ -9,7 +9,8 @@ an address. Member names are scanned too; FreeCAD geometry members (.Map.txt, .b
 topological-naming strings look like IP addresses. Findings inside an archive read `path!member:line`. An archive that
 can't be read (or a file with an archive extension that isn't a readable zip) and a member too large to scan are
 findings. A listed path that is missing or a dangling symlink is a finding; a symlink's target text is
-scanned too. Exit status 1 means something was found.
+scanned too. PDFs are scanned as their uncompressed parts (metadata) plus each FlateDecode stream inflated, since random
+bytes in compressed data look like addresses; a stream that won't inflate is scanned raw. Exit status 1 means something was found.
 
     python -I tools/check_owner_data.py
 """
@@ -43,6 +44,7 @@ MAX_MEMBER = 20 * 1024 * 1024  # archive members larger than this (uncompressed)
 ENTITY_SUFFIXES = {".xml", ".svg", ".model"}
 ARCHIVE_SUFFIXES = {".fcstd", ".3mf", ".zip"}
 GEOMETRY_SUFFIXES = (".map.txt", ".brp", ".brep")  # FreeCAD shape data, not metadata
+PDF_STREAM = re.compile(rb"stream\r?\n(.*?)\r?\nendstream", re.S)
 
 
 def tracked() -> list[pathlib.Path]:
@@ -103,8 +105,21 @@ def scan_file(path: pathlib.Path, rel: str, words: list[str]) -> list[str]:
         return scan_archive(path, rel, words)
     if path.suffix.lower() in ARCHIVE_SUFFIXES:
         return [f"{rel}: cannot read archive"]
+    if path.suffix.lower() == ".pdf":
+        return scan_pdf(path.read_bytes(), rel, words)
     text = path.read_bytes().decode("utf-8", errors="replace")
     return scan_text(rel, text, words, unescape=path.suffix.lower() in ENTITY_SUFFIXES)
+
+
+def scan_pdf(data: bytes, rel: str, words: list[str]) -> list[str]:
+    out = scan_text(rel, PDF_STREAM.sub(b"", data).decode("utf-8", errors="replace"), words)
+    for n, m in enumerate(PDF_STREAM.finditer(data), 1):
+        try:
+            body = zlib.decompressobj().decompress(m.group(1))
+        except zlib.error:
+            body = m.group(1)
+        out += scan_text(f"{rel}!stream{n}", body.decode("utf-8", errors="replace"), words)
+    return out
 
 
 def scan_path(path: pathlib.Path, rel: str, words: list[str]) -> list[str]:
