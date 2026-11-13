@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128.0mm" height="126.7mm" viewBox="0 0 128.0 126.7" font-family="Arial, Helvetica, sans-serif">
-<rect x="0" y="0" width="128.0" height="126.7" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="128.0mm" height="171.6mm" viewBox="0 0 128.0 171.6" font-family="Arial, Helvetica, sans-serif">
+<rect x="0" y="0" width="128.0" height="171.6" fill="#ffffff"/>
 <text x="4.00" y="6.00" font-size="3.00" text-anchor="start" font-weight="bold" fill="#1a1a1a" >Printer station, C3 POWER-RIGHT — protoboard</text>
 <text x="4.00" y="12.50" font-size="2.60" text-anchor="start" font-weight="bold" fill="#333" >TOP VIEW (component side), real size</text>
 <rect x="4" y="16.5" width="120.0" height="15" rx="1" fill="#fff4f2" stroke="#c0392b" stroke-width="0.5"/>
@@ -1054,8 +1054,100 @@
 <polygon points="25.90,69.62 46.22,69.62 46.22,72.16 25.90,72.16" fill="#2b2b2b" opacity="0.8"/>
 <polygon points="46.19,72.27 23.67,72.27 23.67,54.27 46.19,54.27" fill="#1f4e79" fill-opacity="0.08" stroke="#1f4e79" stroke-width="0.4" stroke-dasharray="1.6,0.8"/>
 <polygon points="26.27,67.72 22.97,67.72 22.97,58.82 26.27,58.82" fill="#bdc3c7" stroke="#1f4e79" stroke-width="0.3"/>
-<text x="24.57" y="63.77" font-size="1.30" text-anchor="middle" font-weight="bold" fill="#1f4e79" >USB-C</text>
-<rect x="33.66" y="59.80" width="13.2" height="4.3" rx="0.6" fill="#ffffff" opacity="0.92"/>
+<text x="24.57" y="61.37" font-size="1.30" text-anchor="middle" font-weight="bold" fill="#1f4e79" >USB-C</text>
+<polygon points="60.20,51.36 60.20,53.11 60.16,53.54 60.05,53.95 59.86,54.34 59.60,54.68 59.29,54.99 58.93,55.23 58.52,55.41 58.09,55.52 57.65,55.56 57.21,55.52 56.78,55.41 56.38,55.23 56.01,54.99 55.70,54.68 55.44,54.34 55.25,53.95 55.14,53.54 55.10,53.11 55.10,51.36" fill="#3a3a3a" stroke="#111" stroke-width="0.3"/>
+<line x1="60.20" y1="51.36" x2="55.10" y2="51.36" stroke="#f1c40f" stroke-width="0.45"/>
+<text x="57.65" y="50.96" font-size="1.00" text-anchor="middle" font-weight="normal" fill="#7a6400" >flat</text>
+<circle cx="60.19" cy="53.11" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
+<circle cx="57.65" cy="53.11" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
+<circle cx="55.11" cy="53.11" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
+<line x1="44.95" y1="50.57" x2="48.15" y2="50.57" stroke="#8a8a8a" stroke-width="0.45"/>
+<line x1="57.65" y1="50.57" x2="54.45" y2="50.57" stroke="#8a8a8a" stroke-width="0.45"/>
+<polygon points="48.15,49.37 54.45,49.37 54.45,51.77 48.15,51.77" fill="#cfe0ef" stroke="#2c3e50" stroke-width="0.3"/>
+<polygon points="48.85,49.37 49.45,49.37 49.45,51.77 48.85,51.77" fill="#d62728"/>
+<polygon points="50.10,49.37 50.70,49.37 50.70,51.77 50.10,51.77" fill="#d62728"/>
+<polygon points="51.35,49.37 51.95,49.37 51.95,51.77 51.35,51.77" fill="#7f4f24"/>
+<polygon points="53.15,49.37 53.75,49.37 53.75,51.77 53.15,51.77" fill="#c9a227"/>
+<circle cx="44.95" cy="50.57" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
+<circle cx="57.65" cy="50.57" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
+<line x1="57.65" y1="58.19" x2="57.65" y2="67.30" stroke="#8a8a8a" stroke-width="0.45"/>
+<line x1="57.65" y1="82.70" x2="57.65" y2="73.59" stroke="#8a8a8a" stroke-width="0.45"/>
+<polygon points="58.85,67.30 58.85,73.59 56.45,73.59 56.45,67.30" fill="#cfe0ef" stroke="#2c3e50" stroke-width="0.3"/>
+<polygon points="58.85,68.00 58.85,68.59 56.45,68.59 56.45,68.00" fill="#7f4f24"/>
+<polygon points="58.85,69.25 58.85,69.84 56.45,69.84 56.45,69.25" fill="#111111"/>
+<polygon points="58.85,70.50 58.85,71.09 56.45,71.09 56.45,70.50" fill="#f2d000"/>
+<polygon points="58.85,72.30 58.85,72.89 56.45,72.89 56.45,72.30" fill="#c9a227"/>
+<circle cx="57.65" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
+<circle cx="57.65" cy="82.70" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
+<line x1="60.19" y1="41.90" x2="60.19" y2="43.63" stroke="#8a8a8a" stroke-width="0.45"/>
+<line x1="60.19" y1="50.57" x2="60.19" y2="48.84" stroke="#8a8a8a" stroke-width="0.45"/>
+<polygon points="61.49,43.63 61.49,48.84 58.89,48.84 58.89,43.63" fill="#222" stroke="#111" stroke-width="0.3"/>
+<polygon points="61.49,44.03 61.49,44.84 58.89,44.84 58.89,44.03" fill="#d9d9d9"/>
+<text x="58.59" y="42.35" font-size="1.10" text-anchor="middle" font-weight="bold" fill="#222" >K</text>
+<text x="58.59" y="51.02" font-size="1.10" text-anchor="middle" font-weight="bold" fill="#222" >A</text>
+<circle cx="60.19" cy="41.90" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
+<circle cx="60.19" cy="50.57" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
+<polyline points="27.17,48.03 27.17,41.90" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="27.17,48.03 27.17,41.90" fill="none" stroke="#D55E00" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="29.71,48.03 29.71,39.40" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="29.71,48.03 29.71,39.40" fill="none" stroke="#000000" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="29.71,48.03 29.71,39.40" fill="none" stroke="#ffffff" stroke-width="0.22" stroke-dasharray="0.6,0.9" stroke-linejoin="round"/>
+<polyline points="55.11,48.03 55.11,39.40" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="55.11,48.03 55.11,39.40" fill="none" stroke="#000000" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="55.11,48.03 55.11,39.40" fill="none" stroke="#ffffff" stroke-width="0.22" stroke-dasharray="0.6,0.9" stroke-linejoin="round"/>
+<line x1="106.10" y1="60.70" x2="106.10" y2="63.30" stroke="#ffffff" stroke-width="1.6"/>
+<line x1="106.10" y1="60.70" x2="106.10" y2="63.30" stroke="#4a6fa5" stroke-width="0.9"/>
+<circle cx="27.17" cy="48.03" r="0.62" fill="#D55E00" stroke="#ffffff" stroke-width="0.18"/>
+<circle cx="27.17" cy="41.90" r="0.62" fill="#D55E00" stroke="#ffffff" stroke-width="0.18"/>
+<circle cx="29.71" cy="48.03" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
+<circle cx="29.71" cy="39.40" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
+<circle cx="55.11" cy="48.03" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
+<circle cx="55.11" cy="39.40" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
+<circle cx="34.79" cy="39.40" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="34.79" cy="39.40" r="1.05" fill="none" stroke="#000000" stroke-width="0.5"/>
+<circle cx="34.79" cy="39.40" r="0.5" fill="#000000"/>
+<circle cx="32.25" cy="53.11" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="32.25" cy="53.11" r="1.05" fill="none" stroke="#CC79A7" stroke-width="0.5"/>
+<circle cx="32.25" cy="53.11" r="0.5" fill="#CC79A7"/>
+<circle cx="27.17" cy="75.97" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="27.17" cy="75.97" r="1.05" fill="none" stroke="#0072B2" stroke-width="0.5"/>
+<circle cx="27.17" cy="75.97" r="0.5" fill="#0072B2"/>
+<circle cx="29.71" cy="75.97" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="29.71" cy="75.97" r="1.05" fill="none" stroke="#56B4E9" stroke-width="0.5"/>
+<circle cx="29.71" cy="75.97" r="0.5" fill="#56B4E9"/>
+<circle cx="39.87" cy="39.40" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="39.87" cy="39.40" r="1.05" fill="none" stroke="#000000" stroke-width="0.5"/>
+<circle cx="39.87" cy="39.40" r="0.5" fill="#000000"/>
+<circle cx="32.25" cy="50.57" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="32.25" cy="50.57" r="1.05" fill="none" stroke="#CC79A7" stroke-width="0.5"/>
+<circle cx="32.25" cy="50.57" r="0.5" fill="#CC79A7"/>
+<circle cx="27.17" cy="73.43" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="27.17" cy="73.43" r="1.05" fill="none" stroke="#0072B2" stroke-width="0.5"/>
+<circle cx="27.17" cy="73.43" r="0.5" fill="#0072B2"/>
+<circle cx="29.71" cy="73.43" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="29.71" cy="73.43" r="1.05" fill="none" stroke="#56B4E9" stroke-width="0.5"/>
+<circle cx="29.71" cy="73.43" r="0.5" fill="#56B4E9"/>
+<circle cx="37.33" cy="53.11" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="37.33" cy="53.11" r="1.05" fill="none" stroke="#009E73" stroke-width="0.5"/>
+<circle cx="37.33" cy="53.11" r="0.5" fill="#009E73"/>
+<circle cx="34.79" cy="53.11" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="34.79" cy="53.11" r="1.05" fill="none" stroke="#E69F00" stroke-width="0.5"/>
+<circle cx="34.79" cy="53.11" r="0.5" fill="#E69F00"/>
+<circle cx="44.95" cy="39.40" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="44.95" cy="39.40" r="1.05" fill="none" stroke="#000000" stroke-width="0.5"/>
+<circle cx="44.95" cy="39.40" r="0.5" fill="#000000"/>
+<circle cx="42.41" cy="53.11" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="42.41" cy="53.11" r="1.05" fill="none" stroke="#B8A100" stroke-width="0.5"/>
+<circle cx="42.41" cy="53.11" r="0.5" fill="#B8A100"/>
+<circle cx="32.25" cy="48.03" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="32.25" cy="48.03" r="1.05" fill="none" stroke="#CC79A7" stroke-width="0.5"/>
+<circle cx="32.25" cy="48.03" r="0.5" fill="#CC79A7"/>
+<circle cx="65.27" cy="41.90" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="65.27" cy="41.90" r="1.05" fill="none" stroke="#D55E00" stroke-width="0.5"/>
+<circle cx="65.27" cy="41.90" r="0.5" fill="#D55E00"/>
+<circle cx="60.19" cy="58.19" r="1.05" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+<circle cx="60.19" cy="58.19" r="1.05" fill="none" stroke="#6A3D9A" stroke-width="0.5"/>
+<circle cx="60.19" cy="58.19" r="0.5" fill="#6A3D9A"/>
 <rect x="25.77" y="71.89" width="2.8" height="1.3" rx="0.3" fill="#eaf1f8"/>
 <text x="27.17" y="73.04" font-size="1.10" text-anchor="middle" font-weight="bold" fill="#1f4e79" >5</text>
 <rect x="28.31" y="71.89" width="2.8" height="1.3" rx="0.3" fill="#eaf1f8"/>
@@ -1088,345 +1180,151 @@
 <text x="42.41" y="54.30" font-size="1.10" text-anchor="middle" font-weight="bold" fill="#1f4e79" >1</text>
 <rect x="43.55" y="53.15" width="2.8" height="1.3" rx="0.3" fill="#eaf1f8"/>
 <text x="44.95" y="54.30" font-size="1.10" text-anchor="middle" font-weight="bold" fill="#1f4e79" >0</text>
-<polygon points="47.58,55.84 62.64,55.84 62.64,61.59 47.58,61.59" fill="#f7f1e1" stroke="#222" stroke-width="0.35"/>
-<line x1="48.43" y1="60.89" x2="61.79" y2="60.89" stroke="#222" stroke-width="0.25"/>
-<rect x="53.81" y="60.89" width="2.6" height="0.7" fill="#222"/>
-<circle cx="48.28" cy="58.19" r="0.45" fill="#c0392b"/>
-<text x="50.03" y="57.00" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >CLK</text>
-<text x="52.57" y="57.00" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >DT</text>
-<text x="55.11" y="57.00" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >GND</text>
-<text x="57.65" y="57.00" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >SW</text>
-<text x="60.19" y="57.00" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >3V3</text>
-<text x="55.11" y="60.44" font-size="1.35" text-anchor="middle" font-weight="bold" fill="#1a1a1a" >J3 encoder</text>
-<circle cx="50.03" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="52.57" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="55.11" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="57.65" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="60.19" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<polygon points="80.42,68.16 67.90,68.16 67.90,62.41 80.42,62.41" fill="#f7f1e1" stroke="#222" stroke-width="0.35"/>
-<line x1="79.57" y1="63.11" x2="68.75" y2="63.11" stroke="#222" stroke-width="0.25"/>
-<rect x="72.86" y="62.41" width="2.6" height="0.7" fill="#222"/>
-<circle cx="79.72" cy="65.81" r="0.45" fill="#c0392b"/>
-<text x="77.97" y="67.72" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >GND</text>
-<text x="75.43" y="67.72" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >3V3</text>
-<text x="72.89" y="67.72" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >SDA</text>
-<text x="70.35" y="67.72" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >SCL</text>
-<text x="74.16" y="64.56" font-size="1.35" text-anchor="middle" font-weight="bold" fill="#1a1a1a" >J1 PN532</text>
-<circle cx="77.97" cy="65.81" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="75.43" cy="65.81" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="72.89" cy="65.81" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="70.35" cy="65.81" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<polygon points="93.12,68.16 80.60,68.16 80.60,62.41 93.12,62.41" fill="#f7f1e1" stroke="#222" stroke-width="0.35"/>
-<line x1="92.27" y1="63.11" x2="81.45" y2="63.11" stroke="#222" stroke-width="0.25"/>
-<rect x="85.56" y="62.41" width="2.6" height="0.7" fill="#222"/>
-<circle cx="92.42" cy="65.81" r="0.45" fill="#c0392b"/>
-<text x="90.67" y="67.72" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >GND</text>
-<text x="88.13" y="67.72" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >3V3</text>
-<text x="85.59" y="67.72" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >SDA</text>
-<text x="83.05" y="67.72" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >SCL</text>
-<text x="86.86" y="64.56" font-size="1.35" text-anchor="middle" font-weight="bold" fill="#1a1a1a" >J2 OLED</text>
-<circle cx="90.67" cy="65.81" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="88.13" cy="65.81" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="85.59" cy="65.81" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="83.05" cy="65.81" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<polygon points="80.52,56.44 80.52,58.19 80.48,58.62 80.37,59.03 80.18,59.42 79.92,59.76 79.61,60.07 79.25,60.31 78.84,60.49 78.41,60.60 77.97,60.64 77.53,60.60 77.10,60.49 76.69,60.31 76.33,60.07 76.02,59.76 75.76,59.42 75.57,59.03 75.46,58.62 75.42,58.19 75.42,56.44" fill="#3a3a3a" stroke="#111" stroke-width="0.3"/>
-<line x1="80.52" y1="56.44" x2="75.42" y2="56.44" stroke="#f1c40f" stroke-width="0.45"/>
-<text x="77.97" y="56.04" font-size="1.00" text-anchor="middle" font-weight="normal" fill="#7a6400" >flat</text>
-<text x="80.51" y="59.99" font-size="1.15" text-anchor="middle" font-weight="bold" fill="#ffffff" >D</text>
-<text x="77.97" y="59.99" font-size="1.15" text-anchor="middle" font-weight="bold" fill="#ffffff" >G</text>
-<text x="75.43" y="59.99" font-size="1.15" text-anchor="middle" font-weight="bold" fill="#ffffff" >S</text>
-<circle cx="80.51" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="77.97" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="75.43" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<rect x="81.36" y="56.59" width="5.75" height="3.80" rx="0.4" fill="#ffffff" opacity="0.85"/>
-<text x="84.23" y="58.19" font-size="1.55" text-anchor="middle" font-weight="bold" fill="#1a1a1a" >Q1</text>
-<text x="84.23" y="59.89" font-size="1.30" text-anchor="middle" font-weight="normal" fill="#444" >BS170</text>
-<line x1="62.73" y1="48.03" x2="64.66" y2="48.03" stroke="#8a8a8a" stroke-width="0.45"/>
-<line x1="72.89" y1="48.03" x2="70.96" y2="48.03" stroke="#8a8a8a" stroke-width="0.45"/>
-<polygon points="64.66,46.83 70.96,46.83 70.96,49.23 64.66,49.23" fill="#cfe0ef" stroke="#2c3e50" stroke-width="0.3"/>
-<polygon points="65.36,46.83 65.96,46.83 65.96,49.23 65.36,49.23" fill="#d62728"/>
-<polygon points="66.61,46.83 67.21,46.83 67.21,49.23 66.61,49.23" fill="#d62728"/>
-<polygon points="67.86,46.83 68.46,46.83 68.46,49.23 67.86,49.23" fill="#7f4f24"/>
-<polygon points="69.66,46.83 70.26,46.83 70.26,49.23 69.66,49.23" fill="#c9a227"/>
-<circle cx="62.73" cy="48.03" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="72.89" cy="48.03" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<rect x="63.04" y="49.68" width="9.55" height="2.10" rx="0.4" fill="#ffffff" opacity="0.85"/>
-<text x="67.81" y="51.28" font-size="1.55" text-anchor="middle" font-weight="bold" fill="#1a1a1a" >RG1 220 Ω</text>
-<line x1="77.97" y1="50.57" x2="77.97" y2="48.13" stroke="#8a8a8a" stroke-width="0.45"/>
-<line x1="77.97" y1="39.40" x2="77.97" y2="41.84" stroke="#8a8a8a" stroke-width="0.45"/>
-<polygon points="76.77,48.13 76.77,41.84 79.17,41.84 79.17,48.13" fill="#cfe0ef" stroke="#2c3e50" stroke-width="0.3"/>
-<polygon points="76.77,47.44 76.77,46.84 79.17,46.84 79.17,47.44" fill="#7f4f24"/>
-<polygon points="76.77,46.19 76.77,45.59 79.17,45.59 79.17,46.19" fill="#111111"/>
-<polygon points="76.77,44.94 76.77,44.34 79.17,44.34 79.17,44.94" fill="#f2d000"/>
-<polygon points="76.77,43.13 76.77,42.53 79.17,42.53 79.17,43.13" fill="#c9a227"/>
-<circle cx="77.97" cy="50.57" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="77.97" cy="39.40" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<rect x="79.82" y="43.03" width="6.70" height="3.80" rx="0.4" fill="#ffffff" opacity="0.85"/>
-<text x="83.17" y="44.63" font-size="1.55" text-anchor="middle" font-weight="bold" fill="#1a1a1a" >RP1</text>
-<text x="83.17" y="46.34" font-size="1.30" text-anchor="middle" font-weight="normal" fill="#444" >100 kΩ</text>
-<line x1="93.21" y1="41.90" x2="93.21" y2="43.63" stroke="#8a8a8a" stroke-width="0.45"/>
-<line x1="93.21" y1="50.57" x2="93.21" y2="48.84" stroke="#8a8a8a" stroke-width="0.45"/>
-<polygon points="94.51,43.63 94.51,48.84 91.91,48.84 91.91,43.63" fill="#222" stroke="#111" stroke-width="0.3"/>
-<polygon points="94.51,44.03 94.51,44.84 91.91,44.84 91.91,44.03" fill="#d9d9d9"/>
-<text x="91.61" y="42.35" font-size="1.10" text-anchor="middle" font-weight="bold" fill="#222" >K</text>
-<text x="91.61" y="51.02" font-size="1.10" text-anchor="middle" font-weight="bold" fill="#222" >A</text>
-<circle cx="93.21" cy="41.90" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="93.21" cy="50.57" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<rect x="95.16" y="44.28" width="6.70" height="3.80" rx="0.4" fill="#ffffff" opacity="0.85"/>
-<text x="98.51" y="45.88" font-size="1.55" text-anchor="middle" font-weight="bold" fill="#1a1a1a" >D1</text>
-<text x="98.51" y="47.59" font-size="1.30" text-anchor="middle" font-weight="normal" fill="#444" >1N4001</text>
-<polygon points="88.22,55.84 95.66,55.84 95.66,61.59 88.22,61.59" fill="#f7f1e1" stroke="#222" stroke-width="0.35"/>
-<line x1="89.07" y1="60.89" x2="94.81" y2="60.89" stroke="#222" stroke-width="0.25"/>
-<rect x="90.64" y="60.89" width="2.6" height="0.7" fill="#222"/>
-<circle cx="88.92" cy="58.19" r="0.45" fill="#c0392b"/>
-<text x="90.67" y="57.00" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >5V</text>
-<text x="93.21" y="57.00" font-size="0.95" text-anchor="middle" font-weight="bold" fill="#222" >BZ−</text>
-<text x="91.94" y="60.44" font-size="1.35" text-anchor="middle" font-weight="bold" fill="#1a1a1a" >J4 buzzer</text>
-<circle cx="90.67" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<circle cx="93.21" cy="58.19" r="0.55" fill="#9a9a9a" stroke="#333" stroke-width="0.15"/>
-<polyline points="27.17,48.03 27.17,41.90" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="27.17,48.03 27.17,41.90" fill="none" stroke="#D55E00" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="29.71,48.03 29.71,39.40" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="29.71,48.03 29.71,39.40" fill="none" stroke="#000000" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="29.71,48.03 29.71,39.40" fill="none" stroke="#ffffff" stroke-width="0.22" stroke-dasharray="0.6,0.9" stroke-linejoin="round"/>
-<polyline points="37.33,48.03 50.03,48.03" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="37.33,48.03 50.03,48.03" fill="none" stroke="#009E73" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="34.79,50.57 52.57,50.57" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="34.79,50.57 52.57,50.57" fill="none" stroke="#E69F00" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="42.41,53.11 57.65,53.11" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="42.41,53.11 57.65,53.11" fill="none" stroke="#B8A100" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="55.11,48.03 55.11,39.40" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="55.11,48.03 55.11,39.40" fill="none" stroke="#000000" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="55.11,48.03 55.11,39.40" fill="none" stroke="#ffffff" stroke-width="0.22" stroke-dasharray="0.6,0.9" stroke-linejoin="round"/>
-<polyline points="32.25,58.19 32.25,68.35 65.27,68.35" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="32.25,58.19 32.25,68.35 65.27,68.35" fill="none" stroke="#CC79A7" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="65.27,65.81 65.27,53.11 60.19,53.11" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="65.27,65.81 65.27,53.11 60.19,53.11" fill="none" stroke="#CC79A7" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="44.95,58.19 47.49,58.19" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="44.95,58.19 47.49,58.19" fill="none" stroke="#8C564B" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="47.49,55.65 62.73,55.65" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="47.49,55.65 62.73,55.65" fill="none" stroke="#8C564B" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="27.17,75.97 72.89,75.97" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="27.17,75.97 72.89,75.97" fill="none" stroke="#0072B2" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="29.71,73.43 70.35,73.43" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="29.71,73.43 70.35,73.43" fill="none" stroke="#56B4E9" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="65.27,70.89 75.43,70.89" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="65.27,70.89 75.43,70.89" fill="none" stroke="#CC79A7" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="77.97,70.89 90.67,70.89" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="77.97,70.89 90.67,70.89" fill="none" stroke="#000000" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="77.97,70.89 90.67,70.89" fill="none" stroke="#ffffff" stroke-width="0.22" stroke-dasharray="0.6,0.9" stroke-linejoin="round"/>
-<polyline points="83.05,68.35 70.35,68.35" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="83.05,68.35 70.35,68.35" fill="none" stroke="#56B4E9" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="72.89,73.43 85.59,73.43" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="72.89,73.43 85.59,73.43" fill="none" stroke="#0072B2" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="75.43,75.97 88.13,75.97" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="75.43,75.97 88.13,75.97" fill="none" stroke="#CC79A7" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="90.67,75.97 90.67,82.70" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="90.67,75.97 90.67,82.70" fill="none" stroke="#000000" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="90.67,75.97 90.67,82.70" fill="none" stroke="#ffffff" stroke-width="0.22" stroke-dasharray="0.6,0.9" stroke-linejoin="round"/>
-<polyline points="80.51,53.11 93.21,53.11" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="80.51,53.11 93.21,53.11" fill="none" stroke="#6A3D9A" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="77.97,55.65 72.89,55.65" fill="none" stroke="#ffffff" stroke-width="1.40" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="77.97,55.65 72.89,55.65" fill="none" stroke="#7F7F7F" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="90.67,41.90 90.67,48.03" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="90.67,41.90 90.67,48.03" fill="none" stroke="#D55E00" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="75.43,39.40 75.43,48.03" fill="none" stroke="#ffffff" stroke-width="1.70" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="75.43,39.40 75.43,48.03" fill="none" stroke="#000000" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="75.43,39.40 75.43,48.03" fill="none" stroke="#ffffff" stroke-width="0.22" stroke-dasharray="0.6,0.9" stroke-linejoin="round"/>
-<line x1="106.10" y1="60.70" x2="106.10" y2="63.30" stroke="#ffffff" stroke-width="1.6"/>
-<line x1="106.10" y1="60.70" x2="106.10" y2="63.30" stroke="#4a6fa5" stroke-width="0.9"/>
-<circle cx="27.17" cy="48.03" r="0.62" fill="#D55E00" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="27.17" cy="41.90" r="0.62" fill="#D55E00" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="29.71" cy="48.03" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="29.71" cy="39.40" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="37.33" cy="48.03" r="0.62" fill="#009E73" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="50.03" cy="48.03" r="0.62" fill="#009E73" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="34.79" cy="50.57" r="0.62" fill="#E69F00" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="52.57" cy="50.57" r="0.62" fill="#E69F00" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="42.41" cy="53.11" r="0.62" fill="#B8A100" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="57.65" cy="53.11" r="0.62" fill="#B8A100" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="55.11" cy="48.03" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="55.11" cy="39.40" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="32.25" cy="58.19" r="0.62" fill="#CC79A7" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="65.27" cy="68.35" r="0.62" fill="#CC79A7" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="65.27" cy="65.81" r="0.62" fill="#CC79A7" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="60.19" cy="53.11" r="0.62" fill="#CC79A7" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="44.95" cy="58.19" r="0.62" fill="#8C564B" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="47.49" cy="58.19" r="0.62" fill="#8C564B" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="47.49" cy="55.65" r="0.62" fill="#8C564B" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="62.73" cy="55.65" r="0.62" fill="#8C564B" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="27.17" cy="75.97" r="0.62" fill="#0072B2" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="72.89" cy="75.97" r="0.62" fill="#0072B2" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="29.71" cy="73.43" r="0.62" fill="#56B4E9" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="70.35" cy="73.43" r="0.62" fill="#56B4E9" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="65.27" cy="70.89" r="0.62" fill="#CC79A7" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="75.43" cy="70.89" r="0.62" fill="#CC79A7" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="77.97" cy="70.89" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="90.67" cy="70.89" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="83.05" cy="68.35" r="0.62" fill="#56B4E9" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="70.35" cy="68.35" r="0.62" fill="#56B4E9" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="72.89" cy="73.43" r="0.62" fill="#0072B2" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="85.59" cy="73.43" r="0.62" fill="#0072B2" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="75.43" cy="75.97" r="0.62" fill="#CC79A7" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="88.13" cy="75.97" r="0.62" fill="#CC79A7" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="90.67" cy="75.97" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="90.67" cy="82.70" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="80.51" cy="53.11" r="0.62" fill="#6A3D9A" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="93.21" cy="53.11" r="0.62" fill="#6A3D9A" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="77.97" cy="55.65" r="0.62" fill="#7F7F7F" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="72.89" cy="55.65" r="0.62" fill="#7F7F7F" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="90.67" cy="41.90" r="0.62" fill="#D55E00" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="90.67" cy="48.03" r="0.62" fill="#D55E00" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="75.43" cy="39.40" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<circle cx="75.43" cy="48.03" r="0.62" fill="#000000" stroke="#ffffff" stroke-width="0.18"/>
-<rect x="25.82" y="44.04" width="2.70" height="1.85" rx="0.5" fill="#ffffff" stroke="#D55E00" stroke-width="0.3"/>
-<text x="27.17" y="45.42" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#D55E00" >5V</text>
-<circle cx="27.17" cy="43.13" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="27.17" y="43.58" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >21</text>
-<rect x="30.51" y="42.79" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#000000" stroke-width="0.3"/>
-<text x="32.31" y="44.17" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#000000" >GND</text>
-<circle cx="29.71" cy="46.30" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="29.71" y="46.75" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >17</text>
-<rect x="41.88" y="47.11" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#009E73" stroke-width="0.3"/>
-<text x="43.68" y="48.48" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#009E73" >CLK</text>
-<circle cx="39.87" cy="48.03" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="39.87" y="48.48" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >10</text>
-<rect x="36.14" y="49.65" width="2.70" height="1.85" rx="0.5" fill="#ffffff" stroke="#E69F00" stroke-width="0.3"/>
-<text x="37.49" y="51.02" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#111" >DT</text>
-<rect x="48.52" y="49.65" width="2.70" height="1.85" rx="0.5" fill="#ffffff" stroke="#E69F00" stroke-width="0.3"/>
-<text x="49.87" y="51.02" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#111" >DT</text>
-<circle cx="43.68" cy="50.57" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="43.68" y="51.02" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >6</text>
-<rect x="43.76" y="52.19" width="2.70" height="1.85" rx="0.5" fill="#ffffff" stroke="#B8A100" stroke-width="0.3"/>
-<text x="45.11" y="53.56" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#111" >SW</text>
-<rect x="53.60" y="52.19" width="2.70" height="1.85" rx="0.5" fill="#ffffff" stroke="#B8A100" stroke-width="0.3"/>
-<text x="54.95" y="53.56" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#111" >SW</text>
-<circle cx="50.03" cy="53.11" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="50.03" y="53.56" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >9</text>
-<rect x="53.31" y="42.79" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#000000" stroke-width="0.3"/>
-<text x="55.11" y="44.17" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#000000" >GND</text>
-<circle cx="55.11" cy="46.30" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="55.11" y="46.75" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >18</text>
-<rect x="30.45" y="64.27" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#CC79A7" stroke-width="0.3"/>
-<text x="32.25" y="65.64" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#CC79A7" >3V3</text>
-<rect x="60.77" y="67.42" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#CC79A7" stroke-width="0.3"/>
-<text x="62.57" y="68.80" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#CC79A7" >3V3</text>
-<circle cx="48.76" cy="68.35" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="48.76" y="68.80" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >2</text>
-<rect x="63.47" y="62.19" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#CC79A7" stroke-width="0.3"/>
-<text x="65.27" y="63.56" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#CC79A7" >3V3</text>
-<rect x="61.09" y="52.19" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#CC79A7" stroke-width="0.3"/>
-<text x="62.89" y="53.56" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#CC79A7" >3V3</text>
-<circle cx="65.27" cy="59.46" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="65.27" y="59.91" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >7</text>
-<rect x="44.42" y="54.67" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#8C564B" stroke-width="0.3"/>
-<text x="46.22" y="56.04" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#8C564B" >BUZ</text>
-<circle cx="46.98" cy="58.19" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="46.98" y="58.64" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >3</text>
-<rect x="53.31" y="54.73" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#8C564B" stroke-width="0.3"/>
-<text x="55.11" y="56.10" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#8C564B" >BUZ</text>
-<circle cx="57.40" cy="53.75" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="57.40" y="54.20" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >8</text>
-<rect x="28.07" y="75.05" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#0072B2" stroke-width="0.3"/>
-<text x="29.87" y="76.42" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#0072B2" >SDA</text>
-<rect x="68.39" y="75.05" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#0072B2" stroke-width="0.3"/>
-<text x="70.19" y="76.42" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#0072B2" >SDA</text>
-<circle cx="50.03" cy="75.97" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="50.03" y="76.42" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >4</text>
-<rect x="30.61" y="72.51" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#56B4E9" stroke-width="0.3"/>
-<text x="32.41" y="73.88" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#111" >SCL</text>
-<rect x="65.85" y="72.51" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#56B4E9" stroke-width="0.3"/>
-<text x="67.65" y="73.88" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#111" >SCL</text>
-<circle cx="50.03" cy="73.43" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="50.03" y="73.88" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >5</text>
-<rect x="68.55" y="69.97" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#CC79A7" stroke-width="0.3"/>
-<text x="70.35" y="71.34" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#CC79A7" >3V3</text>
-<circle cx="67.30" cy="70.89" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="67.30" y="71.34" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >16</text>
-<rect x="82.52" y="69.97" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#000000" stroke-width="0.3"/>
-<text x="84.32" y="71.34" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#000000" >GND</text>
-<circle cx="80.51" cy="70.89" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="80.51" y="71.34" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >11</text>
-<rect x="74.90" y="70.03" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#56B4E9" stroke-width="0.3"/>
-<text x="76.70" y="71.40" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#111" >SCL</text>
-<circle cx="74.80" cy="70.25" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="74.80" y="70.70" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >12</text>
-<rect x="77.44" y="72.51" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#0072B2" stroke-width="0.3"/>
-<text x="79.24" y="73.88" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#0072B2" >SDA</text>
-<circle cx="75.43" cy="73.43" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="75.43" y="73.88" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >13</text>
-<rect x="79.98" y="75.05" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#CC79A7" stroke-width="0.3"/>
-<text x="81.78" y="76.42" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#CC79A7" >3V3</text>
-<circle cx="77.97" cy="75.97" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="77.97" y="76.42" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >15</text>
-<rect x="88.87" y="78.41" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#000000" stroke-width="0.3"/>
-<text x="90.67" y="79.79" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#000000" >GND</text>
-<circle cx="90.67" cy="81.35" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="90.67" y="81.80" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >20</text>
-<rect x="85.06" y="52.19" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#6A3D9A" stroke-width="0.3"/>
-<text x="86.86" y="53.56" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#6A3D9A" >BZ−</text>
-<circle cx="83.05" cy="53.11" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="83.05" y="53.56" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >14</text>
-<rect x="73.18" y="52.12" width="4.50" height="1.85" rx="0.5" fill="#ffffff" stroke="#7F7F7F" stroke-width="0.3"/>
-<text x="75.43" y="53.50" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#7F7F7F" >GATE</text>
-<circle cx="73.91" cy="55.65" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="73.91" y="56.10" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >23</text>
-<rect x="86.72" y="44.04" width="2.70" height="1.85" rx="0.5" fill="#ffffff" stroke="#D55E00" stroke-width="0.3"/>
-<text x="88.07" y="45.42" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#D55E00" >5V</text>
-<circle cx="90.67" cy="44.97" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="90.67" y="45.42" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >22</text>
-<rect x="71.03" y="42.79" width="3.60" height="1.85" rx="0.5" fill="#ffffff" stroke="#000000" stroke-width="0.3"/>
-<text x="72.83" y="44.17" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#000000" >GND</text>
-<circle cx="75.43" cy="41.13" r="1.05" fill="#111" stroke="#fff" stroke-width="0.2"/>
-<text x="75.43" y="41.58" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >19</text>
-<text x="40.26" y="61.55" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#1f4e79" stroke="#ffffff" stroke-width="0.55" paint-order="stroke" stroke-linejoin="round">U1 ESP32-C3</text>
-<text x="40.26" y="63.45" font-size="1.25" text-anchor="middle" font-weight="normal" fill="#1f4e79" stroke="#ffffff" stroke-width="0.55" paint-order="stroke" stroke-linejoin="round">← USB-C end</text>
-<text x="4.00" y="95.50" font-size="1.90" text-anchor="start" font-weight="bold" fill="#1a1a1a" >Nets (each wire end is labelled too)</text>
-<line x1="4.00" y1="98.00" x2="11.00" y2="98.00" stroke="#000000" stroke-width="1.0"/>
-<line x1="4.00" y1="98.00" x2="11.00" y2="98.00" stroke="#fff" stroke-width="0.22" stroke-dasharray="0.6,0.9"/>
-<text x="12.50" y="98.50" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >GND</text>
-<text x="17.10" y="98.50" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >ground</text>
-<line x1="64.00" y1="98.00" x2="71.00" y2="98.00" stroke="#D55E00" stroke-width="1.0"/>
-<text x="72.50" y="98.50" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >5V</text>
-<text x="76.10" y="98.50" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >USB 5 V (power)</text>
-<line x1="4.00" y1="100.90" x2="11.00" y2="100.90" stroke="#CC79A7" stroke-width="1.0"/>
-<text x="12.50" y="101.40" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >3V3</text>
-<text x="17.10" y="101.40" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >3.3 V from the C3 (power)</text>
-<line x1="64.00" y1="100.90" x2="71.00" y2="100.90" stroke="#0072B2" stroke-width="0.7"/>
-<text x="72.50" y="101.40" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >SDA</text>
-<text x="77.10" y="101.40" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >I2C data, GPIO 5</text>
-<line x1="4.00" y1="103.80" x2="11.00" y2="103.80" stroke="#56B4E9" stroke-width="0.7"/>
-<text x="12.50" y="104.30" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >SCL</text>
-<text x="17.10" y="104.30" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >I2C clock, GPIO 6</text>
-<line x1="64.00" y1="103.80" x2="71.00" y2="103.80" stroke="#009E73" stroke-width="0.7"/>
-<text x="72.50" y="104.30" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >CLK</text>
-<text x="77.10" y="104.30" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >encoder A, GPIO 3</text>
-<line x1="4.00" y1="106.70" x2="11.00" y2="106.70" stroke="#E69F00" stroke-width="0.7"/>
-<text x="12.50" y="107.20" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >DT</text>
-<text x="16.10" y="107.20" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >encoder B, GPIO 4</text>
-<line x1="64.00" y1="106.70" x2="71.00" y2="106.70" stroke="#B8A100" stroke-width="0.7"/>
-<text x="72.50" y="107.20" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >SW</text>
-<text x="76.10" y="107.20" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >encoder switch, GPIO 1</text>
-<line x1="4.00" y1="109.60" x2="11.00" y2="109.60" stroke="#8C564B" stroke-width="0.7"/>
-<text x="12.50" y="110.10" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >BUZ</text>
-<text x="17.10" y="110.10" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >buzzer drive, GPIO 0</text>
-<line x1="64.00" y1="109.60" x2="71.00" y2="109.60" stroke="#7F7F7F" stroke-width="0.7"/>
-<text x="72.50" y="110.10" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >GATE</text>
-<text x="78.10" y="110.10" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >Q1 gate</text>
-<line x1="4.00" y1="112.50" x2="11.00" y2="112.50" stroke="#6A3D9A" stroke-width="0.7"/>
-<text x="12.50" y="113.00" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >BZ−</text>
-<text x="17.10" y="113.00" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >buzzer − / Q1 drain</text>
-<circle cx="5" cy="116.40" r="0.62" fill="#0072B2" stroke="#fff" stroke-width="0.18"/>
-<text x="6.60" y="116.90" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >wire end: solder here</text>
-<circle cx="38" cy="116.40" r="1.05" fill="#111"/>
-<text x="38.00" y="116.85" font-size="1.25" text-anchor="middle" font-weight="bold" fill="#fff" >3</text>
-<text x="39.80" y="116.90" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >build step</text>
-<rect x="58" y="115.60" width="1.6" height="1.6" rx="0.8" fill="#c98b3a" opacity="0.6"/>
-<text x="60.40" y="116.90" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >copper strip: its holes are joined</text>
-<line x1="4" y1="119.60" x2="10" y2="119.60" stroke="#c0392b" stroke-width="0.45" stroke-dasharray="1.2,0.7"/>
-<text x="11.00" y="120.10" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >unmarked edge trace, broken at the link pads beside the M3 holes; the links join the halves</text>
-<line x1="4" y1="123.70" x2="24" y2="123.70" stroke="#111" stroke-width="0.4"/>
-<line x1="4" y1="122.90" x2="4" y2="124.50" stroke="#111" stroke-width="0.4"/>
-<line x1="24" y1="122.90" x2="24" y2="124.50" stroke="#111" stroke-width="0.4"/>
-<text x="26.00" y="124.20" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >20 mm: printed at 100 % (actual size) this bar measures 20 mm and the board is real size</text>
+<rect x="59.34" y="53.61" width="1.7" height="1.7" rx="0.4" fill="#3a3a3a" stroke="#ffffff" stroke-width="0.2"/>
+<text x="60.19" y="54.91" font-size="1.15" text-anchor="middle" font-weight="bold" fill="#ffffff" >D</text>
+<rect x="56.80" y="53.61" width="1.7" height="1.7" rx="0.4" fill="#3a3a3a" stroke="#ffffff" stroke-width="0.2"/>
+<text x="57.65" y="54.91" font-size="1.15" text-anchor="middle" font-weight="bold" fill="#ffffff" >G</text>
+<rect x="54.26" y="53.61" width="1.7" height="1.7" rx="0.4" fill="#3a3a3a" stroke="#ffffff" stroke-width="0.2"/>
+<text x="55.11" y="54.91" font-size="1.15" text-anchor="middle" font-weight="bold" fill="#ffffff" >S</text>
+<line x1="25.55" y1="52.69" x2="30.90" y2="53.03" stroke="#222222" stroke-width="0.25"/>
+<line x1="46.91" y1="73.43" x2="31.06" y2="73.43" stroke="#222222" stroke-width="0.25"/>
+<g class="callout-part" data-no="1"><circle cx="47.15" cy="48.32" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="47.15" y="48.90" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">1</text></g>
+<g class="callout-part" data-no="2"><circle cx="55.40" cy="66.30" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="55.40" y="66.88" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">2</text></g>
+<g class="callout-part" data-no="3"><circle cx="57.34" cy="43.63" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="57.34" y="44.21" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">3</text></g>
+<g class="callout-part" data-no="4"><circle cx="53.86" cy="56.86" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="53.86" y="57.44" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">4</text></g>
+<g class="callout-part" data-no="5"><circle cx="35.17" cy="63.27" r="1.3" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="35.17" y="63.85" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">5</text></g>
+<g class="callout-lead" data-no="7"><rect x="22.95" y="51.31" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="24.25" y="53.19" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">7</text></g>
+<g class="callout-lead" data-no="13"><rect x="46.91" y="72.13" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="48.21" y="74.01" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">13</text></g>
+<g class="callout-lead" data-no="15"><rect x="33.99" y="49.31" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="35.29" y="51.19" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">15</text></g>
+<g class="callout-lead" data-no="11"><rect x="28.45" y="49.27" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="29.75" y="51.15" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">11</text></g>
+<g class="callout-lead" data-no="12"><rect x="22.87" y="72.13" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="24.17" y="74.01" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">12</text></g>
+<g class="callout-lead" data-no="17"><rect x="41.11" y="49.31" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="42.41" y="51.19" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">17</text></g>
+<g class="callout-lead" data-no="8"><rect x="23.37" y="75.17" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="24.67" y="77.05" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">8</text></g>
+<g class="callout-lead" data-no="14"><rect x="37.03" y="49.31" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="38.33" y="51.19" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">14</text></g>
+<g class="callout-lead" data-no="10"><rect x="38.57" y="40.60" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="39.87" y="42.48" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">10</text></g>
+<g class="callout-lead" data-no="18"><rect x="30.95" y="44.23" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="32.25" y="46.11" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">18</text></g>
+<g class="callout-lead" data-no="6"><rect x="30.99" y="38.10" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="32.29" y="39.98" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">6</text></g>
+<g class="callout-lead" data-no="9"><rect x="28.41" y="77.17" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="29.71" y="79.05" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">9</text></g>
+<g class="callout-lead" data-no="16"><rect x="43.65" y="40.60" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="44.95" y="42.48" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">16</text></g>
+<g class="callout-lead" data-no="20"><rect x="58.89" y="59.39" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="60.19" y="61.27" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">20</text></g>
+<g class="callout-lead" data-no="19"><rect x="61.47" y="40.60" width="2.60" height="2.60" rx="0.6" fill="#ffffff" stroke="#222222" stroke-width="0.3"/><text x="62.77" y="42.48" font-size="1.7" text-anchor="middle" font-weight="bold" fill="#111111">19</text></g>
+<text x="4.00" y="95.50" font-size="1.90" text-anchor="start" font-weight="bold" fill="#1a1a1a" >Parts</text>
+<circle cx="5.20" cy="98.30" r="1.2" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="5.20" y="98.88" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >1</text>
+<text x="7.40" y="98.50" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >RG1 220 Ω: I8, I13</text>
+<circle cx="5.20" cy="100.90" r="1.2" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="5.20" y="101.48" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >2</text>
+<text x="7.40" y="101.10" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >RP1 100 kΩ: F13, bottom − rail at</text>
+<text x="7.40" y="103.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >number 13</text>
+<circle cx="5.20" cy="106.10" r="1.2" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="5.20" y="106.68" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >3</text>
+<text x="7.40" y="106.30" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >D1 1N4001: top + rail at number 14,</text>
+<text x="7.40" y="108.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >I14</text>
+<circle cx="5.20" cy="111.30" r="1.2" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="5.20" y="111.88" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >4</text>
+<text x="7.40" y="111.50" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >Q1 BS170: H14, H13, H12</text>
+<circle cx="5.20" cy="113.90" r="1.2" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="5.20" y="114.48" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >5</text>
+<text x="7.40" y="114.10" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >U1 ESP32-C3 Super Mini: C1-C8, G1-G8</text>
+<text x="44.00" y="95.50" font-size="1.90" text-anchor="start" font-weight="bold" fill="#1a1a1a" >Device wires</text>
+<text x="44.00" y="99.30" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >PN532</text>
+<rect x="44.00" y="100.50" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="45.20" y="102.28" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >6</text>
+<text x="47.40" y="101.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >GND: top − rail at number 4</text>
+<rect x="44.00" y="103.10" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="45.20" y="104.88" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >7</text>
+<text x="47.40" y="104.50" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >3V3: H3</text>
+<rect x="44.00" y="105.70" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="45.20" y="107.48" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >8</text>
+<text x="47.40" y="107.10" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >SDA: A1</text>
+<rect x="44.00" y="108.30" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="45.20" y="110.08" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >9</text>
+<text x="47.40" y="109.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >SCL: A2</text>
+<text x="84.00" y="95.50" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >OLED</text>
+<rect x="84.00" y="96.70" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="98.48" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >10</text>
+<text x="87.40" y="98.10" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >GND: top − rail at number 6</text>
+<rect x="84.00" y="99.30" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="101.08" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >11</text>
+<text x="87.40" y="100.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >3V3: I3</text>
+<rect x="84.00" y="101.90" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="103.68" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >12</text>
+<text x="87.40" y="103.30" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >SDA: B1</text>
+<rect x="84.00" y="104.50" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="106.28" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >13</text>
+<text x="87.40" y="105.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >SCL: B2</text>
+<text x="84.00" y="109.30" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >encoder</text>
+<rect x="84.00" y="110.50" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="112.28" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >14</text>
+<text x="87.40" y="111.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >CLK: H5</text>
+<rect x="84.00" y="113.10" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="114.88" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >15</text>
+<text x="87.40" y="114.50" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >DT: H4</text>
+<rect x="84.00" y="115.70" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="117.48" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >16</text>
+<text x="87.40" y="117.10" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >GND: top − rail at number 8</text>
+<rect x="84.00" y="118.30" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="120.08" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >17</text>
+<text x="87.40" y="119.70" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >SW: H7</text>
+<rect x="84.00" y="120.90" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="122.68" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >18</text>
+<text x="87.40" y="122.30" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >3V3: J3</text>
+<text x="84.00" y="125.70" font-size="1.50" text-anchor="start" font-weight="bold" fill="#333" >buzzer</text>
+<rect x="84.00" y="126.90" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="128.68" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >19</text>
+<text x="87.40" y="128.30" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >5V: top + rail at number 16</text>
+<rect x="84.00" y="129.50" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="85.20" y="131.28" font-size="1.50" text-anchor="middle" font-weight="bold" fill="#111" >20</text>
+<text x="87.40" y="130.90" font-size="1.40" text-anchor="start" font-weight="normal" fill="#333" >BZ−: F14</text>
+<text x="4.00" y="137.00" font-size="1.90" text-anchor="start" font-weight="bold" fill="#1a1a1a" >Nets (wire colours)</text>
+<line x1="4.00" y1="139.50" x2="11.00" y2="139.50" stroke="#000000" stroke-width="1.0"/>
+<line x1="4.00" y1="139.50" x2="11.00" y2="139.50" stroke="#fff" stroke-width="0.22" stroke-dasharray="0.6,0.9"/>
+<text x="12.50" y="140.00" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >GND</text>
+<text x="17.10" y="140.00" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >ground</text>
+<line x1="64.00" y1="139.50" x2="71.00" y2="139.50" stroke="#D55E00" stroke-width="1.0"/>
+<text x="72.50" y="140.00" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >5V</text>
+<text x="76.10" y="140.00" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >USB 5 V (power)</text>
+<line x1="4.00" y1="142.40" x2="11.00" y2="142.40" stroke="#CC79A7" stroke-width="1.0"/>
+<text x="12.50" y="142.90" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >3V3</text>
+<text x="17.10" y="142.90" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >3.3 V from the C3 (power)</text>
+<line x1="64.00" y1="142.40" x2="71.00" y2="142.40" stroke="#0072B2" stroke-width="0.7"/>
+<text x="72.50" y="142.90" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >SDA</text>
+<text x="77.10" y="142.90" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >I2C data, GPIO 5</text>
+<line x1="4.00" y1="145.30" x2="11.00" y2="145.30" stroke="#56B4E9" stroke-width="0.7"/>
+<text x="12.50" y="145.80" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >SCL</text>
+<text x="17.10" y="145.80" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >I2C clock, GPIO 6</text>
+<line x1="64.00" y1="145.30" x2="71.00" y2="145.30" stroke="#009E73" stroke-width="0.7"/>
+<text x="72.50" y="145.80" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >CLK</text>
+<text x="77.10" y="145.80" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >encoder A, GPIO 3</text>
+<line x1="4.00" y1="148.20" x2="11.00" y2="148.20" stroke="#E69F00" stroke-width="0.7"/>
+<text x="12.50" y="148.70" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >DT</text>
+<text x="16.10" y="148.70" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >encoder B, GPIO 4</text>
+<line x1="64.00" y1="148.20" x2="71.00" y2="148.20" stroke="#B8A100" stroke-width="0.7"/>
+<text x="72.50" y="148.70" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >SW</text>
+<text x="76.10" y="148.70" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >encoder switch, GPIO 1</text>
+<line x1="4.00" y1="151.10" x2="11.00" y2="151.10" stroke="#8C564B" stroke-width="0.7"/>
+<text x="12.50" y="151.60" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >BUZ</text>
+<text x="17.10" y="151.60" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >buzzer drive, GPIO 0</text>
+<line x1="64.00" y1="151.10" x2="71.00" y2="151.10" stroke="#7F7F7F" stroke-width="0.7"/>
+<text x="72.50" y="151.60" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >GATE</text>
+<text x="78.10" y="151.60" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >Q1 gate</text>
+<line x1="4.00" y1="154.00" x2="11.00" y2="154.00" stroke="#6A3D9A" stroke-width="0.7"/>
+<text x="12.50" y="154.50" font-size="1.60" text-anchor="start" font-weight="bold" fill="#111" >BZ−</text>
+<text x="17.10" y="154.50" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >buzzer − / Q1 drain</text>
+<circle cx="5" cy="157.90" r="0.62" fill="#0072B2" stroke="#fff" stroke-width="0.18"/>
+<text x="6.60" y="158.40" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >wire end: solder here</text>
+<rect x="58" y="157.10" width="1.6" height="1.6" rx="0.8" fill="#c98b3a" opacity="0.6"/>
+<text x="60.40" y="158.40" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >copper strip: its holes are joined</text>
+<circle cx="5.2" cy="161.30" r="1.2" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="5.20" y="161.70" font-size="1.40" text-anchor="middle" font-weight="bold" fill="#111" >4</text>
+<text x="7.40" y="161.80" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >a part on the board (see Parts)</text>
+<rect x="58" y="160.10" width="2.4" height="2.4" rx="0.55" fill="#ffffff" stroke="#222222" stroke-width="0.28"/>
+<text x="59.20" y="161.70" font-size="1.40" text-anchor="middle" font-weight="bold" fill="#111" >9</text>
+<text x="62.00" y="161.80" font-size="1.45" text-anchor="start" font-weight="normal" fill="#444" >a wire of an off-board device (see Device wires)</text>
+<line x1="4" y1="164.50" x2="10" y2="164.50" stroke="#c0392b" stroke-width="0.45" stroke-dasharray="1.2,0.7"/>
+<text x="11.00" y="165.00" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >unmarked edge trace, broken at the link pads beside the M3 holes; the links join the halves</text>
+<line x1="4" y1="168.60" x2="24" y2="168.60" stroke="#111" stroke-width="0.4"/>
+<line x1="4" y1="167.80" x2="4" y2="169.40" stroke="#111" stroke-width="0.4"/>
+<line x1="24" y1="167.80" x2="24" y2="169.40" stroke="#111" stroke-width="0.4"/>
+<text x="26.00" y="169.10" font-size="1.40" text-anchor="start" font-weight="normal" fill="#444" >20 mm: printed at 100 % (actual size) this bar measures 20 mm and the board is real size</text>
 </svg>

@@ -35,6 +35,7 @@ speaker rated at 3 W or more. Speaker wires go only to the board's two outputs, 
 
 Parts off the main board plug in through JST-XH connectors (2.50 mm pitch; they fit a 0.1" board). I2C always uses the pin order GND, 3V3, SDA, SCL.
 Each connector is listed in the device's catalogue file.
+Protoboard builds may solder the device wires straight to the board instead of fitting JST-XH headers; the pin orders stay the same.
 
 - Every header carries a label on the board naming its function (for example I2C, YELLOW, RED, BUZZER), and the guide
   shows how to find pin 1 on a header and on a plug. The builder plugs each harness into its labelled header.

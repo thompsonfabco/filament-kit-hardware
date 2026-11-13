@@ -1,7 +1,8 @@
 # Printer station bill of materials
 
-Parts to buy for one printer station, with Amazon listing links. The last rows (J1-J4, the U1 socket and the PCB) are
-for the board build only (see "Board" in the guide); the no-board build wires the modules straight to the C3 and builds the buzzer driver (Q1, RG1,
+Parts to buy for one printer station, with Amazon listing links. The JST-XH row (J1-J4) and the PCB rows are
+for the board build only (see "Board" in the guide). The protoboard build (see "Protoboard build") uses the ElectroCookie
+board, the U1 sockets and no plugs; the no-board build wires the modules straight to the C3 and builds the buzzer driver (Q1, RG1,
 RP1, D1) on a scrap of protoboard. The refs and use of each part are in the
 [build guide](guide.md); this list adds where to get them. "Reference build: yes" marks the listing used in the
 reference build; "suggested" marks a listing chosen to match the part. Most listings are multi-packs.
@@ -9,6 +10,7 @@ reference build; "suggested" marks a listing chosen to match the part. Most list
 | Ref | Part | Qty | Brand / listing | Link | Reference build | Notes |
 |---|---|---|---|---|---|---|
 | U1 | ESP32-C3 Super Mini | 1 | Hiraethge ESP32-C3 Super Mini, 6-pack | [B0HJHW5FDL](https://www.amazon.com/dp/B0HJHW5FDL) | yes | Power-left: 5V, GND and 3V3 on the left row, seen from above with USB up, so it takes the power-left board. Any other C3 listing: check the module, which may be either hand (see "Which C3 module do I have?" in the guide) |
+| BRD1 | Solderable breadboard prototype board, full size (89 x 52 mm) | 0 or 1 | ElectroCookie solderable breadboard, 5 full boards + 1 mini board | [B07ZYNWJ1S](https://www.amazon.com/dp/B07ZYNWJ1S) | suggested | Protoboard build only; the layout and hole positions in the guide are measured from it. The project standard lists same-size alternatives |
 | U2 | PN532 NFC module, Elechouse-style V3 | 1 | DIANN PN532 V3 kit, 1 piece (also sold as a 4-pack, [B0B7L816YS](https://www.amazon.com/dp/B0B7L816YS)) | [B0B7L47YSZ](https://www.amazon.com/dp/B0B7L47YSZ) | yes | Elechouse-style V3 board, the one photographed. Set to I2C mode |
 | U3 | SSD1306 OLED, 0.96", 128x64, I2C 0x3C | 1 | Hosyond 0.96" OLED SSD1306, 5-pack | [B09T6SJBV5](https://www.amazon.com/dp/B09T6SJBV5) | yes | |
 | SW1 | EC11 rotary encoder with push switch, 5 pins | 1 | WWZMDiB EC11 rotary encoder with knob caps, 6 pieces | [B0C6Q67V97](https://www.amazon.com/dp/B0C6Q67V97) | yes | A bare encoder: the switch legs are separate from the common, as the schematic shows (switch between GPIO 1 and 3V3) |
@@ -16,10 +18,10 @@ reference build; "suggested" marks a listing chosen to match the part. Most list
 | Q1 | BS170 N-MOSFET, TO-92 | 1 | Fairchild BS170, 10 pieces | [B00MMY1WTK](https://www.amazon.com/dp/B00MMY1WTK) | yes | The intake panel's listing. Legs D G S, flat face toward you. If the buzzer is weak, see "Buzzer driver" in the guide |
 | RG1, RP1 | 220 Ω and 100 kΩ resistors, 1/4 W | 1 + 1 | Joe Knows Electronics 1/4 W 1% metal film kit, 86 E12 values, 10 of each | [B003UC4FSS](https://www.amazon.com/dp/B003UC4FSS) | yes | The intake panel's listing. 220 Ω gate resistor, 100 kΩ gate pull-down |
 | D1 | 1N4001 rectifier diode, 50 V, 1 A, DO-41 | 1 | BOJACK 1N4001, pack of 125 | [B07Q3HBM63](https://www.amazon.com/dp/B07Q3HBM63) | suggested | Flyback diode across the buzzer. The band marks the cathode, which goes to 5V. Any 1N4001 to 1N4007 fits |
-| J1-J4 | JST-XH headers and plugs: 4-pin x2, 5-pin x1, 2-pin x1 | 4 | GeeBat 460-piece JST-XH kit, 2- to 6-pin | [B01MCZE2HM](https://www.amazon.com/dp/B01MCZE2HM) | suggested | Board build only. The kit must include 5-pin parts for J3. Crimping needs a crimp tool, not listed here |
-| U1 socket | Female pin header, 2.54 mm, cut to 8 pins | 2 | Haobase 40-pin female headers, 10 pieces | [B01DLX6RSQ](https://www.amazon.com/dp/B01DLX6RSQ) | suggested | Board build only. Cut two 8-pin lengths; a cut loses one pin. U1 plugs in and is never soldered |
-| PCB, power-left | Printer station through-hole board, C3 POWER-LEFT, 89 x 52 mm, 2 layers, 1.6 mm | 1 | Any board maker that takes Gerbers | [gerbers-tht-power-left.zip](board/gerbers-tht-power-left.zip) | suggested | Board build with a power-left C3 (the Hiraethge modules above). Order it bare from JLCPCB or any board maker (see "Board" in the guide) |
-| PCB, power-right | Printer station through-hole board, C3 POWER-RIGHT, 89 x 52 mm, 2 layers, 1.6 mm | 1 | Any board maker that takes Gerbers | [gerbers-tht-power-right.zip](board/gerbers-tht-power-right.zip) | suggested | Board build with a power-right C3 only: 5V, GND and 3V3 on the right row, seen from above with USB up. Order one PCB row, not both |
+| J1-J4 | JST-XH headers and plugs: 4-pin x2, 5-pin x1, 2-pin x1 | 0 or 4 | GeeBat 460-piece JST-XH kit, 2- to 6-pin | [B01MCZE2HM](https://www.amazon.com/dp/B01MCZE2HM) | suggested | Board build only: the protoboard build uses no plugs and solders the device wires into the board. The kit must include 5-pin parts for J3. Crimping needs a crimp tool, not listed here |
+| U1 socket | Female pin header, 2.54 mm, cut to 8 pins | 0 or 2 | Haobase 40-pin female headers, 10 pieces | [B01DLX6RSQ](https://www.amazon.com/dp/B01DLX6RSQ) | suggested | Board and protoboard builds; not the no-board build. Cut two 8-pin lengths; a cut loses one pin. U1 plugs in and is never soldered |
+| PCB, power-left | Printer station through-hole board, C3 POWER-LEFT, 89 x 52 mm, 2 layers, 1.6 mm | 0 or 1 | Any board maker that takes Gerbers | [gerbers-tht-power-left.zip](board/gerbers-tht-power-left.zip) | suggested | Board build with a power-left C3 (the Hiraethge modules above). Order it bare from JLCPCB or any board maker (see "Board" in the guide) |
+| PCB, power-right | Printer station through-hole board, C3 POWER-RIGHT, 89 x 52 mm, 2 layers, 1.6 mm | 0 or 1 | Any board maker that takes Gerbers | [gerbers-tht-power-right.zip](board/gerbers-tht-power-right.zip) | suggested | Board build with a power-right C3 only: 5V, GND and 3V3 on the right row, seen from above with USB up. Order one PCB row, not both |
 
 ## Ordering from JLCPCB
 

@@ -2,12 +2,12 @@
 <!-- Printer station on the ElectroCookie full board, for a C3 POWER-LEFT module. U1 sits at numbers 1-8,
      its USB-C end at number 1.
      Checked against the schematic by: python tools/protoboard.py check <this file> -->
-<protoboard device="printer-station" hand="power-left" title="Printer station, C3 POWER-LEFT">
+<protoboard style="callouts" device="printer-station" hand="power-left" title="Printer station, C3 POWER-LEFT">
   <netlist schematic="../kicad-power-left/printer-station-power-left.kicad_sch"/>
-  <offboard ref="U2">PN532 module, on the J1 harness</offboard>
-  <offboard ref="U3">OLED module, on the J2 harness</offboard>
-  <offboard ref="SW1">EC11 encoder, on the J3 harness</offboard>
-  <offboard ref="BZ1">buzzer, on the J4 harness</offboard>
+  <offboard ref="U2">PN532 module, wired to the board at J1</offboard>
+  <offboard ref="U3">OLED module, wired to the board at J2</offboard>
+  <offboard ref="SW1">EC11 encoder, wired to the board at J3</offboard>
+  <offboard ref="BZ1">buzzer, wired to the board at J4</offboard>
   <bridge rail="-"/>
   <part ref="U1" kind="c3-supermini" value="ESP32-C3 Super Mini" hand="power-left">
     <pin n="1" hole="H1"/>
@@ -27,69 +27,48 @@
     <pin n="15" hole="D7"/>
     <pin n="16" hole="D8"/>
   </part>
-  <part ref="J3" kind="jst-xh" value="XH-5" latch="up" label="encoder">
-    <pin n="1" hole="E14"/>
-    <pin n="2" hole="E13"/>
-    <pin n="3" hole="E12"/>
-    <pin n="4" hole="E11"/>
-    <pin n="5" hole="E10"/>
+  <part ref="J3" kind="leads" label="encoder">
+    <pin n="1" hole="A5"/>
+    <pin n="2" hole="A4"/>
+    <pin n="3" hole="B-6"/>
+    <pin n="4" hole="A7"/>
+    <pin n="5" hole="A3"/>
   </part>
-  <part ref="J1" kind="jst-xh" value="XH-4" latch="down" label="PN532">
-    <pin n="1" hole="F18"/>
-    <pin n="2" hole="F19"/>
-    <pin n="3" hole="F20"/>
-    <pin n="4" hole="F21"/>
+  <part ref="J1" kind="leads" label="PN532">
+    <pin n="1" hole="T-1"/>
+    <pin n="2" hole="C3"/>
+    <pin n="3" hole="I1"/>
+    <pin n="4" hole="I2"/>
   </part>
-  <part ref="J2" kind="jst-xh" value="XH-4" latch="down" label="OLED">
-    <pin n="1" hole="F23"/>
-    <pin n="2" hole="F24"/>
-    <pin n="3" hole="F25"/>
-    <pin n="4" hole="F26"/>
+  <part ref="J2" kind="leads" label="OLED">
+    <pin n="1" hole="T-3"/>
+    <pin n="2" hole="B3"/>
+    <pin n="3" hole="J1"/>
+    <pin n="4" hole="J2"/>
   </part>
-  <part ref="Q1" kind="to92" value="BS170" flat="down" caption="right">
-    <pin n="1" hole="E20"/>
-    <pin n="2" hole="E21"/>
-    <pin n="3" hole="E22"/>
+  <part ref="Q1" kind="to92" value="BS170" flat="up">
+    <pin n="1" hole="E13"/>
+    <pin n="2" hole="E12"/>
+    <pin n="3" hole="E11"/>
   </part>
-  <part ref="RG1" kind="resistor" value="220 Ω" caption="above">
-    <pin n="1" hole="A15"/>
-    <pin n="2" hole="A19"/>
+  <part ref="RG1" kind="resistor" value="220 Ω">
+    <pin n="1" hole="C8"/>
+    <pin n="2" hole="C12"/>
   </part>
-  <part ref="RP1" kind="resistor" value="100 kΩ" caption="left">
-    <pin n="1" hole="B21"/>
-    <pin n="2" hole="B-21"/>
+  <part ref="RP1" kind="resistor" value="100 kΩ">
+    <pin n="1" hole="B12"/>
+    <pin n="2" hole="B-12"/>
   </part>
-  <part ref="D1" kind="diode" value="1N4001" caption="right">
-    <pin n="1" hole="B+29"/>
-    <pin n="2" hole="A29"/>
+  <part ref="D1" kind="diode" value="1N4001">
+    <pin n="1" hole="B+15"/>
+    <pin n="2" hole="A15"/>
   </part>
-  <part ref="J4" kind="jst-xh" value="XH-2" latch="up" label="buzzer">
-    <pin n="1" hole="E27"/>
-    <pin n="2" hole="E26"/>
+  <part ref="J4" kind="leads" label="buzzer">
+    <pin n="1" hole="B+14"/>
+    <pin n="2" hole="B13"/>
   </part>
   <wire net="5V" from="A1" to="B+1"/>
   <wire net="GND" from="A2" to="B-2"/>
-  <wire net="GND" from="A12" to="B-12"/>
-  <wire net="BUZZER" from="D9" to="D15"/>
-  <wire net="BZ-" from="B29" to="B26"/>
-  <wire net="BZ-" from="C20" to="C26"/>
-  <wire net="BZ_G" from="D21" to="D19"/>
-  <wire net="5V" from="B+27" to="A27"/>
-  <wire net="GND" from="B-22" to="A22"/>
-  <wire net="3V3" from="B3" to="B10"/>
-  <wire net="ENC_DT" from="C4" to="C13"/>
-  <wire net="SDA" from="G20" to="G25"/>
-  <wire net="ENC_SW" from="A7" to="A11"/>
-  <wire net="ENC_CLK" from="C14" to="C16"/>
-  <wire net="ENC_CLK" from="H15" to="E16" route="hv"/>
-  <wire net="GND" from="J18" to="T-18"/>
-  <wire net="GND" from="I23" to="T-23"/>
-  <wire net="ENC_CLK" from="E5" to="F15" route="vh"/>
-  <wire net="SCL" from="H21" to="H26"/>
-  <wire net="3V3" from="J19" to="J24"/>
-  <wire net="3V3" from="E3" to="G19" route="vh"/>
-  <wire net="BUZZER" from="E8" to="E9"/>
-  <wire net="SCL" from="I2" to="I21"/>
-  <wire net="SDA" from="H17" to="H20"/>
-  <wire net="SDA" from="J1" to="J17"/>
+  <wire net="GND" from="A11" to="B-11"/>
+  <wire net="BZ-" from="D13" to="D15"/>
 </protoboard>
